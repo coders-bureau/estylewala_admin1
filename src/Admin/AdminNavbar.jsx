@@ -19,28 +19,65 @@ import {
   Menu,
   MenuButton,
   AvatarBadge,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
 } from "@chakra-ui/react";
+
 import { FiMenu } from "react-icons/fi";
 import { AiFillFolder, AiFillHome } from "react-icons/ai";
 import { BsFillBellFill } from "react-icons/bs";
 import { HiFolderAdd } from "react-icons/hi";
 import { ImMan, ImWoman } from "react-icons/im";
-import { FaChild, FaUsers } from "react-icons/fa";
+import { FaBoxOpen, FaChild, FaUsers } from "react-icons/fa";
 import { RiAccountPinCircleFill, RiLogoutCircleFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 // import { getAdminData } from '../Redux/Admin/Admin.action';
 const LinkItems = [
+  {
+    name: "Products",
+    icon: HiFolderAdd,
+    items: [
+      { name: "Product", icon: HiFolderAdd, path: "/add-products" },
+      { name: "Products", icon: AiFillFolder, path: "/product-list" },
+    ],
+  },
+  {
+    name: "Category",
+    icon: FaUsers,
+    items: [{ name: "Categories", icon: FaUsers, path: "/categories-list" }],
+  },
+  {
+    name: "Sizes",
+    icon: FaUsers,
+    items: [{ name: "Sizes", icon: FaUsers, path: "/size" }],
+  },
   // { name: "Home", icon: AiFillHome, path: "/admin-dashboard" },
-  { name: "Home", icon: AiFillHome, path: "/" },
-  { name: "Add Product", icon: HiFolderAdd, path: "/add-products" },
-  { name: "All Products", icon: AiFillFolder, path: "/product-list" },
+  // { name: "Home", icon: AiFillHome, path: "/" },
+  // { name: "Product", icon: HiFolderAdd, path: "/add-products" },
+  // { name: "Products", icon: AiFillFolder, path: "/product-list" },
+  // { name: "Orders", icon: FaBoxOpen, path: "/orders-list" },
+  // { name: "Users", icon: FaUsers, path: "/users-list" },
+  // { name: "Categories", icon: FaUsers, path: "/categories-list" },
+  // {
+
+  // },
   // { name: "Men", icon: ImMan, path: "/admin-men" },
   // { name: "Women", icon: ImWoman, path: "/admin-women" },
   // { name: "Kids", icon: FaChild, path: "/admin-kids" },
-  // { name: "Users", icon: FaUsers, path: "/admin-users" },
   // { name: "Account", icon: RiAccountPinCircleFill, path: "/admin-profile" },
   // { name: "Logout", icon: RiLogoutCircleFill, path: "/" },
+];
+const ProductsItems = [
+  // { name: "Home", icon: AiFillHome, path: "/" },
+  { name: "Product", icon: HiFolderAdd, path: "/add-products" },
+  { name: "Products", icon: AiFillFolder, path: "/product-list" },
+  // { name: "Orders", icon: FaBoxOpen, path: "/orders-list" },
+  // { name: "Users", icon: FaUsers, path: "/users-list" },
+  // { name: "Categories", icon: FaUsers, path: "/categories-list" },
 ];
 //RiLogoutCircleFill
 export default function AdminNavbar({ children }) {
@@ -108,14 +145,77 @@ const SidebarContent = ({ onClose, ...rest }) => {
 
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
+      {/* <NavItem key={"Home"} icon={"AiFillHome"} item={'/'}> */}
+      {/* </NavItem> */}
+      {/* <NavItem> */}
+      <NavItem  key={LinkItems[0].name} icon={AiFillHome} item={"/"}>
+        {{ name: "Home" }}
+      </NavItem>
+      {/* </NavItem> */}
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} item={link.path}>
-          {link}
-        </NavItem>
+        <Accordion allowToggle>
+          <AccordionItem>
+            <h2>
+              <AccordionButton>
+                <Box as="span" flex="1" 
+                // textAlign="center"
+                >
+                  {/* <Text fontSize={15} fontWeight={400}> */}
+                    {/* <Flex
+                      // _groupActive={{ color: "#990578" }}
+                      align="left"
+                      p="4"
+                      mx="4"
+                      borderRadius="lg"
+                      role="group"
+                      cursor="pointer"
+                      // _hover={{
+                      //   bg: "#72749B",
+                      //   color: "white",
+                      // }}
+                      {...rest}
+                    > */}
+                      {AiFillHome && (
+                        <Icon
+                          mr="4"
+                          fontSize="20"
+                          // _groupHover={{
+                          //   color: "white",
+                          // }}
+                          as={link.icon}
+                        />
+                      )}
+                      {link.name}
+                    {/* </Flex> */}
+                    {/* <Icon
+                      mr="4"
+                      fontSize="20"
+                      _groupHover={{
+                        color: "white",
+                      }}
+                      as={HiFolderAdd}
+                    />
+
+                    {link.name} */}
+                  {/* </Text> */}
+                </Box>
+                {/* <AccordionIcon /> */}
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>
+              {link.items.map((link) => (
+                <NavItem key={link.name} icon={link.icon} item={link.path}>
+                  {link}
+                </NavItem>
+              ))}
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       ))}
     </Box>
   );
 };
+
 const NavItem = ({ icon, children, item, ...rest }) => {
   return (
     <NavLink
@@ -124,26 +224,28 @@ const NavItem = ({ icon, children, item, ...rest }) => {
       _focus={{ boxShadow: "none" }}
     >
       <Flex
-        _groupActive={{ color: "#990578" }}
-        align="center"
+      // bgColor={"white"}
+        // _groupActive={{ color: "#990578" }}
+        align="right"
         p="4"
-        mx="4"
+        // mx="10"
+        ml="8"
         borderRadius="lg"
         role="group"
         cursor="pointer"
-        _hover={{
-          bg: "#72749B",
-          color: "white",
-        }}
+        // _hover={{
+        //   bg: "#72749B",
+        //   color: "white",
+        // }}
         {...rest}
       >
         {icon && (
           <Icon
             mr="4"
             fontSize="20"
-            _groupHover={{
-              color: "white",
-            }}
+            // _groupHover={{
+            //   color: "white",
+            // }}
             as={icon}
           />
         )}

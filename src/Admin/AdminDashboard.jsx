@@ -3,39 +3,72 @@ import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import { useDispatch, useSelector } from "react-redux";
 import AdminNavbar from "./AdminNavbar";
-import {
-  getAllProductsData,
-} from "../Redux/AppReducer/Action";
+import { getAllProductsData } from "../Redux/AppReducer/Action";
 import LoadingPage from "../Pages/LoadingPage";
+import PageNotFound from "../Pages/PageNotFound";
 // import Calendar from './Calendar';
+import axios from "axios";
+
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
-  const Allproducts = useSelector((store) => store.AppReducer);
-  console.log(Allproducts.isLoading);
-  useEffect(() => {
+  const [products, setProducts] = useState([]);
+  const [isLoading, setisLoading] = useState(false);
 
-    dispatch(getAllProductsData());
+  // const Allproducts = useSelector((store) => store.AppReducer);
+
+  
+
+  console.log(products);
+  console.log("error: " + products.isError);
+  useEffect(() => {
+    // dispatch(getAllProductsData());
+    fetchProducts();
   }, []);
 
-  const kd = Allproducts.Products.filter((item) => item.type === "Kids").length;
-  const md = Allproducts.Products.filter((item) => item.type === "Men").length;
-  const wd = Allproducts.Products.filter(
-    (item) => item.type === "Women"
-  ).length;
+  const fetchProducts = async () => {
+    setisLoading(true);
+    await axios
+      .get("http://localhost:5000/product/allproducts")
+      .then((response) => {
+        setProducts(response.data.data);
+        console.log(response.data.data);
+        setisLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+        setisLoading(false);
+      });
+  };
+
+  
+  // const kd = Allproducts.Products ? 0 : Allproducts.Products.data.filter((item) => item.type === "Kids").length ;
+  // const md = Allproducts.Products ? 0 : Allproducts.Products.data.filter((item) => item.type === "Mens").length ;
+  // const wd = Allproducts.Products ? 0 : Allproducts.Products.data.filter((item) => item.type === "Women").length ;
+  const kd = products.filter((item) => item.type === "Kids").length ;
+  const md = products.filter((item) => item.type === "Mens").length ;
+  const wd = products.filter((item) => item.type === "Womens").length ;
   console.log(kd, md, wd);
 
   return (
     <Box minH="100vh" bg={"whiteAlpha.50"}>
       <AdminNavbar />
-      {Allproducts.isLoading ? (
-        <LoadingPage />
+      {isLoading ? (
+        false ? (
+          <>
+            <PageNotFound />{" "}
+          </>
+        ) : (
+          <>
+            <LoadingPage />
+          </>
+        )
       ) : (
         <Box
           marginTop={{ lg: "80px", md: "80px", base: "80px" }}
           pt={30}
           fontFamily={"sans-serif"}
-          // bg={'#ffffff'} 
+          // bg={'#ffffff'}
           padding={4}
           // width={"80%"}
         >

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  Text,
   Box,
   Button,
   Center,
@@ -21,12 +22,32 @@ import AdminNavbar from "./AdminNavbar";
 import { CloseIcon } from "@chakra-ui/icons";
 import LoadingPage from "../Pages/LoadingPage";
 import PageNotFound from "../Pages/PageNotFound";
+// import { sizeOptions } from "../Constants/costant";
 
 const AddProductPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const [isLoading, setisLoading] = useState(false);
   const [showimages, setshowimages] = useState([]);
+  const [showImageWarning, setShowImageWarning] = useState(false);
+  const [showImagesWarning, setShowImagesWarning] = useState(false);
+  const [sizeOptions, setSizeOptions] = useState({});
+
+    // Fetch size options on component mount
+    useEffect(() => {
+      fetchSizeOptions();
+    }, []);
+
+  const fetchSizeOptions = () => {
+    axios.get('http://localhost:5000/size/size-options')
+      .then(response => {
+        setSizeOptions(response.data);
+        // setEditingOptions(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching size options:', error);
+      });
+  };
 
   const [productData, setProductData] = useState({
     title: "",
@@ -85,6 +106,7 @@ const AddProductPage = () => {
   // };
 
   const handleAddImage = (e) => {
+    setShowImagesWarning(false);
     const file = e.target.files[0];
     if (file) {
       setProductData((prevData) => ({
@@ -126,6 +148,7 @@ const AddProductPage = () => {
   // };
   // const [imasd, setimg] = useState("");
   const handleImageChange = (e) => {
+    setShowImageWarning(false);
     const file = e.target.files[0];
     if (file) {
       setProductData((prevData) => ({
@@ -156,8 +179,17 @@ const AddProductPage = () => {
   };
 
   const handleSubmit = (e) => {
-    setisLoading(true);
     e.preventDefault();
+    if (productData.images.length === 0) {
+      setShowImagesWarning(true); // Show the warning if no images are added
+      return;
+    }
+    if (!productData.img) {
+      setShowImageWarning(true); // Show the warning if image is not selected
+      return;
+    } 
+
+    setisLoading(true);
     console.log(productData);
     const formData = new FormData();
     formData.append("title", productData.title);
@@ -368,13 +400,16 @@ const AddProductPage = () => {
                   />
                 )}
               </HStack>
+              {showImageWarning && (
+                <Text color="red">Please select an image</Text>
+              )}
             </FormControl>
 
             {/* <input type="file" accept="image/*" onChange={handleImageChange} /> */}
 
             {/* Render input for additional images */}
 
-            <FormControl>
+            <FormControl isRequired>
               <FormLabel>Aditional Images</FormLabel>
               <VStack spacing={4}>
                 <input type="file" accept="image/*" onChange={handleAddImage} />{" "}
@@ -397,86 +432,37 @@ const AddProductPage = () => {
                   ))}
                 </>
               </VStack>
+              {showImagesWarning && (
+                <Text color="red">Please select images</Text>
+              )}
             </FormControl>
 
             {/* <input type="file" accept="image/*" onChange={handleAddImage} /> */}
 
-            <FormControl>
-              <FormLabel>Standard Sizes:</FormLabel>
-              <HStack>
-                <Checkbox value="S" onChange={handleSizeChange}>
-                  S
-                </Checkbox>
-                <Checkbox value="M" onChange={handleSizeChange}>
-                  M
-                </Checkbox>
-                <Checkbox value="L" onChange={handleSizeChange}>
-                  L
-                </Checkbox>
-                <Checkbox value="XL" onChange={handleSizeChange}>
-                  XL
-                </Checkbox>
-                <Checkbox value="XXL" onChange={handleSizeChange}>
-                  XXL
-                </Checkbox>
-                <Checkbox value="3XL" onChange={handleSizeChange}>
-                  3XL
-                </Checkbox>
-              </HStack>
-            </FormControl>
-            <FormControl>
-              <FormLabel>Waist Sizes:</FormLabel>
-              <HStack>
-                <Checkbox value="28" onChange={handleSizeChange}>
-                  28
-                </Checkbox>
-                <Checkbox value="30" onChange={handleSizeChange}>
-                  30
-                </Checkbox>
-                <Checkbox value="32" onChange={handleSizeChange}>
-                  32
-                </Checkbox>
-                <Checkbox value="34" onChange={handleSizeChange}>
-                  34
-                </Checkbox>
-                <Checkbox value="36" onChange={handleSizeChange}>
-                  36
-                </Checkbox>
-              </HStack>
-            </FormControl>
-            <FormControl>
-              <FormLabel>Age Sizes:</FormLabel>
-              <HStack>
-                <Checkbox isChecked={productData.size.includes("6-12M")} value="6-12M" onChange={handleSizeChange}>
-                  6-12M
-                </Checkbox>
-                <Checkbox value="1-1.5Y" onChange={handleSizeChange}>
-                  1-1.5Y
-                </Checkbox>
-                <Checkbox value="1.5-2Y" onChange={handleSizeChange}>
-                  1.5-2Y
-                </Checkbox>
-                <Checkbox value="2-3Y" onChange={handleSizeChange}>
-                  2-3Y
-                </Checkbox>
-                <Checkbox value="4-6Y" onChange={handleSizeChange}>
-                  4-6Y
-                </Checkbox>
-                <Checkbox value="6-8Y" onChange={handleSizeChange}>
-                  6-8Y
-                </Checkbox>
-                <Checkbox value="9-11Y" onChange={handleSizeChange}>
-                  9-11Y
-                </Checkbox>
-                <Checkbox value="12-14Y" onChange={handleSizeChange}>
-                  12-14Y
-                </Checkbox>
-                <Checkbox value="15-17Y" onChange={handleSizeChange}>
-                  15-17Y
-                </Checkbox>
-                {/* Add the rest of the age size checkboxes */}
-              </HStack>
-            </FormControl>
+            {Object.entries(sizeOptions).map(([category, sizes]) => (
+              <FormControl key={category}>
+                <FormLabel>
+                  {category === "standardSizes"
+                    ? "Standard"
+                    : category === "waistSizes"
+                    ? "Waist"
+                    : "Age"}{" "}
+                  Sizes:
+                </FormLabel>
+                <HStack>
+                  {sizes.map((size) => (
+                    <Checkbox
+                      key={size}
+                      isChecked={productData.size.includes(size)}
+                      value={size}
+                      onChange={handleSizeChange}
+                    >
+                      {size}
+                    </Checkbox>
+                  ))}
+                </HStack>
+              </FormControl>
+            ))}
 
             {/* <div>
               <label>Main Image:</label>
