@@ -26,6 +26,7 @@ export const PrivateRoute = ({ children }) => {
 
   const auth_token = localStorage.getItem("authToken");
   axios.defaults.headers.common["auth_token"] = `${auth_token}`;
+  if(auth_token){
   axios
     .get("http://localhost:5000/admin/adminloginstatus")
     .then((response) => {
@@ -39,7 +40,7 @@ export const PrivateRoute = ({ children }) => {
       dispatch(login("logout"));
       localStorage.clear();
     });
-
+  }
   const isAuth = useSelector((store) => store.AuthReducer.isAuth);
   console.log(isAuth);
   const location = useLocation();

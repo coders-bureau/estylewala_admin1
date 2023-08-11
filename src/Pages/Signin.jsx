@@ -109,7 +109,7 @@ const Signin = () => {
         const config = { headers: { "Contnet-Type": "application/json" } };
         console.log(input);
         axios
-          .post("http://localhost:5000/admin/signup", { mobileNumber }, config)
+          .post("http://localhost:5000/admin/login", { mobileNumber }, config)
           .then((res) => {
             console.log(res);
             const token = res.data.token;
@@ -138,7 +138,7 @@ const Signin = () => {
         // User couldn't sign in (bad verification code?)
         // ...
         setLoading("false");
-
+        // navigate("/");
         toast({
           position: "top",
           title: `Wrong OTP entered`,
@@ -207,7 +207,8 @@ const Signin = () => {
   const authii = async () => {
     const auth_token = localStorage.getItem("authToken");
     axios.defaults.headers.common["auth_token"] = `${auth_token}`;
-    await axios
+    if(auth_token){
+      await axios
       .get("http://localhost:5000/admin/adminloginstatus")
       .then((response) => {
         // setisAuth(true);
@@ -219,6 +220,8 @@ const Signin = () => {
         console.error("Error: ", error);
         dispatch(login("logout"));
       });
+    }
+    dispatch(login("logout"));
   };
   console.log(value);
   return (

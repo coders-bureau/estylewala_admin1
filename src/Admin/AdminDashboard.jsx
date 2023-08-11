@@ -47,7 +47,7 @@ const AdminDashboard = () => {
   // const wd = Allproducts.Products ? 0 : Allproducts.Products.data.filter((item) => item.type === "Women").length ;
   const kd = products.filter((item) => item.type === "Kids").length ;
   const md = products.filter((item) => item.type === "Mens").length ;
-  const wd = products.filter((item) => item.type === "Womens").length ;
+  const wd = products.filter((item) => item.type === "Women").length ;
   console.log(kd, md, wd);
 
   return (
