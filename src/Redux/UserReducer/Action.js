@@ -61,7 +61,7 @@ export const userRegister = (mobileNumber) => async (dispatch) => {
 export const getUserDetails = (mobileNumber) => async (dispatch) => {
   try {
 
-    const { data }  = await axios.get(`https://estylewalabackend.onrender.com/user/${mobileNumber}`);
+    const { data }  = await axios.get(`http://localhost:5000/user/profile/details`);
     console.log(data.user);
     dispatch({
       type: types.USER_DETAILS_SUCCESS,

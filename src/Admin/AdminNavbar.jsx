@@ -1,7 +1,8 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../Assets/estylebg.png";
 import {
+  Button,
   IconButton,
   Avatar,
   Box,
@@ -24,21 +25,48 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  MenuList,
+  Tag,
+  MenuItem,
 } from "@chakra-ui/react";
 
 import { FiMenu } from "react-icons/fi";
 import { AiFillFolder, AiFillHome } from "react-icons/ai";
 import { BsFillBellFill } from "react-icons/bs";
-import { HiFolderAdd } from "react-icons/hi";
+import { HiFolderAdd, HiOutlineUser } from "react-icons/hi";
 import { ImMan, ImWoman } from "react-icons/im";
-import { FaBoxOpen, FaChild, FaUsers } from "react-icons/fa";
-import { RiAccountPinCircleFill, RiLogoutCircleFill } from "react-icons/ri";
+import { TbRulerMeasure } from "react-icons/tb";
+import { MdRateReview } from "react-icons/md";
+import { FaBoxOpen, FaBoxes, FaChild, FaUser, FaUsers } from "react-icons/fa";
+import {
+  RiAccountPinCircleFill,
+  RiAdminFill,
+  RiLogoutCircleFill,
+} from "react-icons/ri";
+import {
+  BiSolidCategory,
+  BiCategory,
+  BiSolidCommentDetail,
+} from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { login } from "../Redux/AuthReducer/Action";
 // import { getAdminData } from '../Redux/Admin/Admin.action';
 const LinkItems = [
   {
-    name: "Products",
+    name: "Customer",
+    icon: FaUser,
+    items: [{ name: "Customers", icon: FaUsers, path: "/users-list" }],
+  },
+  {
+    name: "Order",
+    icon: FaBoxes,
+    items: [{ name: "Orders", icon: FaBoxOpen, path: "/orders-list" }],
+  },
+  {
+    name: "Product",
     icon: HiFolderAdd,
     items: [
       { name: "Product", icon: HiFolderAdd, path: "/add-products" },
@@ -47,13 +75,18 @@ const LinkItems = [
   },
   {
     name: "Category",
-    icon: FaUsers,
-    items: [{ name: "Categories", icon: FaUsers, path: "/categories-list" }],
+    icon: BiSolidCategory,
+    items: [{ name: "Categories", icon: BiCategory, path: "/categories-list" }],
   },
   {
-    name: "Sizes",
-    icon: FaUsers,
-    items: [{ name: "Sizes", icon: FaUsers, path: "/size" }],
+    name: "Review",
+    icon: BiSolidCommentDetail,
+    items: [{ name: "Reviews", icon: MdRateReview, path: "/reviews-list" }],
+  },
+  {
+    name: "Size",
+    icon: TbRulerMeasure,
+    items: [{ name: "Sizes", icon: TbRulerMeasure, path: "/size" }],
   },
   // { name: "Home", icon: AiFillHome, path: "/admin-dashboard" },
   // { name: "Home", icon: AiFillHome, path: "/" },
@@ -70,14 +103,6 @@ const LinkItems = [
   // { name: "Kids", icon: FaChild, path: "/admin-kids" },
   // { name: "Account", icon: RiAccountPinCircleFill, path: "/admin-profile" },
   // { name: "Logout", icon: RiLogoutCircleFill, path: "/" },
-];
-const ProductsItems = [
-  // { name: "Home", icon: AiFillHome, path: "/" },
-  { name: "Product", icon: HiFolderAdd, path: "/add-products" },
-  { name: "Products", icon: AiFillFolder, path: "/product-list" },
-  // { name: "Orders", icon: FaBoxOpen, path: "/orders-list" },
-  // { name: "Users", icon: FaUsers, path: "/users-list" },
-  // { name: "Categories", icon: FaUsers, path: "/categories-list" },
 ];
 //RiLogoutCircleFill
 export default function AdminNavbar({ children }) {
@@ -115,7 +140,7 @@ export default function AdminNavbar({ children }) {
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <MobileNav onOpen={onOpen} name={"admin"} />
+      <MobileNav onOpen={onOpen} onClose={onClose} name={"admin"} />
       <Box ml={{ base: 0, md: 56 }} p="4">
         {children}
       </Box>
@@ -148,70 +173,59 @@ const SidebarContent = ({ onClose, ...rest }) => {
       {/* <NavItem key={"Home"} icon={"AiFillHome"} item={'/'}> */}
       {/* </NavItem> */}
       {/* <NavItem> */}
-      <NavItem  key={LinkItems[0].name} icon={AiFillHome} item={"/"}>
-        {{ name: "Home" }}
-      </NavItem>
-      {/* </NavItem> */}
-      {LinkItems.map((link) => (
-        <Accordion allowToggle>
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box as="span" flex="1" 
-                // textAlign="center"
-                >
-                  {/* <Text fontSize={15} fontWeight={400}> */}
-                    {/* <Flex
-                      // _groupActive={{ color: "#990578" }}
-                      align="left"
-                      p="4"
-                      mx="4"
-                      borderRadius="lg"
-                      role="group"
-                      cursor="pointer"
-                      // _hover={{
-                      //   bg: "#72749B",
-                      //   color: "white",
-                      // }}
-                      {...rest}
-                    > */}
-                      {AiFillHome && (
-                        <Icon
-                          mr="4"
-                          fontSize="20"
-                          // _groupHover={{
-                          //   color: "white",
-                          // }}
-                          as={link.icon}
-                        />
-                      )}
-                      {link.name}
-                    {/* </Flex> */}
-                    {/* <Icon
-                      mr="4"
-                      fontSize="20"
-                      _groupHover={{
-                        color: "white",
-                      }}
-                      as={HiFolderAdd}
-                    />
-
-                    {link.name} */}
-                  {/* </Text> */}
-                </Box>
-                {/* <AccordionIcon /> */}
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              {link.items.map((link) => (
-                <NavItem key={link.name} icon={link.icon} item={link.path}>
-                  {link}
-                </NavItem>
-              ))}
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
-      ))}
+      <VStack align={"flex-start"}>
+        <Box fontSize={18} py={"8px"} px={"16px"}>
+          <NavItem key={LinkItems[0].name} icon={AiFillHome} item={"/"}>
+            {{ name: "Home" }}
+          </NavItem>
+        </Box>
+        <Box fontSize={18} py={"8px"} px={"16px"}>
+          <NavItem
+            key={LinkItems[0].name}
+            icon={RiAdminFill}
+            item={"/admin-list"}
+          >
+            {{ name: "Admin" }}
+          </NavItem>
+        </Box>
+        {/* </NavItem> */}
+        {LinkItems.map((link) => (
+          <Accordion allowToggle>
+            <AccordionItem>
+              <h2>
+                <AccordionButton>
+                  <Box fontSize={18} as="span" flex="1" textAlign="left">
+                    {AiFillHome && (
+                      <Icon
+                        mr="4"
+                        fontSize="20"
+                        // _groupHover={{
+                        //   color: "white",
+                        // }}
+                        as={link.icon}
+                      />
+                    )}
+                    {link.name}
+                  </Box>
+                  {/* <AccordionIcon /> */}
+                </AccordionButton>
+              </h2>
+              <AccordionPanel bgColor={"white"} pl={10} py={4}>
+                {link.items.map((link) => (
+                  <NavItem
+                    py={3}
+                    key={link.name}
+                    icon={link.icon}
+                    item={link.path}
+                  >
+                    {link}
+                  </NavItem>
+                ))}
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+        ))}
+      </VStack>
     </Box>
   );
 };
@@ -224,13 +238,13 @@ const NavItem = ({ icon, children, item, ...rest }) => {
       _focus={{ boxShadow: "none" }}
     >
       <Flex
-      // bgColor={"white"}
+        // bgColor={"white"}
         // _groupActive={{ color: "#990578" }}
-        align="right"
-        p="4"
+        align="left"
+        // p="4"
         // mx="10"
-        ml="8"
-        borderRadius="lg"
+        // ml="8"
+        // borderRadius="lg"
         role="group"
         cursor="pointer"
         // _hover={{
@@ -254,7 +268,34 @@ const NavItem = ({ icon, children, item, ...rest }) => {
     </NavLink>
   );
 };
-const MobileNav = ({ onOpen, name, ...rest }) => {
+const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
+  const dispatch = useDispatch();
+
+  const { isAuth } = useSelector((store) => store.AuthReducer);
+  const navigate = useNavigate();
+  const handleLogOut = () => {
+    // localStorage.clear();
+    const auth_token = localStorage.getItem("authToken");
+    axios.defaults.headers.common["auth_token"] = `${auth_token}`;
+    axios
+      .get("http://localhost:5000/admin/account/logout")
+      .then((response) => {
+        // setisAuth(true);
+        dispatch(login("logout"));
+        localStorage.clear();
+        // console.log("hii")
+        // console.log(response);
+      })
+      .catch((error) => {
+        // setisAuth(false);
+        dispatch(login("logout"));
+        localStorage.clear();
+        console.error("Error: ", error);
+      });
+    dispatch(login("logout"));
+    localStorage.clear();
+    navigate("/login");
+  };
   return (
     <Flex
       ml={{ base: 0, md: 56 }}
@@ -317,10 +358,81 @@ const MobileNav = ({ onOpen, name, ...rest }) => {
                   <Text fontSize={"xs"} fontWeight={500} color="gray.600">
                     Admin
                   </Text>
+                  {/* <VStack spacing={"3px"}>
+                    <Menu>
+                    <MenuButton onMouseEnter={onOpen} onMouseLeave={onClose}>
+                    <VStack
+                    _hover={{
+                      color: "#ff3e6c",
+                    }}
+                          spacing={"3px"}
+                        >
+                          <Icon as={HiOutlineUser} fontSize="xl" />
+                          <Text fontWeight={"500"} color={"#282c3f"}>
+                            Profile
+                          </Text>
+                        </VStack>
+                      </MenuButton>
+                      <MenuList onMouseEnter={onOpen} onMouseLeave={onClose}>
+                        <MenuItem>
+                          <VStack spacing={2} alignItems="flex-start">
+                            <Text
+                              fontSize={"14px"}
+                              color="#333333"
+                              fontWeight={"500"}
+                            >
+                              Welcome
+                            </Text>
+                            <Text fontSize={"14px"} color="#333333">
+                              {isAuth
+                                ? "To remove account access"
+                                : "To access account and manage orders"}
+                            </Text>
+                            <Tag
+                              _hover={{ fontWeight: "700" }}
+                              variant={"outline"}
+                              colorScheme="pink"
+                              size={"md"}
+                              fontSize={"14px"}
+                              onClick={() => {
+                                isAuth ? handleLogOut() : navigate("/login");
+                              }}
+                            >
+                              {isAuth ? "LOGOUT" : " LOGIN/SIGNUP"}
+                            </Tag>
+                          </VStack>
+                        </MenuItem>
+                        <hr />
+
+                        <MenuItem
+                          _hover={{ fontWeight: "500" }}
+                          fontSize={"13px"}
+                          onClick={() => navigate("/profile")}
+                        >
+                          Profile
+                        </MenuItem>
+                        <MenuItem
+                          _hover={{ fontWeight: "500" }}
+                          fontSize={"13px"}
+                          onClick={() => navigate("/wishlist")}
+                        >
+                          Wishlist
+                        </MenuItem>
+                        <MenuItem
+                          _hover={{ fontWeight: "500" }}
+                          fontSize={"13px"}
+                          onClick={() => navigate("/admin-dashboard")}
+                        >
+                          Admin
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
+                  </VStack> */}
                 </VStack>
               </HStack>
             </MenuButton>
           </Menu>
+          <Button onClick={handleLogOut}>Logout</Button>
         </Flex>
       </HStack>
     </Flex>

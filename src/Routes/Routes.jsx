@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import AdminDashboard from "../Admin/AdminDashboard";
 import AddProductsPage from "../Admin/AddProductsPage";
 import ProductListPage from "../Admin/ProductListPage";
@@ -9,46 +9,88 @@ import UsersPage from "../Admin/UsersPage";
 import CategoriesPage from "../Admin/CategoriesPage";
 import Signin from "../Pages/Signin";
 import SizeOptionsPage from "../Admin/SizeOptionsPage";
+import { PrivateRoute } from "./PrivateRoutes";
+import AdminPage from "../Admin/AdminPage";
+import ReviewsPage from "../Admin/ReviewsPage";
 
 // import AddProductsPage from '../Admin/AddProductsPage';
 // import UsersPage from "../Admin/UsersPage";
 // import AdminProfilePage from "../Admin/AdminProfilePage";
 
 export const MainRoutes = () => {
+  const isAuthTokenPresent = () => {
+    const authToken = localStorage.getItem("authToken");
+    return authToken !== null;
+  };
   return (
     <>
       {/* <Navbar /> */}
       <Routes>
-        <Route path="/signin" element={<Signin />} />
-        <Route path="/size" element={<SizeOptionsPage />} />
-        <Route path="/" element={<AdminDashboard />} />
-        {/* <Route path='/signup' element={<Signup/>} />
-             <Route path='/login' element={<Signin/>} />
-             <Route path='/otp' element={<RealOtp/>} />
-             <Route path='/profilefill' element={<AddProfileData/>} />
-             <Route path="/store" element={<Store/>} />
-             <Route path='/single_product/:id' element={<SingleProduct/>} />
-             <Route path='/wishlist' element={<PrivateRoute><Wishlist/></PrivateRoute>} />
-             <Route path='/cart' element={<PrivateRoute><Cart/></PrivateRoute>}/>
-             <Route path='/profile' element={<PrivateRoute><Profile /></PrivateRoute>} />
-             <Route path='/address' element={<PrivateRoute><Address/></PrivateRoute>}/>
-             <Route path="/payment" element={<PrivateRoute><Payment/></PrivateRoute> }></Route>
-             <Route path="/success" element={<PrivateRoute><Success /></PrivateRoute>} ></Route>
-             <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-             <Route path="/faqs" element={<FAQ />} />
-             <Route path="/tac" element={<TermsAndConditions />} />
-             <Route path="/termsofuse" element={<TermsOfUse />} />
-             <Route path="/shipping" element={<Shipping />} />
-             <Route path="/return" element={<Return />} />
-             <Route path="/cancellation" element={<Cancellation />} /> */}
-        {/* <Route path="/admin-dashboard" element={<AdminDashboard />}></Route> */}
-        {/* <Route path="/p" element={<ProductList />}></Route> */}
-        <Route path="/add-products" element={<AddProductsPage />}></Route>
-        <Route path="/product-list" element={<ProductListPage />}></Route>
-        <Route path="/edit-product/:id" element={<EditProduct />}></Route>
-        <Route path="/orders-list" element={<OrdersPage />}></Route>
-        <Route path="/users-list" element={<UsersPage />}></Route>
-        <Route path="/categories-list" element={<CategoriesPage />}></Route>
+        <Route
+          path="/login"
+          element={isAuthTokenPresent() ? <Navigate to="/" /> : <Signin />}
+        />
+        <Route
+          path="/size"
+          element={
+            <PrivateRoute>
+              <SizeOptionsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <AdminDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/add-products"
+          element={
+            <PrivateRoute>
+              <AddProductsPage />
+            </PrivateRoute>
+          }
+        ></Route>
+        <Route
+          path="/product-list"
+          element={
+            <PrivateRoute>
+              <ProductListPage />
+            </PrivateRoute>
+          }
+        ></Route>
+        <Route
+          path="/edit-product/:id"
+          element={
+            <PrivateRoute>
+              <EditProduct />
+            </PrivateRoute>
+          }
+        ></Route>
+        <Route
+          path="/orders-list"
+          element={
+            <PrivateRoute>
+              <OrdersPage />
+            </PrivateRoute>
+          }
+        ></Route>
+        <Route
+          path="/categories-list"
+          element={
+            <PrivateRoute>
+              <CategoriesPage />
+            </PrivateRoute>
+          }
+        ></Route>
+        <Route path="/users-list" element={<PrivateRoute><UsersPage /></PrivateRoute>}></Route>
+        <Route path="/admin-list" element={<PrivateRoute><AdminPage /></PrivateRoute>}></Route>
+        <Route path="/reviews-list" element={<PrivateRoute><ReviewsPage /></PrivateRoute>}></Route>
+
+
 
         {/* <Route path="/add-products" element={<AddProductsPage />}></Route>
              <Route path="/admin-men" element={<MensPage />}></Route>

@@ -107,7 +107,7 @@ const UsersPage = () => {
       setisLoading(true);
 
       const response = await axios.get("http://localhost:5000/admin/allusers"); // Adjust the endpoint accordingly
-      setUsers(response.data);
+      setUsers(response.data.data);
       setisLoading(false);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -127,6 +127,7 @@ const UsersPage = () => {
           marginLeft={{ lg: "250px", md: "250px", base: "0px" }}
           marginRight={"10px"}
         >
+          {users.length> 0 ? (
           <Table variant="striped" colorScheme="gray">
             <Thead>
               <Tr>
@@ -152,8 +153,10 @@ const UsersPage = () => {
                 </Tr>
               ))}
             </Tbody>
-          </Table>
-          {users.length === 0 && <Text mt={4}>No users available.</Text>}
+          </Table> ) :
+          (<Text fontSize={50}>No users available.</Text>)
+              }
+          {/* {users.length === 0 && <Text mt={4}>No users available.</Text>} */}
         </Box>
       )}
     </Box>

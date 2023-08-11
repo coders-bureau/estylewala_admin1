@@ -38,22 +38,35 @@ const EditProduct = () => {
     images: [],
   });
   const [updatedImages, setUpdateImages] = useState([]);
+  const [sizeOptions, setSizeOptions] = useState({});
+  const fetchSizeOptions = () => {
+    axios
+      .get("http://localhost:5000/size/size-options")
+      .then((response) => {
+        setSizeOptions(response.data);
+        // setEditingOptions(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching size options:", error);
+      });
+  };
+  const fetchProduct = async () => {
+    try {
+      await axios
+        .get(`http://localhost:5000/product/products/${id}`)
+        .then((response) => {
+          setProduct(response.data.data);
+          setisLoading(false);
+        });
+    } catch (error) {
+      console.error("Error fetching product:", error);
+      // Handle error here, e.g., show an error message to the user
+    }
+  };
   useEffect(() => {
     // Fetch the product data from the backend using the product ID
-    const fetchProduct = async () => {
-      try {
-        await axios
-          .get(`http://localhost:5000/product/products/${id}`)
-          .then((response) => {
-            setProduct(response.data);
-            setisLoading(false);
-          });
-      } catch (error) {
-        console.error("Error fetching product:", error);
-        // Handle error here, e.g., show an error message to the user
-      }
-    };
 
+    fetchSizeOptions();
     fetchProduct();
   }, [id]);
 
@@ -114,6 +127,24 @@ const EditProduct = () => {
     setUpdateImages(updatedImages1);
   };
 
+  const handleSizeChange = (e) => {
+    const sizeValue = e.target.value;
+    const checked = e.target.checked;
+
+    if (checked) {
+      // If the size checkbox is checked, add it to the size array
+      setProduct({
+        ...product,
+        size: [...product.size, sizeValue],
+      });
+    } else {
+      // If the size checkbox is unchecked, remove it from the size array
+      const updatedSizes = product.size.filter(
+        (size) => size !== sizeValue
+      );
+      setProduct({ ...product, size: updatedSizes });
+    }
+  };
   const handleSizeCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setProduct((prevProduct) => {
@@ -200,9 +231,9 @@ const EditProduct = () => {
     formData.append("currentSize", product.currentSize);
     formData.append("img", product.img);
     // formData.append('images', product.images);
-    updatedImages.forEach((image1)=> {
-      formData.append("updatedImages",image1);
-    })
+    updatedImages.forEach((image1) => {
+      formData.append("updatedImages", image1);
+    });
     product.images.forEach((image) => {
       formData.append("images", image);
     });
@@ -218,7 +249,7 @@ const EditProduct = () => {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      setisLoading(false)
+      setisLoading(false);
 
       // Handle the response, e.g., show a success message
       console.log(response.data);
@@ -230,7 +261,7 @@ const EditProduct = () => {
         status: "success",
         duration: 2500,
       });
-      setProduct(response.data.product)
+      setProduct(response.data.product);
       navigate("/product-list");
 
       // setProduct({
@@ -292,342 +323,366 @@ const EditProduct = () => {
   return (
     <Box width={"100%"}>
       <AdminNavbar />
-      {
-        !isLoading ? <VStack spacing={4} align="center">
-        <Box
-          marginTop={{ lg: "100px", md: "80px", base: "80px" }}
-          marginLeft={{ lg: "250px", md: "250px", base: "0px" }}
-          as="form"
-          onSubmit={handleUpdateProduct}
-          w="70%"
-        >
-          <FormControl mb={4}>
-            <FormLabel>Title</FormLabel>
-            <Input
-              type="text"
-              name="title"
-              value={product.title}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Brand</FormLabel>
-            <Input
-              type="text"
-              name="brand"
-              value={product.brand}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Category</FormLabel>
-            <Input
-              type="text"
-              name="category"
-              value={product.category}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Type</FormLabel>
-            <Select
-              name="type"
-              value={product.type}
-              onChange={handleInputChange}
-            >
-              <option value="Men">Men</option>
-              <option value="Women">Women</option>
-              <option value="Kids">Kids</option>
-            </Select>
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Price</FormLabel>
-            <Input
-              type="number"
-              name="price"
-              value={product.price}
-              onChange={handleInputChange}
-              required
-            />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>MRP</FormLabel>
-            <Input
-              type="number"
-              name="MRP"
-              value={product.MRP}
-              onChange={handleInputChange}
-              required
-            />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Discount</FormLabel>
-            <Input
-              type="number"
-              name="discount"
-              value={product.discount}
-              onChange={handleInputChange}
-              required
-            />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Standard Sizes:</FormLabel>
-            <Checkbox
-              name="S"
-              isChecked={product.size.includes("S")}
-              onChange={handleSizeCheckboxChange}
-              mr={2}
-            >
-              S
-            </Checkbox>
-            <Checkbox
-              name="M"
-              isChecked={product.size.includes("M")}
-              onChange={handleSizeCheckboxChange}
-              mr={2}
-            >
-              M
-            </Checkbox>
-            <Checkbox
-              name="L"
-              isChecked={product.size.includes("L")}
-              onChange={handleSizeCheckboxChange}
-              mr={2}
-            >
-              L
-            </Checkbox>
-            <Checkbox
-              name="XL"
-              isChecked={product.size.includes("XL")}
-              onChange={handleSizeCheckboxChange}
-              mr={2}
-            >
-              XL
-            </Checkbox>
-            <Checkbox
-              name="XXL"
-              isChecked={product.size.includes("XXL")}
-              onChange={handleSizeCheckboxChange}
-              mr={2}
-            >
-              XXL
-            </Checkbox>
-            <Checkbox
-              name="3XL"
-              isChecked={product.size.includes("3XL")}
-              onChange={handleSizeCheckboxChange}
-              mr={2}
-            >
-              3XL
-            </Checkbox>
-            {/* Add other size options here */}
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Waist Sizes:</FormLabel>
-            <Checkbox
-              name="28"
-              isChecked={product.size.includes("28")}
-              onChange={handleSizeCheckboxChange}
-              mr={2}
-            >
-              28
-            </Checkbox>
-            <Checkbox
-              name="30"
-              isChecked={product.size.includes("30")}
-              onChange={handleSizeCheckboxChange}
-              mr={2}
-            >
-              30
-            </Checkbox>
-            <Checkbox
-              name="32"
-              isChecked={product.size.includes("32")}
-              onChange={handleSizeCheckboxChange}
-              mr={2}
-            >
-              32
-            </Checkbox>
-            <Checkbox
-              name="34"
-              isChecked={product.size.includes("34")}
-              onChange={handleSizeCheckboxChange}
-              mr={2}
-            >
-              34
-            </Checkbox>
-            <Checkbox
-              name="36"
-              isChecked={product.size.includes("36")}
-              onChange={handleSizeCheckboxChange}
-              mr={2}
-            >
-              36
-            </Checkbox>
-            <Checkbox
-              name="38"
-              isChecked={product.size.includes("38")}
-              onChange={handleSizeCheckboxChange}
-              mr={2}
-            >
-              38
-            </Checkbox>
-            {/* Add other size options here */}
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Age Sizes:</FormLabel>
-            <Checkbox
-              name="6-12M"
-              isChecked={product.size.includes("6-12M")}
-              mr={2}
-              onChange={handleSizeCheckboxChange}
-            >
-              6-12M
-            </Checkbox>
-            <Checkbox
-              name="1-1.5Y"
-              isChecked={product.size.includes("1-1.5Y")}
-              mr={2}
-              onChange={handleSizeCheckboxChange}
-            >
-              1-1.5Y
-            </Checkbox>
-            <Checkbox
-              name="1.5-2Y"
-              isChecked={product.size.includes("1.5-2Y")}
-              mr={2}
-              onChange={handleSizeCheckboxChange}
-            >
-              1.5-2Y
-            </Checkbox>
-            <Checkbox
-              name="2-3Y"
-              isChecked={product.size.includes("2-3Y")}
-              mr={2}
-              onChange={handleSizeCheckboxChange}
-            >
-              2-3Y
-            </Checkbox>
-            <Checkbox
-              name="4-6Y"
-              isChecked={product.size.includes("4-6Y")}
-              mr={2}
-              onChange={handleSizeCheckboxChange}
-            >
-              4-6Y
-            </Checkbox>
-            <Checkbox
-              name="6-8Y"
-              isChecked={product.size.includes("6-8Y")}
-              mr={2}
-              onChange={handleSizeCheckboxChange}
-            >
-              6-8Y
-            </Checkbox>
-            <Checkbox
-              name="9-11Y"
-              isChecked={product.size.includes("9-11Y")}
-              mr={2}
-              onChange={handleSizeCheckboxChange}
-            >
-              9-11Y
-            </Checkbox>
-            <Checkbox
-              name="12-14Y"
-              isChecked={product.size.includes("12-14Y")}
-              mr={2}
-              onChange={handleSizeCheckboxChange}
-            >
-              12-14Y
-            </Checkbox>
-            <Checkbox
-              name="15-17Y"
-              isChecked={product.size.includes("15-17Y")}
-              mr={2}
-              onChange={handleSizeCheckboxChange}
-            >
-              15-17Y
-            </Checkbox>
-            {/* Add other size options here */}
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Main Image:</FormLabel>
-            <HStack>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-              />{" "}
-              {normalImage ? (
-                <Image
-                  src={`http://localhost:5000/${product.img}`}
-                  alt="Main Image"
-                  style={{ width: "100px" }}
-                />
-              ) : (
-                <Image
-                  src={URL.createObjectURL(product.img)}
-                  alt="Main Image"
-                  style={{ width: "100px" }}
-                />
-              )}
-            </HStack>
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Aditional Images</FormLabel>
-            <VStack align="flex-start" spacing={4}>
-              <input type="file" accept="image/*" onChange={handleAddImage} />{" "}
+      {!isLoading ? (
+        <VStack spacing={4} align="center">
+          <Box
+            marginTop={{ lg: "100px", md: "80px", base: "80px" }}
+            marginLeft={{ lg: "250px", md: "250px", base: "0px" }}
+            as="form"
+            onSubmit={handleUpdateProduct}
+            w="70%"
+          >
+            <FormControl mb={4}>
+              <FormLabel>Title</FormLabel>
+              <Input
+                type="text"
+                name="title"
+                value={product.title}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mb={4}>
+              <FormLabel>Brand</FormLabel>
+              <Input
+                type="text"
+                name="brand"
+                value={product.brand}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mb={4}>
+              <FormLabel>Category</FormLabel>
+              <Input
+                type="text"
+                name="category"
+                value={product.category}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mb={4}>
+              <FormLabel>Type</FormLabel>
+              <Select
+                name="type"
+                value={product.type}
+                onChange={handleInputChange}
+              >
+                <option value="Men">Men</option>
+                <option value="Women">Women</option>
+                <option value="Kids">Kids</option>
+              </Select>
+            </FormControl>
+            <FormControl mb={4}>
+              <FormLabel>Price</FormLabel>
+              <Input
+                type="number"
+                name="price"
+                value={product.price}
+                onChange={handleInputChange}
+                required
+              />
+            </FormControl>
+            <FormControl mb={4}>
+              <FormLabel>MRP</FormLabel>
+              <Input
+                type="number"
+                name="MRP"
+                value={product.MRP}
+                onChange={handleInputChange}
+                required
+              />
+            </FormControl>
+            <FormControl mb={4}>
+              <FormLabel>Discount</FormLabel>
+              <Input
+                type="number"
+                name="discount"
+                value={product.discount}
+                onChange={handleInputChange}
+                required
+              />
+            </FormControl>
+
+            {/* <FormControl mb={4}>
+              <FormLabel>Standard Sizes:</FormLabel>
+              <Checkbox
+                name="S"
+                isChecked={product.size.includes("S")}
+                onChange={handleSizeCheckboxChange}
+                mr={2}
+              >
+                S
+              </Checkbox>
+              <Checkbox
+                name="M"
+                isChecked={product.size.includes("M")}
+                onChange={handleSizeCheckboxChange}
+                mr={2}
+              >
+                M
+              </Checkbox>
+              <Checkbox
+                name="L"
+                isChecked={product.size.includes("L")}
+                onChange={handleSizeCheckboxChange}
+                mr={2}
+              >
+                L
+              </Checkbox>
+              <Checkbox
+                name="XL"
+                isChecked={product.size.includes("XL")}
+                onChange={handleSizeCheckboxChange}
+                mr={2}
+              >
+                XL
+              </Checkbox>
+              <Checkbox
+                name="XXL"
+                isChecked={product.size.includes("XXL")}
+                onChange={handleSizeCheckboxChange}
+                mr={2}
+              >
+                XXL
+              </Checkbox>
+              <Checkbox
+                name="3XL"
+                isChecked={product.size.includes("3XL")}
+                onChange={handleSizeCheckboxChange}
+                mr={2}
+              >
+                3XL
+              </Checkbox>
+            </FormControl>
+            <FormControl mb={4}>
+              <FormLabel>Waist Sizes:</FormLabel>
+              <Checkbox
+                name="28"
+                isChecked={product.size.includes("28")}
+                onChange={handleSizeCheckboxChange}
+                mr={2}
+              >
+                28
+              </Checkbox>
+              <Checkbox
+                name="30"
+                isChecked={product.size.includes("30")}
+                onChange={handleSizeCheckboxChange}
+                mr={2}
+              >
+                30
+              </Checkbox>
+              <Checkbox
+                name="32"
+                isChecked={product.size.includes("32")}
+                onChange={handleSizeCheckboxChange}
+                mr={2}
+              >
+                32
+              </Checkbox>
+              <Checkbox
+                name="34"
+                isChecked={product.size.includes("34")}
+                onChange={handleSizeCheckboxChange}
+                mr={2}
+              >
+                34
+              </Checkbox>
+              <Checkbox
+                name="36"
+                isChecked={product.size.includes("36")}
+                onChange={handleSizeCheckboxChange}
+                mr={2}
+              >
+                36
+              </Checkbox>
+              <Checkbox
+                name="38"
+                isChecked={product.size.includes("38")}
+                onChange={handleSizeCheckboxChange}
+                mr={2}
+              >
+                38
+              </Checkbox>
+            </FormControl>
+            <FormControl mb={4}>
+              <FormLabel>Age Sizes:</FormLabel>
+              <Checkbox
+                name="6-12M"
+                isChecked={product.size.includes("6-12M")}
+                mr={2}
+                onChange={handleSizeCheckboxChange}
+              >
+                6-12M
+              </Checkbox>
+              <Checkbox
+                name="1-1.5Y"
+                isChecked={product.size.includes("1-1.5Y")}
+                mr={2}
+                onChange={handleSizeCheckboxChange}
+              >
+                1-1.5Y
+              </Checkbox>
+              <Checkbox
+                name="1.5-2Y"
+                isChecked={product.size.includes("1.5-2Y")}
+                mr={2}
+                onChange={handleSizeCheckboxChange}
+              >
+                1.5-2Y
+              </Checkbox>
+              <Checkbox
+                name="2-3Y"
+                isChecked={product.size.includes("2-3Y")}
+                mr={2}
+                onChange={handleSizeCheckboxChange}
+              >
+                2-3Y
+              </Checkbox>
+              <Checkbox
+                name="4-6Y"
+                isChecked={product.size.includes("4-6Y")}
+                mr={2}
+                onChange={handleSizeCheckboxChange}
+              >
+                4-6Y
+              </Checkbox>
+              <Checkbox
+                name="6-8Y"
+                isChecked={product.size.includes("6-8Y")}
+                mr={2}
+                onChange={handleSizeCheckboxChange}
+              >
+                6-8Y
+              </Checkbox>
+              <Checkbox
+                name="9-11Y"
+                isChecked={product.size.includes("9-11Y")}
+                mr={2}
+                onChange={handleSizeCheckboxChange}
+              >
+                9-11Y
+              </Checkbox>
+              <Checkbox
+                name="12-14Y"
+                isChecked={product.size.includes("12-14Y")}
+                mr={2}
+                onChange={handleSizeCheckboxChange}
+              >
+                12-14Y
+              </Checkbox>
+              <Checkbox
+                name="15-17Y"
+                isChecked={product.size.includes("15-17Y")}
+                mr={2}
+                onChange={handleSizeCheckboxChange}
+              >
+                15-17Y
+              </Checkbox>
+            </FormControl> */}
+            <FormControl mb={4}>
+              <FormLabel>Main Image:</FormLabel>
               <HStack>
-                {product.images.map((image, index) => (
-                  <div key={index}>
-                    <Image
-                      src={`http://localhost:5000/${image}`}
-                      alt={"Image " + index}
-                      style={{ width: "100px" }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-                {!normalImage1 && (
-                  <>
-                    {updatedImages.map((image, index) => (
-                      <div key={index}>
-                        <Image
-                          src={URL.createObjectURL(image)}
-                          alt={`Image ${index + 1}`}
-                          width="100px"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImage1(index)}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                  </>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />{" "}
+                {normalImage ? (
+                  <Image
+                    src={`http://localhost:5000/${product.img}`}
+                    alt="Main Image"
+                    style={{ width: "100px" }}
+                  />
+                ) : (
+                  <Image
+                    src={URL.createObjectURL(product.img)}
+                    alt="Main Image"
+                    style={{ width: "100px" }}
+                  />
                 )}
               </HStack>
-            </VStack>
-          </FormControl>
+            </FormControl>
+            <FormControl mb={4}>
+              <FormLabel>Aditional Images</FormLabel>
+              <VStack align="flex-start" spacing={4}>
+                <input type="file" accept="image/*" onChange={handleAddImage} />{" "}
+                <HStack>
+                  {product.images.map((image, index) => (
+                    <div key={index}>
+                      <Image
+                        src={`http://localhost:5000/${image}`}
+                        alt={"Image " + index}
+                        style={{ width: "100px" }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                  {!normalImage1 && (
+                    <>
+                      {updatedImages.map((image, index) => (
+                        <div key={index}>
+                          <Image
+                            src={URL.createObjectURL(image)}
+                            alt={`Image ${index + 1}`}
+                            width="100px"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage1(index)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </HStack>
+              </VStack>
+            </FormControl>
+            {Object.entries(sizeOptions).map(([category, sizes]) => (
+              <FormControl key={category}>
+                <FormLabel>
+                  {category === "standardSizes"
+                    ? "Standard"
+                    : category === "waistSizes"
+                    ? "Waist"
+                    : "Age"}{" "}
+                  Sizes:
+                </FormLabel>
+                <HStack>
+                  {sizes.map((size) => (
+                    <Checkbox
+                      key={size}
+                      isChecked={product.size.includes(size)}
+                      value={size}
+                      onChange={handleSizeChange}
+                    >
+                      {size}
+                    </Checkbox>
+                  ))}
+                </HStack>
+              </FormControl>
+            ))}
+            {/* <input type="file" accept="image/*" onChange={handleAdditionalImagesChange}/> */}
 
-          {/* <input type="file" accept="image/*" onChange={handleAdditionalImagesChange}/> */}
-
-          <HStack mt={8}>
-            <Button type="submit" colorScheme="blue">
-              Update Product
-            </Button>
-            <Button colorScheme="gray">Cancel</Button>
-          </HStack>
-        </Box>
-      </VStack> : <><LoadingPage /></>
-      }
-      
+            <HStack mt={8}>
+              <Button type="submit" colorScheme="blue">
+                Update Product
+              </Button>
+              <Button colorScheme="gray">Cancel</Button>
+            </HStack>
+          </Box>
+        </VStack>
+      ) : (
+        <>
+          <LoadingPage />
+        </>
+      )}
     </Box>
   );
 };

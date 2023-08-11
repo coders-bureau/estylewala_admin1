@@ -29,6 +29,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { login } from "../Redux/AuthReducer/Action";
 import firebase from "../firebase";
 import AdminNavbar from "../Admin/AdminNavbar";
+import Cookies from "js-cookie";
 
 const Signin = () => {
   const [mbNumber, setMbNumber] = useState(false);
@@ -45,10 +46,14 @@ const Signin = () => {
   const [viewOtpForm, setViewOtpForm] = useState(false);
   const auth = firebase.auth();
   const [loading, setLoading] = useState(false);
-  
+
   useEffect(() => {
     prevLocation.current = location;
   }, [location]);
+
+  useEffect(() => {
+    authii();
+  }, []);
 
   useEffect(() => {
     try {
@@ -88,7 +93,7 @@ const Signin = () => {
 
   const onSubmitOTP = (e) => {
     e.preventDefault();
-    setLoading('true')
+    setLoading("true");
 
     const code = value;
     console.log(code);
@@ -104,19 +109,20 @@ const Signin = () => {
         const config = { headers: { "Contnet-Type": "application/json" } };
         console.log(input);
         axios
-          .post(
-            "http://localhost:5000/admin/signup",
-            { mobileNumber },
-            config
-          )
+          .post("http://localhost:5000/admin/signup", { mobileNumber }, config)
           .then((res) => {
             console.log(res);
+            const token = res.data.token;
+
+            localStorage.setItem("authToken", token);
+            dispatch(login());
+
+            // authii();
           })
           .catch((error) => console.error("Error Adding User", error));
 
         dispatch(getUserDetails(mobileNumber));
         //   navigate("/otp", { state: comingFrom, replace: true });
-        dispatch(login());
         toast({
           position: "top",
           title: `Login successful`,
@@ -124,15 +130,14 @@ const Signin = () => {
           isClosable: true,
           duration: 1500,
         });
-        console.log(comingFrom);
-        setLoading('false');
-        navigate(comingFrom, { replace: true });
-
+        // console.log(comingFrom);
+        setLoading("false");
+        navigate("/");
       })
       .catch((error) => {
         // User couldn't sign in (bad verification code?)
         // ...
-        setLoading('false');
+        setLoading("false");
 
         toast({
           position: "top",
@@ -194,14 +199,61 @@ const Signin = () => {
             console.log("SMS not sent " + error);
           });
       } catch (error) {
-        
         console.log(error);
       }
     }
   };
+
+  const authii = async () => {
+    const auth_token = localStorage.getItem("authToken");
+    axios.defaults.headers.common["auth_token"] = `${auth_token}`;
+    await axios
+      .get("http://localhost:5000/admin/adminloginstatus")
+      .then((response) => {
+        // setisAuth(true);
+        console.log(response);
+        dispatch(login());
+      })
+      .catch((error) => {
+        // setisAuth(false);
+        console.error("Error: ", error);
+        dispatch(login("logout"));
+      });
+  };
   console.log(value);
   return (
     <>
+      {/* <button
+        onClick={() => {
+          axios
+            .post("http://localhost:5000/admin/login", {
+              mobileNumber: 7083105861,
+            })
+            .then((res) => {
+              console.log(res.data.token);
+              // document.cookie = res.data.token;
+              const token = res.data.token;
+
+              localStorage.setItem("authToken", token);
+
+              // const cookieOptions = {
+              //   expires: 30, // Expires in 30 days
+              //   path: "/", // Set the path for which the cookie is accessible
+              //   // httpOnly: true, // Set the cookie as HTTP-only for security
+              // };
+
+              // // Set the "auth-token" cookie using js-cookie
+              // Cookies.set("auth_token", token, cookieOptions);
+              // const authToken = Cookies.get("auth_token");
+              const authToken = localStorage.getItem("authToken");
+              console.log(authToken);
+            })
+            .catch((error) => console.error("Error Adding User", error));
+        }}
+      >
+        click
+      </button> */}
+      {/* <button onClick={authii}>authii</button> */}
       {!viewOtpForm ? (
         <Box>
           <Center w={"full"} bgColor="#fceeea" h={"100vh"}>
