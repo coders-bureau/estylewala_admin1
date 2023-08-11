@@ -223,10 +223,10 @@ const Signin = () => {
     }
     dispatch(login("logout"));
   };
-  console.log(value);
+  // console.log(value);
   return (
     <>
-      {/* <button
+      <button
         onClick={() => {
           axios
             .post("http://localhost:5000/admin/login", {
@@ -250,12 +250,15 @@ const Signin = () => {
               // const authToken = Cookies.get("auth_token");
               const authToken = localStorage.getItem("authToken");
               console.log(authToken);
+              if(authToken){
+                navigate("/");
+              }
             })
             .catch((error) => console.error("Error Adding User", error));
         }}
       >
-        click
-      </button> */}
+        click me to buypass login
+      </button>
       {/* <button onClick={authii}>authii</button> */}
       {!viewOtpForm ? (
         <Box>

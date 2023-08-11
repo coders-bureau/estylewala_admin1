@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
   Container,
-  Box,  useToast,
+  Box,
+  useToast,
   Table,
   Thead,
   Tbody,
@@ -17,6 +18,46 @@ import LoadingPage from "../Pages/LoadingPage";
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [isLoading, setisLoading] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState("proccessing");
+  const toast = useToast();
+
+  const handleStatusChange = async (orderId) => {
+    try {
+      setisLoading(true);
+
+      const response = await axios.put(
+        `http://localhost:5000/admin/order/${orderId}/status`,
+        {
+          orderStatus: selectedStatus,
+        }
+      );
+
+      if (response.data.success) {
+        toast({
+          title: "Order status updated successfully",
+          variant: "top-accent",
+          isClosable: true,
+          position: "top-right",
+          status: "success",
+          duration: 2500,
+        });
+        console.log("Order status updated successfully");
+        setisLoading(false);
+      }
+    } catch (error) {
+      setisLoading(false);
+      toast({
+        title: "updating order status",
+        variant: "top-accent",
+        isClosable: true,
+        position: "top-right",
+        status: "error",
+        duration: 2500,
+      });
+
+      console.error("Error updating order status:", error);
+    }
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -25,7 +66,9 @@ const OrdersPage = () => {
   const fetchOrders = async () => {
     try {
       setisLoading(true);
-      const response = await axios.get("http://localhost:5000/admin/allorders"); // Adjust the endpoint accordingly
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_API}/admin/allorders`
+      ); // Adjust the endpoint accordingly
       setOrders(response.data.data);
       setisLoading(false);
     } catch (error) {
@@ -77,7 +120,21 @@ const OrdersPage = () => {
                       <Td>{new Date(order.orderDate).toLocaleDateString()}</Td>
                       <Td>{order.totalAmount}</Td>
                       <Td>{order.paymentMode}</Td>
-                      <Td>{order.orderStatus}</Td>
+                      <Td>
+                        <select
+                          id="status"
+                          value={order.orderStatus}
+                          onChange={(e) => setSelectedStatus(e.target.value)}
+                        >
+                          <option value="processing">Processing</option>
+                          <option value="shipped">Shipped</option>
+                          <option value="delivered">Delivered</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
+                        <button onClick={()=> {handleStatusChange(order._id)}}>
+                          Update Status
+                        </button>
+                      </Td>
                     </Tr>
                   ))}
                 </>

@@ -26,29 +26,29 @@ export const PrivateRoute = ({ children }) => {
 
   const auth_token = localStorage.getItem("authToken");
   axios.defaults.headers.common["auth_token"] = `${auth_token}`;
-  if(auth_token){
-  axios
-    .get("http://localhost:5000/admin/adminloginstatus")
-    .then((response) => {
-      // setisAuth(true);
-      console.log(response);
-      dispatch(login());
-    })
-    .catch((error) => {
-      // setisAuth(false);
-      console.error("Error: ", error);
-      dispatch(login("logout"));
-      localStorage.clear();
-    });
+  if (auth_token) {
+    axios
+      .get("http://localhost:5000/admin/adminloginstatus")
+      .then((response) => {
+        // setisAuth(true);
+        console.log(response);
+        dispatch(login());
+      })
+      .catch((error) => {
+        // setisAuth(false);
+        console.error("Error: ", error);
+        dispatch(login("logout"));
+        localStorage.clear();
+      });
   }
   const isAuth = useSelector((store) => store.AuthReducer.isAuth);
   console.log(isAuth);
   const location = useLocation();
 
   if (!isAuth) {
-    return (
-      <Navigate to={"/login"} state={{ data: location.pathname }} replace />
-    );
+    return <Navigate to={"/login"} />;
+  } else {
+    <Navigate to={"/"} />;
   }
   return children;
 };

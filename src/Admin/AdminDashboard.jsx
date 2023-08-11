@@ -13,8 +13,10 @@ import axios from "axios";
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [users, setUsers] = useState([]);
   const [isLoading, setisLoading] = useState(false);
-
+  
   // const Allproducts = useSelector((store) => store.AppReducer);
 
   
@@ -24,12 +26,14 @@ const AdminDashboard = () => {
   useEffect(() => {
     // dispatch(getAllProductsData());
     fetchProducts();
+    fetchOrders();
+    fetchUsers();
   }, []);
 
   const fetchProducts = async () => {
     setisLoading(true);
     await axios
-      .get("http://localhost:5000/product/allproducts")
+      .get(`${process.env.REACT_APP_BASE_API}/product/allproducts`)
       .then((response) => {
         setProducts(response.data.data);
         console.log(response.data.data);
@@ -39,6 +43,29 @@ const AdminDashboard = () => {
         console.error("Error fetching products:", error);
         setisLoading(false);
       });
+  };
+  const fetchOrders = async () => {
+    try {
+      setisLoading(true);
+      const response = await axios.get(`${process.env.REACT_APP_BASE_API}/admin/allorders`); // Adjust the endpoint accordingly
+      setOrders(response.data.data);
+      setisLoading(false);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      setisLoading(false);
+    }
+  };
+  const fetchUsers = async () => {
+    try {
+      setisLoading(true);
+
+      const response = await axios.get(`${process.env.REACT_APP_BASE_API}/admin/allusers`); // Adjust the endpoint accordingly
+      setUsers(response.data.data);
+      setisLoading(false);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setisLoading(false);
+    }
   };
 
   

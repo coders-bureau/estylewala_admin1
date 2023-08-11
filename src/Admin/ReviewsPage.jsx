@@ -27,7 +27,7 @@ const ReviewsPage = () => {
     try {
       setisLoading(true);
       const response = await axios.get(
-        "http://localhost:5000/admin/allreviews"
+        `${process.env.REACT_APP_BASE_API}/admin/allreviews`
       );
       setReviews(response.data.data);
       setisLoading(false);
@@ -36,6 +36,7 @@ const ReviewsPage = () => {
       setisLoading(false);
     }
   };
+  // console.log(product.reviews.length);
 
   return (
     <div>
@@ -50,16 +51,17 @@ const ReviewsPage = () => {
           marginRight={"10px"}
         >
           <Heading>Products with Reviews</Heading>
-          <HStack mt={5}>
+          <VStack mt={5}>
             {productsWithReviews.map((product) => (
               <HStack key={product._id}>
                 <div>
                   <Accordion allowMultiple>
                     <AccordionItem>
                       <h2>
-                        <AccordionButton>
+                        <AccordionButton w={"80vw"}>
                           <HStack as="span" flex="1" textAlign="left">
                             <Text>{product.title}</Text>
+                            {/* {product.reviews[0]} */}
                             <img src={product.img} alt={"img"} />
                           </HStack>
                           <AccordionIcon />
@@ -67,20 +69,30 @@ const ReviewsPage = () => {
                       </h2>
                       <AccordionPanel bgColor={"white"} pb={4}>
                         <VStack>
-                          {product.reviews.map((review) => (
-                            <HStack
-                              borderColor={"black"}
-                              border={2}
-                              borderRadius={5}
-                              key={review._id}
-                              align={"flex-start"}
-                              textAlign={"left"}
-                            >
-                                <Text w={"20vw"} isTruncated>{review.user.name}</Text>
-                              <Text w={"10vw"} isTruncated>{review.rating}</Text>
-                              <Text w={"40vw"}> {review.content}</Text>
-                            </HStack>
-                          ))}
+                          {product.reviews.length > 1 ? (
+                            <>
+                              {product.reviews.map((review) => (
+                                <HStack
+                                  borderColor={"black"}
+                                  border={2}
+                                  borderRadius={5}
+                                  key={review._id}
+                                  align={"flex-start"}
+                                  textAlign={"left"}
+                                >
+                                  <Text w={"20vw"} isTruncated>
+                                    {review.user ? review.user.name : ""}
+                                  </Text>
+                                  <Text w={"10vw"} isTruncated>
+                                    {review.rating}
+                                  </Text>
+                                  <Text w={"40vw"}> {review.content}</Text>
+                                </HStack>
+                              ))}
+                            </>
+                          ) : (
+                            <>No Reviews</>
+                          )}
                         </VStack>
                       </AccordionPanel>
                     </AccordionItem>
@@ -88,7 +100,7 @@ const ReviewsPage = () => {
                 </div>
               </HStack>
             ))}
-          </HStack>
+          </VStack>
         </Box>
       )}
     </div>

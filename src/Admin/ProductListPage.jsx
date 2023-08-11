@@ -21,6 +21,7 @@ import { Link } from "react-router-dom";
 import AdminNavbar from "./AdminNavbar";
 import LoadingPage from "../Pages/LoadingPage";
 import PageNotFound from "../Pages/PageNotFound";
+import { BsImageFill } from "react-icons/bs";
 
 const ProductListPage = () => {
   const [products, setProducts] = useState([]);
@@ -36,7 +37,7 @@ const ProductListPage = () => {
   const fetchProducts = async () => {
     setisLoading(true);
     await axios
-      .get("http://localhost:5000/product/allproducts")
+      .get(`${process.env.REACT_APP_BASE_API}/product/allproducts`)
       .then((response) => {
         setProducts(response.data.data);
         console.log(response.data.data);
@@ -51,7 +52,7 @@ const ProductListPage = () => {
   const handleDeleteProduct = async (productId) => {
     setisLoading(true);
     try {
-      await axios.delete(`http://localhost:5000/admin/product/${productId}`);
+      await axios.delete(`${process.env.REACT_APP_BASE_API}/admin/product/${productId}`);
       toast({
         title: "Product deleted successfully.",
         status: "success",
@@ -81,7 +82,7 @@ const ProductListPage = () => {
       const productToUpdate = products.find(product => product._id === productId);
       const newStatus = productToUpdate.status === 'available' ? 'unavailable' : 'available';
   
-      const response = await axios.put(`http://localhost:5000/admin/product/${productId}/status`, {
+      const response = await axios.put(`${process.env.REACT_APP_BASE_API}/admin/product/${productId}/status`, {
         newStatus,
       });
   
@@ -136,9 +137,9 @@ const ProductListPage = () => {
                     <Td>{index + 1}</Td>
                     <Td>
                       <Image
-                        src={`http://localhost:5000/${product.img}`}
+                        src={process.env.REACT_APP_BASE_API+`/${product.img}`}
                         // src={product.img}
-                        alt={product.title}
+                        alt={"[:)]"}
                         boxSize="50px"
                         objectFit="cover"
                       />

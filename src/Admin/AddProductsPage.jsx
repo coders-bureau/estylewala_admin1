@@ -39,7 +39,7 @@ const AddProductPage = () => {
     }, []);
 
   const fetchSizeOptions = () => {
-    axios.get('http://localhost:5000/size/size-options')
+    axios.get(`${process.env.REACT_APP_BASE_API}/size/size-options`)
       .then(response => {
         setSizeOptions(response.data);
         // setEditingOptions(response.data);
@@ -213,7 +213,7 @@ const AddProductPage = () => {
     console.log(formData);
     // Send the product data to the backend API
     axios
-      .post("http://localhost:5000/admin/add", formData, {
+      .post(`${process.env.REACT_APP_BASE_API}/admin/add`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

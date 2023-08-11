@@ -25,7 +25,7 @@ const AdminPage = () => {
   const fetchUsers = async () => {
     try {
       setisLoading(true);
-      const response = await axios.get("http://localhost:5000/admin//alladmins"); // Adjust the endpoint accordingly
+      const response = await axios.get(`${process.env.REACT_APP_BASE_API}/admin/alladmins`); // Adjust the endpoint accordingly
       setUsers(response.data.data)
       setisLoading(false);
     } catch (error) {

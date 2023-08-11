@@ -432,7 +432,7 @@ const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
               </HStack>
             </MenuButton>
           </Menu>
-          <Button onClick={handleLogOut}>Logout</Button>
+          <Button textColor={"white"} bgColor={"#ff3e6c"} mx={6} onClick={handleLogOut}>Logout</Button>
         </Flex>
       </HStack>
     </Flex>
