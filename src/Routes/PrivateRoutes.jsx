@@ -12,7 +12,7 @@ export const PrivateRoute = ({ children }) => {
   // const auth_token = Cookies.get("auth_token");
   // axios.defaults.headers.common["auth_token"] = `${auth_token}`;
   // axios
-  //   .get("http://localhost:5000/admin/adminloginstatus")
+  //   .get("${process.env.REACT_APP_BASE_API}/admin/adminloginstatus")
   //   .then((response) => {
   //     // setisAuth(true);
   //     dispatch(login());
@@ -28,7 +28,7 @@ export const PrivateRoute = ({ children }) => {
   axios.defaults.headers.common["auth_token"] = `${auth_token}`;
   if (auth_token) {
     axios
-      .get("http://localhost:5000/admin/adminloginstatus")
+      .get(`${process.env.REACT_APP_BASE_API}/admin/adminloginstatus`)
       .then((response) => {
         // setisAuth(true);
         console.log(response);
@@ -41,14 +41,12 @@ export const PrivateRoute = ({ children }) => {
         localStorage.clear();
       });
   }
+  // console.log(isAuth);
+  // const location = useLocation();
   const isAuth = useSelector((store) => store.AuthReducer.isAuth);
-  console.log(isAuth);
-  const location = useLocation();
 
   if (!isAuth) {
     return <Navigate to={"/login"} />;
-  } else {
-    <Navigate to={"/"} />;
   }
   return children;
 };
