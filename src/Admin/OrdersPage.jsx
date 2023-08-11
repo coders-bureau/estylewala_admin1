@@ -26,7 +26,7 @@ const OrdersPage = () => {
       setisLoading(true);
 
       const response = await axios.put(
-        `http://localhost:5000/admin/order/${orderId}/status`,
+        `${process.env.REACT_APP_BASE_API}/admin/order/${orderId}/status`,
         {
           orderStatus: selectedStatus,
         }

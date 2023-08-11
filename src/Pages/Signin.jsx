@@ -109,7 +109,7 @@ const Signin = () => {
         const config = { headers: { "Contnet-Type": "application/json" } };
         console.log(input);
         axios
-          .post("http://localhost:5000/admin/login", { mobileNumber }, config)
+          .post(`${process.env.REACT_APP_BASE_API}/admin/login`, { mobileNumber }, config)
           .then((res) => {
             console.log(res);
             const token = res.data.token;
@@ -209,7 +209,7 @@ const Signin = () => {
     axios.defaults.headers.common["auth_token"] = `${auth_token}`;
     if(auth_token){
       await axios
-      .get("http://localhost:5000/admin/adminloginstatus")
+      .get(`${process.env.REACT_APP_BASE_API}/admin/adminloginstatus`)
       .then((response) => {
         // setisAuth(true);
         console.log(response);
@@ -229,7 +229,7 @@ const Signin = () => {
       <button
         onClick={() => {
           axios
-            .post("http://localhost:5000/admin/login", {
+            .post(`${process.env.REACT_APP_BASE_API}/admin/login`, {
               mobileNumber: 7083105861,
             })
             .then((res) => {
