@@ -22,6 +22,7 @@ import AdminNavbar from "./AdminNavbar";
 import { CloseIcon } from "@chakra-ui/icons";
 import LoadingPage from "../Pages/LoadingPage";
 import PageNotFound from "../Pages/PageNotFound";
+import CategoryDropdown from "./CategoryDropdown";
 // import { sizeOptions } from "../Constants/costant";
 
 const AddProductPage = () => {
@@ -32,20 +33,29 @@ const AddProductPage = () => {
   const [showImageWarning, setShowImageWarning] = useState(false);
   const [showImagesWarning, setShowImagesWarning] = useState(false);
   const [sizeOptions, setSizeOptions] = useState({});
+  const [selectedCategory, setSelectedCategory] = useState("");
 
-    // Fetch size options on component mount
-    useEffect(() => {
-      fetchSizeOptions();
-    }, []);
+  const handleSelectCategory = (category) => {
+    setSelectedCategory(category);
+    setProductData((prevProductData) => ({
+      ...prevProductData,
+      category: category, // Update the category value in the state
+    }));
+  };
+  // Fetch size options on component mount
+  useEffect(() => {
+    fetchSizeOptions();
+  }, []);
 
   const fetchSizeOptions = () => {
-    axios.get(`${process.env.REACT_APP_BASE_API}/size/size-options`)
-      .then(response => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_API}/size/size-options`)
+      .then((response) => {
         setSizeOptions(response.data);
         // setEditingOptions(response.data);
       })
-      .catch(error => {
-        console.error('Error fetching size options:', error);
+      .catch((error) => {
+        console.error("Error fetching size options:", error);
       });
   };
 
@@ -187,7 +197,7 @@ const AddProductPage = () => {
     if (!productData.img) {
       setShowImageWarning(true); // Show the warning if image is not selected
       return;
-    } 
+    }
 
     setisLoading(true);
     console.log(productData);
@@ -306,10 +316,10 @@ const AddProductPage = () => {
     );
   return (
     <Box width={"100%"}>
-      <AdminNavbar />
+      {/* <AdminNavbar /> */}
       <VStack spacing={4} align="center">
         <Box
-          marginTop={"100px"}
+          marginTop={"20px"}
           marginLeft={{ lg: "250px", md: "250px", base: "10px" }}
           as="form"
           onSubmit={handleSubmit}
@@ -349,12 +359,14 @@ const AddProductPage = () => {
             </FormControl>
             <FormControl isRequired>
               <FormLabel>Category:</FormLabel>
-              <Input
+              {/* <Input
                 type="text"
                 name="category"
                 value={productData.category}
                 onChange={handleChange}
-              />
+              /> */}
+              <CategoryDropdown onSelectCategory={handleSelectCategory} />
+              {selectedCategory && <p>Selected category: {selectedCategory}</p>}
             </FormControl>
             <FormControl isRequired>
               <FormLabel>Price:</FormLabel>

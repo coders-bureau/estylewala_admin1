@@ -52,7 +52,9 @@ const ProductListPage = () => {
   const handleDeleteProduct = async (productId) => {
     setisLoading(true);
     try {
-      await axios.delete(`${process.env.REACT_APP_BASE_API}/admin/product/${productId}`);
+      await axios.delete(
+        `${process.env.REACT_APP_BASE_API}/admin/product/${productId}`
+      );
       toast({
         title: "Product deleted successfully.",
         status: "success",
@@ -79,25 +81,30 @@ const ProductListPage = () => {
 
   const handleToggleStatus = async (productId) => {
     try {
-      const productToUpdate = products.find(product => product._id === productId);
-      const newStatus = productToUpdate.status === 'available' ? 'unavailable' : 'available';
-  
-      const response = await axios.put(`${process.env.REACT_APP_BASE_API}/admin/product/${productId}/status`, {
-        newStatus,
-      });
-  
+      const productToUpdate = products.find(
+        (product) => product._id === productId
+      );
+      const newStatus =
+        productToUpdate.status === "available" ? "unavailable" : "available";
+
+      const response = await axios.put(
+        `${process.env.REACT_APP_BASE_API}/admin/product/${productId}/status`,
+        {
+          newStatus,
+        }
+      );
+
       const updatedProduct = response.data;
-      const updatedProducts = products.map(product =>
+      const updatedProducts = products.map((product) =>
         product._id === updatedProduct._id ? updatedProduct : product
       );
-  
+
       setProducts(updatedProducts);
     } catch (error) {
       console.error(error);
       // Handle error
     }
   };
-  
 
   // if (isError)
   //   return (
@@ -107,37 +114,37 @@ const ProductListPage = () => {
   //   );
   return (
     <Box width={"100%"}>
-      <AdminNavbar />
+      {/* <AdminNavbar /> */}
       {isLoading ? (
         <LoadingPage />
       ) : (
         <Box
-          marginTop={{ lg: "90px", md: "80px", base: "80px" }}
+          marginTop={"20px"}
           marginLeft={{ lg: "250px", md: "250px", base: "0px" }}
           marginRight={"10px"}
         >
-            { products.length > 0 ? (
-          <Table variant="striped" colorScheme="gray">
-            <Thead>
-              <Tr>
-                <Th>Sr No.</Th>
-                <Th>Image</Th>
-                <Th>Title</Th>
-                <Th>Brand</Th>
-                <Th>Price</Th>
-                <Th>Type</Th>
-                <Th>Status</Th>
-                <Th>Actions</Th>
-              </Tr>
-            </Thead>
-   
+          {products.length > 0 ? (
+            <Table variant="striped" colorScheme="gray">
+              <Thead>
+                <Tr>
+                  <Th>Sr No.</Th>
+                  <Th>Image</Th>
+                  <Th>Title</Th>
+                  <Th>Brand</Th>
+                  <Th>Price</Th>
+                  <Th>Type</Th>
+                  <Th>Status</Th>
+                  <Th>Actions</Th>
+                </Tr>
+              </Thead>
+
               <Tbody>
                 {products.map((product, index) => (
                   <Tr key={product._id}>
                     <Td>{index + 1}</Td>
                     <Td>
                       <Image
-                        src={process.env.REACT_APP_BASE_API+`/${product.img}`}
+                        src={process.env.REACT_APP_BASE_API + `/${product.img}`}
                         // src={product.img}
                         alt={"[:)]"}
                         boxSize="50px"
@@ -149,13 +156,13 @@ const ProductListPage = () => {
                     <Td>{product.price}</Td>
                     <Td>{product.type}</Td>
                     <Td>
-                  {/* Toggle switch for changing status */}
-                  <Switch
-                    colorScheme="green"
-                    isChecked={product.status === "available"}
-                    onChange={() => handleToggleStatus(product._id)}
-                  />
-                </Td>
+                      {/* Toggle switch for changing status */}
+                      <Switch
+                        colorScheme="green"
+                        isChecked={product.status === "available"}
+                        onChange={() => handleToggleStatus(product._id)}
+                      />
+                    </Td>
                     <Td>
                       <Link to={`/edit-product/${product._id}`}>
                         <IconButton
@@ -177,14 +184,13 @@ const ProductListPage = () => {
                   </Tr>
                 ))}
               </Tbody>
-            
-          </Table>
+            </Table>
           ) : (
-              <Box padding={"50"}>
-                <Text fontSize={"20px"} fontWeight={500}>
-                  No Products Added! Please Add Products.
-                </Text>
-              </Box>
+            <Box padding={"50"}>
+              <Text fontSize={"20px"} fontWeight={500}>
+                No Products Added! Please Add Products.
+              </Text>
+            </Box>
           )}
         </Box>
       )}

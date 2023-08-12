@@ -9,17 +9,14 @@ import PageNotFound from "../Pages/PageNotFound";
 // import Calendar from './Calendar';
 import axios from "axios";
 
-
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]);
   const [isLoading, setisLoading] = useState(false);
-  
-  // const Allproducts = useSelector((store) => store.AppReducer);
 
-  
+  // const Allproducts = useSelector((store) => store.AppReducer);
 
   console.log(products);
   console.log("error: " + products.isError);
@@ -47,7 +44,9 @@ const AdminDashboard = () => {
   const fetchOrders = async () => {
     try {
       setisLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_BASE_API}/admin/allorders`); // Adjust the endpoint accordingly
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_API}/admin/allorders`
+      ); // Adjust the endpoint accordingly
       setOrders(response.data.data);
       setisLoading(false);
     } catch (error) {
@@ -59,7 +58,9 @@ const AdminDashboard = () => {
     try {
       setisLoading(true);
 
-      const response = await axios.get(`${process.env.REACT_APP_BASE_API}/admin/allusers`); // Adjust the endpoint accordingly
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_API}/admin/allusers`
+      ); // Adjust the endpoint accordingly
       setUsers(response.data.data);
       setisLoading(false);
     } catch (error) {
@@ -68,13 +69,12 @@ const AdminDashboard = () => {
     }
   };
 
-  
   // const kd = Allproducts.Products ? 0 : Allproducts.Products.data.filter((item) => item.type === "Kids").length ;
   // const md = Allproducts.Products ? 0 : Allproducts.Products.data.filter((item) => item.type === "Mens").length ;
   // const wd = Allproducts.Products ? 0 : Allproducts.Products.data.filter((item) => item.type === "Women").length ;
-  const kd = products.filter((item) => item.type === "Kids").length ;
-  const md = products.filter((item) => item.type === "Mens").length ;
-  const wd = products.filter((item) => item.type === "Women").length ;
+  const kd = products.filter((item) => item.type === "Kids").length;
+  const md = products.filter((item) => item.type === "Mens").length;
+  const wd = products.filter((item) => item.type === "Women").length;
   console.log(kd, md, wd);
 
   return (
@@ -99,17 +99,54 @@ const AdminDashboard = () => {
           padding={4}
           // width={"80%"}
         >
-          <Box
+          <HStack 
+          display={"block"}
             ml={{ lg: "250px", md: "250px", base: "0px" }}
             borderRadius={15}
             mt={1}
             mb={4}
             border="2px solid lightBlue"
           >
+              
+              {/* <Chart
+                type="pie"
+                height={"450px"}
+                series={[kd, md, wd]}
+                options={{
+                  noData: { text: "Unavailable" },
+                  stroke: {
+                    lineCap: "round",
+                  },
+                  radialBar: {
+                    // dataLabels: {
+                    total: {
+                      show: true,
+                      label: "TOTAL",
+                    },
+                    // }
+                  },
+                  // dropShadow: {
+                  //   enabled: true,
+                  //       top: 0,
+                  //       left: 0,
+                  //       blur: 3,
+                  //       opacity: 0.5,
+                  //     },
+                  labels: ["KIDS-PRODUCTS", "MENS-PRODUCTS", "WOMENS-PRODUCTS"],
+                }}
+              ></Chart> */}
             <Box display={{ lg: "block", md: "block", base: "none" }}>
+              <Text
+                ml={20}
+                textAlign={"left"}
+                fontWeight={500}
+                fontSize={"40px"}
+              >
+                PRODUCTS
+              </Text>
               <Chart
                 type="pie"
-                height={"450px  "}
+                height={"450px"}
                 series={[kd, md, wd]}
                 options={{
                   noData: { text: "Unavailable" },
@@ -135,7 +172,7 @@ const AdminDashboard = () => {
                 }}
               ></Chart>
             </Box>
-            <Box display={{ lg: "none", md: "none", base: "block" }}>
+            {/* <Box display={{ lg: "none", md: "none", base: "block" }}>
               <Chart
                 type="bar"
                 height="450px"
@@ -171,9 +208,9 @@ const AdminDashboard = () => {
                   },
                 }}
               />
-            </Box>
-          </Box>
-          <Stack
+            </Box> */}
+          </HStack>
+          {/* <Stack
             bg={"#a0aec0"}
             ml={{ lg: "250px", md: "250px", base: "0px" }}
             padding={5}
@@ -189,8 +226,8 @@ const AdminDashboard = () => {
             >
               Total Products : <b>{kd + md + wd}</b>
             </Text>
-          </Stack>
-          <HStack
+          </Stack> */}
+          {/* <HStack
             ml={{ lg: "250px", md: "250px", base: "0px" }}
             mt={3}
             pb={10}
@@ -248,7 +285,7 @@ const AdminDashboard = () => {
                 Total Kids Products <b>{kd}</b>
               </Text>
             </Stack>
-          </HStack>
+          </HStack> */}
         </Box>
       )}
     </Box>

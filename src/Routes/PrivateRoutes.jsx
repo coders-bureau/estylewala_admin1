@@ -31,13 +31,13 @@ export const PrivateRoute = ({ children }) => {
       .get(`${process.env.REACT_APP_BASE_API}/admin/adminloginstatus`)
       .then((response) => {
         // setisAuth(true);
-        console.log(response);
         dispatch(login());
+        console.log(response);
       })
       .catch((error) => {
         // setisAuth(false);
         console.error("Error: ", error);
-        dispatch(login("logout"));
+        // dispatch(login("logout"));
         localStorage.clear();
       });
   }

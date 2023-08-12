@@ -132,7 +132,7 @@ export const getAllProductsData = (params) => async (dispatch) => {
     const all = process.env.BASE_API;
     console.log(all);
     const r = await axios.get(
-      `http://localhost:5000/product/allproducts`,
+      `${process.env.REACT_APP_BASE_API}/product/allproducts`,
       params
     );
     console.log(r.data);

@@ -38,11 +38,11 @@ const CategoriesPage = () => {
   const toast = useToast();
   useEffect(() => {
     fetchCategories();
-  }, [newCategoryName, deleteCategoryId, updatedCategories]);
+  }, []);
 
   const fetchCategories = async () => {
     try {
-        setisLoading(true);
+      setisLoading(true);
       const response = await axios.get(
         `${process.env.REACT_APP_BASE_API}/admin/allcategories`
       ); // Adjust the endpoint accordingly
@@ -57,7 +57,7 @@ const CategoriesPage = () => {
   const handleEditCategory = async (categoryId, newType) => {
     try {
       setisLoading(true);
-      
+
       await axios
         .put(
           process.env.REACT_APP_BASE_API + `/category/update/${categoryId}`,
@@ -66,8 +66,8 @@ const CategoriesPage = () => {
           }
         )
         .then(() => {
-      setisLoading(false);
-
+          setisLoading(false);
+          fetchCategories();
           toast({
             position: "top",
             title: `Category updated successfully`,
@@ -77,7 +77,7 @@ const CategoriesPage = () => {
           });
         })
         .catch(() => {
-      setisLoading(false);
+          setisLoading(false);
 
           toast({
             position: "top",
@@ -103,15 +103,21 @@ const CategoriesPage = () => {
 
   const confirmDeleteCategory = async () => {
     try {
-        setisLoading(true);
+      // setisLoading(true);
       await axios.delete(
         process.env.REACT_APP_BASE_API + `/category/delete/${deleteCategoryId}`
       );
       setIsDeleteAlertOpen(false);
       setDeleteCategoryId(null);
       fetchCategories();
-      setisLoading(false);
-
+      toast({
+        position: "top",
+        title: `Category deleted successfully`,
+        status: "success",
+        isClosable: true,
+        duration: 1500,
+      });
+      // setisLoading(false);
     } catch (error) {
       setisLoading(false);
       console.error("Error deleting category:", error);
@@ -120,13 +126,14 @@ const CategoriesPage = () => {
 
   const handleAddCategory = async (name) => {
     try {
-        setisLoading(true);
+      setisLoading(true);
       const response = await axios
         .post(`${process.env.REACT_APP_BASE_API}/category/add`, {
           name,
         })
         .then(() => {
-      setisLoading(false);
+          fetchCategories();
+          setisLoading(false);
           toast({
             position: "top",
             title: `Category added successfully`,
@@ -136,7 +143,7 @@ const CategoriesPage = () => {
           });
         })
         .catch(() => {
-      setisLoading(false);
+          setisLoading(false);
 
           toast({
             position: "top",
@@ -189,7 +196,9 @@ const CategoriesPage = () => {
                       <Td>
                         {" "}
                         <Input
+                          border={"1px"}
                           w={200}
+                          placeholder="Type and click right button"
                           // value={} // Use the existing category type
                           onChange={(e) => setUpdatedCategories(e.target.value)}
                         />
@@ -223,6 +232,7 @@ const CategoriesPage = () => {
               <FormControl>
                 {/* <FormLabel>Name</FormLabel> */}
                 <Input
+                  border={"1px"}
                   w={200}
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}

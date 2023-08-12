@@ -55,19 +55,19 @@ const Signin = () => {
     authii();
   }, []);
 
-  useEffect(() => {
-    try {
-      let nmbr = JSON.parse(localStorage.getItem("MbNumber")) || false;
+  // useEffect(() => {
+  //   try {
+  //     let nmbr = JSON.parse(localStorage.getItem("MbNumber")) || false;
 
-      if (!nmbr) {
-        navigate("/login", { state: comingFrom, replace: true });
-      } else {
-        setMbNumber(nmbr);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [mbNumber]);
+  //     if (!nmbr) {
+  //       navigate("/login", { state: comingFrom, replace: true });
+  //     } else {
+  //       setMbNumber(nmbr);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }, [mbNumber]);
 
   const handleInputChange = (e) => {
     setInput(e.target.value);

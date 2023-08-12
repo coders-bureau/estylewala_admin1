@@ -12,6 +12,7 @@ import SizeOptionsPage from "../Admin/SizeOptionsPage";
 import { PrivateRoute } from "./PrivateRoutes";
 import AdminPage from "../Admin/AdminPage";
 import ReviewsPage from "../Admin/ReviewsPage";
+import ProductsPage from "../Admin/ProductsPage";
 
 // import AddProductsPage from '../Admin/AddProductsPage';
 // import UsersPage from "../Admin/UsersPage";
@@ -28,7 +29,7 @@ export const MainRoutes = () => {
       <Routes>
         <Route
           path="/login"
-          element={isAuthTokenPresent() ? <Navigate to="/" /> : <Signin />}
+          element={<Signin />}
         />
         <Route
           path="/size"
@@ -41,9 +42,9 @@ export const MainRoutes = () => {
         <Route
           path="/"
           element={
-            <PrivateRoute>
+            // <PrivateRoute>
               <AdminDashboard />
-            </PrivateRoute>
+            // </PrivateRoute>
           }
         />
         <Route
@@ -58,7 +59,7 @@ export const MainRoutes = () => {
           path="/product-list"
           element={
             <PrivateRoute>
-              <ProductListPage />
+              <ProductsPage/>
             </PrivateRoute>
           }
         ></Route>

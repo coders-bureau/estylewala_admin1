@@ -40,7 +40,7 @@ export const userRegister = (mobileNumber) => async (dispatch) => {
     const config = { headers: { "Contnet-Type": "application/json" } };
 
     const msg = await axios.post(
-      "http://localhost:5000/user/signup",
+      `${process.env.REACT_APP_BASE_API}/user/signup`,
       { mobileNumber },
       config
     );
@@ -61,7 +61,7 @@ export const userRegister = (mobileNumber) => async (dispatch) => {
 export const getUserDetails = (mobileNumber) => async (dispatch) => {
   try {
 
-    const { data }  = await axios.get(`http://localhost:5000/user/profile/details`);
+    const { data }  = await axios.get(`${process.env.REACT_APP_BASE_API}/user/profile/details`);
     console.log(data.user);
     dispatch({
       type: types.USER_DETAILS_SUCCESS,

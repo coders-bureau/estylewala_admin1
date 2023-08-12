@@ -54,55 +54,67 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { login } from "../Redux/AuthReducer/Action";
 // import { getAdminData } from '../Redux/Admin/Admin.action';
-const LinkItems = [
-  {
-    name: "Customer",
-    icon: FaUser,
-    items: [{ name: "Customers", icon: FaUsers, path: "/users-list" }],
-  },
-  {
-    name: "Order",
-    icon: FaBoxes,
-    items: [{ name: "Orders", icon: FaBoxOpen, path: "/orders-list" }],
-  },
-  {
-    name: "Product",
-    icon: HiFolderAdd,
-    items: [
-      { name: "Product", icon: HiFolderAdd, path: "/add-products" },
-      { name: "Products", icon: AiFillFolder, path: "/product-list" },
-    ],
-  },
-  {
-    name: "Category",
-    icon: BiSolidCategory,
-    items: [{ name: "Categories", icon: BiCategory, path: "/categories-list" }],
-  },
-  {
-    name: "Review",
-    icon: BiSolidCommentDetail,
-    items: [{ name: "Reviews", icon: MdRateReview, path: "/reviews-list" }],
-  },
-  {
-    name: "Size",
-    icon: TbRulerMeasure,
-    items: [{ name: "Sizes", icon: TbRulerMeasure, path: "/size" }],
-  },
-  // { name: "Home", icon: AiFillHome, path: "/admin-dashboard" },
-  // { name: "Home", icon: AiFillHome, path: "/" },
-  // { name: "Product", icon: HiFolderAdd, path: "/add-products" },
-  // { name: "Products", icon: AiFillFolder, path: "/product-list" },
-  // { name: "Orders", icon: FaBoxOpen, path: "/orders-list" },
-  // { name: "Users", icon: FaUsers, path: "/users-list" },
-  // { name: "Categories", icon: FaUsers, path: "/categories-list" },
-  // {
+// const LinkItems = [
+//   {
+//     name: "Customer",
+//     icon: FaUser,
+//     path: "/users-list",
+//   },
+//   {
+//     name: "Order",
+//     icon: FaBoxes,
+//     items: [{ name: "Orders", icon: FaBoxOpen, path: "/orders-list" }],
+//   },
+//   {
+//     name: "Product",
+//     icon: HiFolderAdd,
+//     items: [
+//       { name: "Product", icon: HiFolderAdd, path: "/add-products" },
+//       { name: "Products", icon: AiFillFolder, path: "/product-list" },
+//     ],
+//   },
+//   {
+//     name: "Category",
+//     icon: BiSolidCategory,
+//     items: [{ name: "Categories", icon: BiCategory, path: "/categories-list" }],
+//   },
+//   {
+//     name: "Review",
+//     icon: BiSolidCommentDetail,
+//     items: [{ name: "Reviews", icon: MdRateReview, path: "/reviews-list" }],
+//   },
+//   {
+//     name: "Size",
+//     icon: TbRulerMeasure,
+//     items: [{ name: "Sizes", icon: TbRulerMeasure, path: "/size" }],
+//   },
+//   // { name: "Home", icon: AiFillHome, path: "/admin-dashboard" },
+//   // { name: "Home", icon: AiFillHome, path: "/" },
+//   // { name: "Product", icon: HiFolderAdd, path: "/add-products" },
+//   // { name: "Products", icon: AiFillFolder, path: "/product-list" },
+//   // { name: "Orders", icon: FaBoxOpen, path: "/orders-list" },
+//   // { name: "Users", icon: FaUsers, path: "/users-list" },
+//   // { name: "Categories", icon: FaUsers, path: "/categories-list" },
+//   // {
 
-  // },
-  // { name: "Men", icon: ImMan, path: "/admin-men" },
-  // { name: "Women", icon: ImWoman, path: "/admin-women" },
-  // { name: "Kids", icon: FaChild, path: "/admin-kids" },
-  // { name: "Account", icon: RiAccountPinCircleFill, path: "/admin-profile" },
-  // { name: "Logout", icon: RiLogoutCircleFill, path: "/" },
+//   // },
+//   // { name: "Men", icon: ImMan, path: "/admin-men" },
+//   // { name: "Women", icon: ImWoman, path: "/admin-women" },
+//   // { name: "Kids", icon: FaChild, path: "/admin-kids" },
+//   // { name: "Account", icon: RiAccountPinCircleFill, path: "/admin-profile" },
+//   // { name: "Logout", icon: RiLogoutCircleFill, path: "/" },
+// ];
+const LinkItems = [
+  { name: 'Home', icon: AiFillHome, path: '/' },
+  { name: 'Admin', icon: RiAdminFill, path: '/admin-list' },
+  { name: 'Customer', icon: FaUser, path: '/users-list' },
+  { name: 'Order', icon: FaBoxes, path: '/orders-list' },
+  { name: 'Product', icon: HiFolderAdd, path: '/product-list' },
+  { name: 'Category', icon: BiSolidCategory, path: '/categories-list' },
+  { name: 'Review', icon: BiSolidCommentDetail, path: '/reviews-list' },
+  { name: 'Size', icon: TbRulerMeasure, path: '/size' },
+  { name: 'Account', icon: RiAccountPinCircleFill, path: '/admin-profile' },
+  { name: 'Logout', icon: RiLogoutCircleFill, path: '/' }
 ];
 //RiLogoutCircleFill
 export default function AdminNavbar({ children }) {
@@ -173,7 +185,12 @@ const SidebarContent = ({ onClose, ...rest }) => {
       {/* <NavItem key={"Home"} icon={"AiFillHome"} item={'/'}> */}
       {/* </NavItem> */}
       {/* <NavItem> */}
-      <VStack align={"flex-start"}>
+      {LinkItems.map((link) => (
+        <NavItem key={link.name} icon={link.icon} item={link.path}>
+          {link}
+        </NavItem>
+      ))}
+      {/* <VStack align={"flex-start"}>
         <Box fontSize={18} py={"8px"} px={"16px"}>
           <NavItem key={LinkItems[0].name} icon={AiFillHome} item={"/"}>
             {{ name: "Home" }}
@@ -188,7 +205,6 @@ const SidebarContent = ({ onClose, ...rest }) => {
             {{ name: "Admin" }}
           </NavItem>
         </Box>
-        {/* </NavItem> */}
         {LinkItems.map((link) => (
           <Accordion allowToggle>
             <AccordionItem>
@@ -199,15 +215,14 @@ const SidebarContent = ({ onClose, ...rest }) => {
                       <Icon
                         mr="4"
                         fontSize="20"
-                        // _groupHover={{
-                        //   color: "white",
-                        // }}
+                        _groupHover={{
+                          color: "white",
+                        }}
                         as={link.icon}
                       />
                     )}
                     {link.name}
                   </Box>
-                  {/* <AccordionIcon /> */}
                 </AccordionButton>
               </h2>
               <AccordionPanel bgColor={"white"} pl={10} py={4}>
@@ -225,41 +240,34 @@ const SidebarContent = ({ onClose, ...rest }) => {
             </AccordionItem>
           </Accordion>
         ))}
-      </VStack>
+      </VStack> */}
     </Box>
   );
 };
 
 const NavItem = ({ icon, children, item, ...rest }) => {
   return (
-    <NavLink
-      to={item}
-      style={{ textDecoration: "none" }}
-      _focus={{ boxShadow: "none" }}
-    >
+    <NavLink to={item} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
       <Flex
-        // bgColor={"white"}
-        // _groupActive={{ color: "#990578" }}
-        align="left"
-        // p="4"
-        // mx="10"
-        // ml="8"
-        // borderRadius="lg"
+        _groupActive={{ color: '#990578' }}
+        align="center"
+        p="4"
+        mx="4"
+        borderRadius="lg"
         role="group"
         cursor="pointer"
-        // _hover={{
-        //   bg: "#72749B",
-        //   color: "white",
-        // }}
-        {...rest}
-      >
+        _hover={{
+          bg: '#72749B',
+          color: 'white',
+        }}
+        {...rest}>
         {icon && (
           <Icon
             mr="4"
             fontSize="20"
-            // _groupHover={{
-            //   color: "white",
-            // }}
+            _groupHover={{
+              color: 'white',
+            }}
             as={icon}
           />
         )}
@@ -268,6 +276,44 @@ const NavItem = ({ icon, children, item, ...rest }) => {
     </NavLink>
   );
 };
+// const NavItem = ({ icon, children, item, ...rest }) => {
+//   return (
+//     <NavLink
+//       to={item}
+//       style={{ textDecoration: "none" }}
+//       _focus={{ boxShadow: "none" }}
+//     >
+//       <Flex
+//         // bgColor={"white"}
+//         // _groupActive={{ color: "#990578" }}
+//         align="left"
+//         // p="4"
+//         // mx="10"
+//         // ml="8"
+//         // borderRadius="lg"
+//         role="group"
+//         cursor="pointer"
+//         // _hover={{
+//         //   bg: "#72749B",
+//         //   color: "white",
+//         // }}
+//         {...rest}
+//       >
+//         {icon && (
+//           <Icon
+//             mr="4"
+//             fontSize="20"
+//             // _groupHover={{
+//             //   color: "white",
+//             // }}
+//             as={icon}
+//           />
+//         )}
+//         {children.name}
+//       </Flex>
+//     </NavLink>
+//   );
+// };
 const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
   const dispatch = useDispatch();
 
@@ -278,7 +324,7 @@ const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
     const auth_token = localStorage.getItem("authToken");
     axios.defaults.headers.common["auth_token"] = `${auth_token}`;
     axios
-      .get("http://localhost:5000/admin/account/logout")
+      .get(`${process.env.REACT_APP_BASE_API}/admin/account/logout`)
       .then((response) => {
         // setisAuth(true);
         dispatch(login("logout"));
@@ -432,7 +478,18 @@ const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
               </HStack>
             </MenuButton>
           </Menu>
-          <Button textColor={"white"} bgColor={"#ff3e6c"} mx={6} onClick={handleLogOut}>Logout</Button>
+          <Button
+            textColor={"white"}
+            _hover={{
+              bg: '#72749B',
+              color: 'white',
+            }}
+            bgColor={"#ff3e6c"}
+            mx={6}
+            onClick={handleLogOut}
+          >
+            Logout
+          </Button>
         </Flex>
       </HStack>
     </Flex>

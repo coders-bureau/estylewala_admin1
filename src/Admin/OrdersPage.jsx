@@ -10,17 +10,35 @@ import {
   Th,
   Td,
   Text,
+  Select,
+  DatePicker,
+  Button,
 } from "@chakra-ui/react";
 import axios from "axios";
 import AdminNavbar from "./AdminNavbar";
 import LoadingPage from "../Pages/LoadingPage";
+import OrderFilters from "./OrderFilters";
 // const toast = useToast();
 const OrdersPage = () => {
+  const [filteredOrders, setFilteredOrders] = useState([]);
+
+  const handleFilterSubmit = async (filters) => {
+    try {
+      console.log(filters);
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_API}/admin/orders/filter`,
+        { params: filters }
+      );
+      setFilteredOrders(response.data.orders);
+    } catch (error) {
+      console.error("Error fetching filtered orders:", error);
+    }
+  };
   const [orders, setOrders] = useState([]);
   const [isLoading, setisLoading] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("proccessing");
   const toast = useToast();
-
   const handleStatusChange = async (orderId) => {
     try {
       setisLoading(true);
@@ -78,8 +96,13 @@ const OrdersPage = () => {
   };
 
   console.log(orders);
+  console.log(filteredOrders);
+
+  console.log(orders);
+ 
+
   return (
-    <Box width={"100%"}>
+    <>
       <AdminNavbar />
       {isLoading ? (
         <LoadingPage />
@@ -88,12 +111,23 @@ const OrdersPage = () => {
           marginTop={{ lg: "90px", md: "80px", base: "80px" }}
           marginLeft={{ lg: "250px", md: "250px", base: "0px" }}
           marginRight={"10px"}
+          marginBottom={"50px"}
         >
-          {orders ? (
+          {/* <Text fontSize={50}>No orders available.</Text> */}
+          <div>
+            <Text fontSize={"25px"}>Order Management</Text>
+            <OrderFilters onFilter={handleFilterSubmit} />
+            {/* <ul>
+              {filteredOrders.map((order) => (
+                <li key={order._id}>
+                  
+                </li>
+              ))}
+            </ul> */}
             <Table variant="striped" colorScheme="gray">
               <Thead>
                 <Tr>
-                  <Th>Sr. No.</Th>
+                  <Th>No.</Th>
                   <Th>Address</Th>
                   <Th>Customer Name</Th>
                   <Th>Items</Th>
@@ -105,7 +139,7 @@ const OrdersPage = () => {
               </Thead>
               <Tbody>
                 <>
-                  {orders.map((order, index) => (
+                  {filteredOrders.map((order, index) => (
                     <Tr key={index}>
                       <Td>{index + 1}</Td>
                       <Td>{order.addressLine}</Td>
@@ -131,7 +165,11 @@ const OrdersPage = () => {
                           <option value="delivered">Delivered</option>
                           <option value="cancelled">Cancelled</option>
                         </select>
-                        <button onClick={()=> {handleStatusChange(order._id)}}>
+                        <button
+                          onClick={() => {
+                            handleStatusChange(order._id);
+                          }}
+                        >
                           Update Status
                         </button>
                       </Td>
@@ -140,13 +178,15 @@ const OrdersPage = () => {
                 </>
               </Tbody>
             </Table>
-          ) : (
-            <Text fontSize={50}>No orders available.</Text>
+          </div>
+          {filteredOrders.length === 0 && (
+            <Text mt={4}>No orders available.</Text>
           )}
-          {/* {orders.length === 0 && <Text mt={4}>No orders available.</Text>} */}
+
+
         </Box>
       )}
-    </Box>
+    </>
   );
 };
 
