@@ -26,9 +26,15 @@ export const PrivateRoute = ({ children }) => {
 
   const auth_token = localStorage.getItem("authToken");
   axios.defaults.headers.common["auth_token"] = `${auth_token}`;
+  const config = {
+    headers: {
+      auth_token: `${auth_token}`,
+      // Other headers can be added here
+    },
+  };
   if (auth_token) {
     axios
-      .get(`${process.env.REACT_APP_BASE_API}/admin/adminloginstatus`)
+      .get(`${process.env.REACT_APP_BASE_API}/admin/adminloginstatus`, config)
       .then((response) => {
         // setisAuth(true);
         dispatch(login());

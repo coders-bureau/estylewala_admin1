@@ -34,6 +34,7 @@ const AddProductPage = () => {
   const [showImagesWarning, setShowImagesWarning] = useState(false);
   const [sizeOptions, setSizeOptions] = useState({});
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [offers, setOffers] = useState([]);
 
   const handleSelectCategory = (category) => {
     setSelectedCategory(category);
@@ -45,7 +46,19 @@ const AddProductPage = () => {
   // Fetch size options on component mount
   useEffect(() => {
     fetchSizeOptions();
+    fetchOffers();
   }, []);
+
+  const fetchOffers = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_API}/admin/fetchoffers`
+      );
+      setOffers(response.data);
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+    }
+  };
 
   const fetchSizeOptions = () => {
     axios
@@ -69,13 +82,15 @@ const AddProductPage = () => {
     price: "",
     MRP: "",
     discount: "",
+    offerType: "", // Add offerType field
+    offerValue: "", // Add offerValue field
     size: [],
     currentSize: "",
     img: null, // Main image link
     images: [], // Array of additional image links
     // reviews: [],
   });
-  // console.log(productData);
+  console.log(productData);
 
   const handleInputChange = (event) => {
     const { name, value, files } = event.target;
@@ -106,6 +121,7 @@ const AddProductPage = () => {
     }));
     console.log(productData);
   };
+  console.log("offers", offers);
 
   // const handleAddImage = () => {
   //   // Add a new empty string to the images array when plus button is clicked
@@ -210,7 +226,10 @@ const AddProductPage = () => {
     formData.append("type", productData.type);
     formData.append("price", productData.price);
     formData.append("MRP", productData.MRP);
-    formData.append("discount", productData.discount);
+    // formData.append("discount", productData.discount);
+    formData.append("offerType",productData.offerType);
+    formData.append("offerValue",productData.offerValue);
+
     productData.size.forEach((size) => {
       formData.append("size", size);
     });
@@ -386,7 +405,7 @@ const AddProductPage = () => {
                 onChange={handleChange}
               />
             </FormControl>
-            <FormControl isRequired>
+            {/* <FormControl isRequired>
               <FormLabel>Discount:</FormLabel>
               <Input
                 type="number"
@@ -394,7 +413,49 @@ const AddProductPage = () => {
                 value={productData.discount}
                 onChange={handleChange}
               />
+            </FormControl> */}
+
+            {/* <text>erwre </text> */}
+            <FormControl>
+            <FormLabel>Offers:</FormLabel>
+            <select
+              name="offerType"
+              value={productData.offerType}
+              onChange={handleInputChange}
+            >
+              <option value="">Select Offer Type</option>
+              {offers.map((offer) => (
+                <option key={offer._id} value={offer.type}>
+                  {offer.type}
+                </option>
+              ))}
+            </select>
+            <select
+              disabled={!productData.offerType}
+              name="offerValue"
+              value={productData.offerValue}
+              onChange={handleInputChange}
+            >
+              <option value="">Select Offer Value</option>
+              {productData.offerType &&
+                offers
+                  ?.find((o) => o.type === productData.offerType)
+                  ?.values?.map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+            </select>
             </FormControl>
+            {/* <FormControl isRequired>
+              <FormLabel>Offers:</FormLabel>
+              <Input
+                type="number"
+                name="discount"
+                value={productData.discount}
+                onChange={handleChange}
+              />
+            </FormControl> */}
             {/* Add other fields */}
             <FormControl isRequired>
               <FormLabel>Main Image:</FormLabel>

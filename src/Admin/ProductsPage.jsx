@@ -11,7 +11,7 @@ const ProductsPage = () => {
     <div>
       <AdminNavbar />
       {/* <h1>Product Page</h1> */}
-      <Box marginTop={{ lg: "90px", md: "110px", base: "110px" }}>
+      {/* <Box marginTop={{ lg: "90px", md: "110px", base: "110px" }}>
         <Button
           _hover={{
             bg: "#72749B",
@@ -24,7 +24,48 @@ const ProductsPage = () => {
           {" "}
           {showAddProduct ? "Product List" : "Add Product"}
         </Button>
-      </Box>
+      </Box> */}
+            {showAddProduct ? (
+        <Box
+          textAlign={"left"}
+          marginLeft={"270px"}
+          // my={"20px"}
+          marginTop={{ lg: "110px", md: "110px", base: "110px" }}
+        >
+          <Button
+            _hover={{
+              bg: "#72749B",
+              color: "white",
+            }}
+            textColor={"#ffffff"}
+            bgColor={"#ff3e6c"}
+            onClick={() => setShowAddProduct(!showAddProduct)}
+          >
+            {" "}
+            {showAddProduct ? "Go Back " : "Add Product"}
+          </Button>
+        </Box>
+      ) : (
+        <Box
+          textAlign={"right"}
+          marginRight={"50px"}
+          // my={"20px"}
+          marginTop={{ lg: "110px", md: "110px", base: "110px" }}
+        >
+          <Button
+            _hover={{
+              bg: "#72749B",
+              color: "white",
+            }}
+            textColor={"#ffffff"}
+            bgColor={"#ff3e6c"}
+            onClick={() => setShowAddProduct(!showAddProduct)}
+          >
+            {" "}
+            {showAddProduct ? "Go Back " : "Add Product"}
+          </Button>
+        </Box>
+      )}
 
       {showAddProduct ? <AddProductPage /> : <ProductListPage />}
     </div>

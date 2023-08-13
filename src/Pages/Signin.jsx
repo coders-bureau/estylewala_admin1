@@ -236,9 +236,12 @@ const Signin = () => {
               console.log(res.data.token);
               // document.cookie = res.data.token;
               const token = res.data.token;
-
+              console.log("token from db" , token)
+              
+              dispatch(login());
               localStorage.setItem("authToken", token);
-
+              
+              console.log("token from local" , localStorage.getItem("authToken"))
               // const cookieOptions = {
               //   expires: 30, // Expires in 30 days
               //   path: "/", // Set the path for which the cookie is accessible
@@ -252,6 +255,7 @@ const Signin = () => {
               console.log(authToken);
               if(authToken){
                 navigate("/");
+                // dispatch(login());
               }
             })
             .catch((error) => console.error("Error Adding User", error));

@@ -43,20 +43,47 @@ const AdminPage = () => {
   return (
     <Box width={"100%"}>
       <AdminNavbar />
-      <Box marginTop={{ lg: "110px", md: "110px", base: "110px" }}>
-        <Button
-          _hover={{
-            bg: "#72749B",
-            color: "white",
-          }}
-          textColor={"#ffffff"}
-          bgColor={"#ff3e6c"}
-          onClick={() => setShowAddProduct(!showAddProduct)}
+      {showAddProduct ? (
+        <Box
+          textAlign={"left"}
+          marginLeft={"270px"}
+          // my={"20px"}
+          marginTop={{ lg: "110px", md: "110px", base: "110px" }}
         >
-          {" "}
-          {showAddProduct ? "Admin List" : "Add Admin"}
-        </Button>
-      </Box>
+          <Button
+            _hover={{
+              bg: "#72749B",
+              color: "white",
+            }}
+            textColor={"#ffffff"}
+            bgColor={"#ff3e6c"}
+            onClick={() => setShowAddProduct(!showAddProduct)}
+          >
+            {" "}
+            {showAddProduct ? "Go Back " : "Add Admin"}
+          </Button>
+        </Box>
+      ) : (
+        <Box
+          textAlign={"right"}
+          marginRight={"50px"}
+          // my={"20px"}
+          marginTop={{ lg: "110px", md: "110px", base: "110px" }}
+        >
+          <Button
+            _hover={{
+              bg: "#72749B",
+              color: "white",
+            }}
+            textColor={"#ffffff"}
+            bgColor={"#ff3e6c"}
+            onClick={() => setShowAddProduct(!showAddProduct)}
+          >
+            {" "}
+            {showAddProduct ? "Go Back " : "Add Admin"}
+          </Button>
+        </Box>
+      )}
       {isLoading ? (
         <LoadingPage />
       ) : (

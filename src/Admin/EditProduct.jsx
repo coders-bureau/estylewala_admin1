@@ -33,6 +33,8 @@ const EditProduct = () => {
     price: 0,
     MRP: 0,
     discount: 0,
+    offerType: "", // Add offerType field
+    offerValue: "", // Add offerValue field
     size: [],
     img: "",
     images: [],
@@ -68,8 +70,18 @@ const EditProduct = () => {
 
     fetchSizeOptions();
     fetchProduct();
+    fetchOffers();
   }, [id]);
-
+  const fetchOffers = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_API}/admin/fetchoffers`
+      );
+      setOffers(response.data);
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+    }
+  };
   // Handle input changes for the editable fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -139,9 +151,7 @@ const EditProduct = () => {
       });
     } else {
       // If the size checkbox is unchecked, remove it from the size array
-      const updatedSizes = product.size.filter(
-        (size) => size !== sizeValue
-      );
+      const updatedSizes = product.size.filter((size) => size !== sizeValue);
       setProduct({ ...product, size: updatedSizes });
     }
   };
@@ -208,6 +218,7 @@ const EditProduct = () => {
       // Handle error here, e.g., show an error message to the user
     }
   };
+  const [offers, setOffers] = useState([]);
 
   const handleUpdateProduct = async (e) => {
     setisLoading(true);
@@ -215,6 +226,8 @@ const EditProduct = () => {
     setNormalImage(true);
     setNormalImage1(true);
     const formData = new FormData();
+    formData.append("offerType", product.offerType);
+    formData.append("offerValue", product.offerValue);
     formData.append("title", product.title);
     formData.append("brand", product.brand);
     formData.append("rating", product.rating);
@@ -223,7 +236,7 @@ const EditProduct = () => {
     formData.append("type", product.type);
     formData.append("price", product.price);
     formData.append("MRP", product.MRP);
-    formData.append("discount", product.discount);
+    // formData.append("discount", product.discount);
     formData.append("size", product.size);
     product.size.forEach((size) => {
       formData.append("size", size);
@@ -391,14 +404,48 @@ const EditProduct = () => {
                 required
               />
             </FormControl>
+
+            <FormControl>
+              <FormLabel>Offers:</FormLabel>
+              <select
+                name="offerType"
+                value={product.offerType}
+                onChange={handleInputChange}
+              >
+                <option value="">Select Offer Type</option>
+                {offers.map((offer) => (
+                  <option key={offer._id} value={offer.type}>
+                    {offer.type}
+                  </option>
+                ))}
+              </select>
+              <select
+                disabled={!product.offerType}
+                name="offerValue"
+                value={product.offerValue}
+                onChange={handleInputChange}
+              >
+                <option value="">Select Offer Value</option>
+                {product.offerType &&
+                  offers
+                    ?.find((o) => o.type === product.offerType)
+                    ?.values?.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+              </select>
+            </FormControl>
+
             <FormControl mb={4}>
-              <FormLabel>Discount</FormLabel>
+              <FormLabel>Final Price</FormLabel>
               <Input
                 type="number"
                 name="discount"
                 value={product.discount}
                 onChange={handleInputChange}
                 required
+                isDisabled
               />
             </FormControl>
 

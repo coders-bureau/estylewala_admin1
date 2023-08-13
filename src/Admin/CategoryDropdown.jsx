@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Select } from '@chakra-ui/react';
+import { Select, SelectField } from '@chakra-ui/react';
 import axios from 'axios';
 
 const CategoryDropdown = ({ onSelectCategory }) => {
@@ -27,14 +27,14 @@ console.log(categories);
   };
 
   return (
-    <Select value={selectedCategory} onChange={handleCategoryChange}>
+    <select value={selectedCategory} onChange={handleCategoryChange}>
       <option value="" disabled>Select a category</option>
       {categories.map((category) => (
         <option key={category._id} value={category.name}>
           {category.name}
         </option>
       ))}
-    </Select>
+    </select>
   );
 };
 

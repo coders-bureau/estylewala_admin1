@@ -13,6 +13,11 @@ import { PrivateRoute } from "./PrivateRoutes";
 import AdminPage from "../Admin/AdminPage";
 import ReviewsPage from "../Admin/ReviewsPage";
 import ProductsPage from "../Admin/ProductsPage";
+import OrderBarChart from "../Admin/OrderBarChart";
+import ReportsPage from "../Admin/ReportsPage";
+import OfferPage from "../Admin/OfferPage";
+import AccountPage from "../Admin/AccountPage";
+import AdminNavbar from "../Admin/AdminNavbar";
 
 // import AddProductsPage from '../Admin/AddProductsPage';
 // import UsersPage from "../Admin/UsersPage";
@@ -25,12 +30,10 @@ export const MainRoutes = () => {
   };
   return (
     <>
-      {/* <Navbar /> */}
+      {/* <AdminNavbar /> */}
       <Routes>
-        <Route
-          path="/login"
-          element={<Signin />}
-        />
+        <Route path="/chart" element={<OrderBarChart />} />
+        <Route path="/login" element={<Signin />} />
         <Route
           path="/size"
           element={
@@ -43,7 +46,7 @@ export const MainRoutes = () => {
           path="/"
           element={
             // <PrivateRoute>
-              <AdminDashboard />
+            <AdminDashboard />
             // </PrivateRoute>
           }
         />
@@ -59,7 +62,7 @@ export const MainRoutes = () => {
           path="/product-list"
           element={
             <PrivateRoute>
-              <ProductsPage/>
+              <ProductsPage />
             </PrivateRoute>
           }
         ></Route>
@@ -87,11 +90,54 @@ export const MainRoutes = () => {
             </PrivateRoute>
           }
         ></Route>
-        <Route path="/users-list" element={<PrivateRoute><UsersPage /></PrivateRoute>}></Route>
-        <Route path="/admin-list" element={<PrivateRoute><AdminPage /></PrivateRoute>}></Route>
-        <Route path="/reviews-list" element={<PrivateRoute><ReviewsPage /></PrivateRoute>}></Route>
-
-
+        <Route
+          path="/users-list"
+          element={
+            <PrivateRoute>
+              <UsersPage />
+            </PrivateRoute>
+          }
+        ></Route>
+        <Route
+          path="/admin-list"
+          element={
+            <PrivateRoute>
+              <AdminPage />
+            </PrivateRoute>
+          }
+        ></Route>
+        <Route
+          path="/reviews-list"
+          element={
+            <PrivateRoute>
+              <ReviewsPage />
+            </PrivateRoute>
+          }
+        ></Route>
+        <Route
+          path="/reports"
+          element={
+            <PrivateRoute>
+              <ReportsPage />
+            </PrivateRoute>
+          }
+        ></Route>
+        <Route
+          path="/offers"
+          element={
+            <PrivateRoute>
+              <OfferPage />
+            </PrivateRoute>
+          }
+        ></Route>
+        <Route
+          path="/admin-profile"
+          element={
+            <PrivateRoute>
+              <AccountPage />
+            </PrivateRoute>
+          }
+        ></Route>
 
         {/* <Route path="/add-products" element={<AddProductsPage />}></Route>
              <Route path="/admin-men" element={<MensPage />}></Route>

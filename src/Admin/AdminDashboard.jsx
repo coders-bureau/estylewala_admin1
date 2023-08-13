@@ -8,6 +8,7 @@ import LoadingPage from "../Pages/LoadingPage";
 import PageNotFound from "../Pages/PageNotFound";
 // import Calendar from './Calendar';
 import axios from "axios";
+import OrderBarChart from "./OrderBarChart";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -15,6 +16,9 @@ const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]);
   const [isLoading, setisLoading] = useState(false);
+  const [chartData, setChartData] = useState({});
+  const [months, setMonths] = useState({});
+  const [numbers, setNumber] = useState({});
 
   // const Allproducts = useSelector((store) => store.AppReducer);
 
@@ -25,7 +29,50 @@ const AdminDashboard = () => {
     fetchProducts();
     fetchOrders();
     fetchUsers();
+    fetchChartData();
   }, []);
+
+  const fetchChartData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/admin/order/chart"
+      );
+      const data = response.data.chartData;
+
+      if (!Array.isArray(data)) {
+        console.error("Invalid chart data received:", data);
+        return;
+      }
+      console.log(data);
+      const months = [];
+      const chartdata = [];
+      const orderCounts = [];
+      data.forEach((entry) => {
+        if (entry.month && entry.count) {
+          months.push(entry.month);
+          orderCounts.push(entry.count);
+          // chartdata.push({ label: entry.month, y: entry.count });
+        }
+      });
+      setMonths(months);
+      setNumber(numbers);
+      console.log(months);
+      // setChartData(chartdata);
+
+      //   setChartData({
+      //     labels: months,
+      //     datasets: [
+      //       {
+      //         label: 'Number of Orders',
+      //         data: orderCounts,
+      //         backgroundColor: 'rgba(75, 192, 192, 0.6)', // Adjust the color as needed
+      //       },
+      //     ],
+      //   });
+    } catch (error) {
+      console.error("Error fetching chart data:", error);
+    }
+  };
 
   const fetchProducts = async () => {
     setisLoading(true);
@@ -99,16 +146,16 @@ const AdminDashboard = () => {
           padding={4}
           // width={"80%"}
         >
-          <HStack 
-          display={"block"}
+          <HStack
+            // gap={10}
+            display={"block"}
             ml={{ lg: "250px", md: "250px", base: "0px" }}
             borderRadius={15}
             mt={1}
             mb={4}
             border="2px solid lightBlue"
           >
-              
-              {/* <Chart
+            {/* <Chart
                 type="pie"
                 height={"450px"}
                 series={[kd, md, wd]}
@@ -135,12 +182,12 @@ const AdminDashboard = () => {
                   labels: ["KIDS-PRODUCTS", "MENS-PRODUCTS", "WOMENS-PRODUCTS"],
                 }}
               ></Chart> */}
-            <Box display={{ lg: "block", md: "block", base: "none" }}>
+            <Box display={{ lg: "block", md: "block", base: "block" }}>
               <Text
                 ml={20}
                 textAlign={"left"}
                 fontWeight={500}
-                fontSize={"40px"}
+                fontSize={{ md: "40px", base: "20px" }}
               >
                 PRODUCTS
               </Text>
@@ -171,6 +218,55 @@ const AdminDashboard = () => {
                   labels: ["KIDS-PRODUCTS", "MENS-PRODUCTS", "WOMENS-PRODUCTS"],
                 }}
               ></Chart>
+            </Box>
+          </HStack>
+          <HStack  display={"block"}
+            ml={{ lg: "250px", md: "250px", base: "0px" }}
+            borderRadius={15}
+            mt={1}
+            mb={4}
+            border="2px solid lightBlue">
+            <Box display={{ lg: "block", md: "block", base: "block" }}>
+              <Text
+                ml={20}
+                textAlign={"left"}
+                fontWeight={500}
+                fontSize={{ md: "40px", base: "20px" }}
+              >
+                No of Orders
+              </Text>
+              <Chart
+                type="bar"
+                height="450px"
+                series={[
+                  {
+                    data: [7, 1, 3, 2, 5, 6],
+                  },
+                ]}
+                options={{
+                  noData: { text: "Unavailable" },
+                  stroke: {
+                    lineCap: "round",
+                  },
+                  plotOptions: {
+                    bar: {
+                      vertical: true,
+                      distributed: true,
+                      dataLabels: {
+                        position: "top",
+                      },
+                    },
+                  },
+                  dataLabels: {
+                    enabled: true,
+                    formatter: (val) => `${val}%`,
+                  },
+                  xaxis: {
+                    // labels: ["Months"],
+                    categories: ["Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+                  },
+                }}
+              />
             </Box>
             {/* <Box display={{ lg: "none", md: "none", base: "block" }}>
               <Chart
@@ -210,6 +306,7 @@ const AdminDashboard = () => {
               />
             </Box> */}
           </HStack>
+          {/* <OrderBarChart /> */}
           {/* <Stack
             bg={"#a0aec0"}
             ml={{ lg: "250px", md: "250px", base: "0px" }}

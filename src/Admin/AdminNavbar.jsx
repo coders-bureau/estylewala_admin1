@@ -31,7 +31,7 @@ import {
 } from "@chakra-ui/react";
 
 import { FiMenu } from "react-icons/fi";
-import { AiFillFolder, AiFillHome } from "react-icons/ai";
+import { AiFillFileAdd, AiFillFolder, AiFillHome } from "react-icons/ai";
 import { BsFillBellFill } from "react-icons/bs";
 import { HiFolderAdd, HiOutlineUser } from "react-icons/hi";
 import { ImMan, ImWoman } from "react-icons/im";
@@ -47,6 +47,7 @@ import {
   BiSolidCategory,
   BiCategory,
   BiSolidCommentDetail,
+  BiSolidOffer,
 } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -114,7 +115,10 @@ const LinkItems = [
   { name: 'Review', icon: BiSolidCommentDetail, path: '/reviews-list' },
   { name: 'Size', icon: TbRulerMeasure, path: '/size' },
   { name: 'Account', icon: RiAccountPinCircleFill, path: '/admin-profile' },
-  { name: 'Logout', icon: RiLogoutCircleFill, path: '/' }
+  { name: 'Offer', icon: BiSolidOffer, path: '/offers' },
+
+  
+  // { name: 'Logout', icon: RiLogoutCircleFill, path: '/' }
 ];
 //RiLogoutCircleFill
 export default function AdminNavbar({ children }) {
@@ -372,12 +376,12 @@ const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
       </a>
 
       <HStack spacing={{ base: 0, md: 3 }} mr={{ base: 3, md: 8 }}>
-        <IconButton
+        {/* <IconButton
           size="lg"
           variant="ghost"
           aria-label="open menu"
           icon={<BsFillBellFill />}
-        />
+        /> */}
         <Flex alignItems={"center"}>
           <Menu>
             <MenuButton
@@ -386,15 +390,15 @@ const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
               _focus={{ boxShadow: "none" }}
             >
               <HStack>
-                <Avatar size={"sm"} src={"/AdminProfile"}>
+                {/* <Avatar size={"sm"} src={"/AdminProfile"}>
                   <AvatarBadge boxSize="1em" bg="green.500" />
-                </Avatar>
+                </Avatar> */}
                 <VStack
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"
                   spacing="1px"
                 >
-                  <Text
+                  {/* <Text
                     fontSize={"sm"}
                     fontWeight={500}
                     fontFamily={"sans-serif"}
@@ -403,7 +407,7 @@ const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
                   </Text>
                   <Text fontSize={"xs"} fontWeight={500} color="gray.600">
                     Admin
-                  </Text>
+                  </Text> */}
                   {/* <VStack spacing={"3px"}>
                     <Menu>
                     <MenuButton onMouseEnter={onOpen} onMouseLeave={onClose}>
