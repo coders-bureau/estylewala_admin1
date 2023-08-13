@@ -54,6 +54,7 @@ import { useEffect } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { login } from "../Redux/AuthReducer/Action";
+import { useState } from "react";
 // import { getAdminData } from '../Redux/Admin/Admin.action';
 // const LinkItems = [
 //   {
@@ -106,28 +107,31 @@ import { login } from "../Redux/AuthReducer/Action";
 //   // { name: "Logout", icon: RiLogoutCircleFill, path: "/" },
 // ];
 const LinkItems = [
-  { name: 'Home', icon: AiFillHome, path: '/' },
-  { name: 'Admin', icon: RiAdminFill, path: '/admin-list' },
-  { name: 'Customer', icon: FaUser, path: '/users-list' },
-  { name: 'Order', icon: FaBoxes, path: '/orders-list' },
-  { name: 'Product', icon: HiFolderAdd, path: '/product-list' },
-  { name: 'Category', icon: BiSolidCategory, path: '/categories-list' },
-  { name: 'Review', icon: BiSolidCommentDetail, path: '/reviews-list' },
-  { name: 'Size', icon: TbRulerMeasure, path: '/size' },
-  { name: 'Account', icon: RiAccountPinCircleFill, path: '/admin-profile' },
-  { name: 'Offer', icon: BiSolidOffer, path: '/offers' },
+  { name: "Home", icon: AiFillHome, path: "/" },
+  { name: "Admin", icon: RiAdminFill, path: "/admin-list" },
+  { name: "Customer", icon: FaUser, path: "/users-list" },
+  { name: "Order", icon: FaBoxes, path: "/orders-list" },
+  { name: "Product", icon: HiFolderAdd, path: "/product-list" },
+  { name: "Category", icon: BiSolidCategory, path: "/categories-list" },
+  { name: "Review", icon: BiSolidCommentDetail, path: "/reviews-list" },
+  { name: "Size", icon: TbRulerMeasure, path: "/size" },
+  { name: "Account", icon: RiAccountPinCircleFill, path: "/admin-profile" },
+  { name: "Offer", icon: BiSolidOffer, path: "/offers" },
 
-  
   // { name: 'Logout', icon: RiLogoutCircleFill, path: '/' }
 ];
 //RiLogoutCircleFill
 export default function AdminNavbar({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isAuth, setisAuth] = useState(false);
   // const { adminData } = useSelector((store) => store.adminManager);
   const dispatch = useDispatch();
-  // useEffect(() => {
-  //   dispatch(getAdminData());
-  // }, [])
+  useEffect(() => {
+    // dispatch(getAdminData());
+    if (localStorage.getItem("authToken")) {
+      setisAuth(true);
+    }
+  }, []);
   return (
     <Box
       border={"0px solid black"}
@@ -251,9 +255,13 @@ const SidebarContent = ({ onClose, ...rest }) => {
 
 const NavItem = ({ icon, children, item, ...rest }) => {
   return (
-    <NavLink to={item} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+    <NavLink
+      to={item}
+      style={{ textDecoration: "none" }}
+      _focus={{ boxShadow: "none" }}
+    >
       <Flex
-        _groupActive={{ color: '#990578' }}
+        _groupActive={{ color: "#990578" }}
         align="center"
         p="4"
         mx="4"
@@ -261,16 +269,17 @@ const NavItem = ({ icon, children, item, ...rest }) => {
         role="group"
         cursor="pointer"
         _hover={{
-          bg: '#72749B',
-          color: 'white',
+          bg: "#72749B",
+          color: "white",
         }}
-        {...rest}>
+        {...rest}
+      >
         {icon && (
           <Icon
             mr="4"
             fontSize="20"
             _groupHover={{
-              color: 'white',
+              color: "white",
             }}
             as={icon}
           />
@@ -344,8 +353,11 @@ const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
       });
     dispatch(login("logout"));
     localStorage.clear();
-    navigate("/login");
+    navigate("/");
   };
+  const handleLogin = () => {
+    navigate("/login");
+  }
   return (
     <Flex
       ml={{ base: 0, md: 56 }}
@@ -485,14 +497,14 @@ const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
           <Button
             textColor={"white"}
             _hover={{
-              bg: '#72749B',
-              color: 'white',
+              bg: "#72749B",
+              color: "white",
             }}
             bgColor={"#ff3e6c"}
             mx={6}
-            onClick={handleLogOut}
+            onClick={isAuth ? handleLogOut : handleLogin}
           >
-            Logout
+            {isAuth ? "Logout" : "Login"}
           </Button>
         </Flex>
       </HStack>

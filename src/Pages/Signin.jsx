@@ -51,9 +51,9 @@ const Signin = () => {
     prevLocation.current = location;
   }, [location]);
 
-  useEffect(() => {
-    authii();
-  }, []);
+  // useEffect(() => {
+  //   authii();
+  // }, []);
 
   // useEffect(() => {
   //   try {
@@ -109,19 +109,18 @@ const Signin = () => {
         const config = { headers: { "Contnet-Type": "application/json" } };
         console.log(input);
         axios
-          .post(`${process.env.REACT_APP_BASE_API}/admin/login`, { mobileNumber }, config)
+          .post(`${process.env.REACT_APP_BASE_API}/admin/login`, { mobileNumber })
           .then((res) => {
             console.log(res);
             const token = res.data.token;
-
             localStorage.setItem("authToken", token);
             dispatch(login());
-
+            navigate("/");
             // authii();
           })
           .catch((error) => console.error("Error Adding User", error));
 
-        dispatch(getUserDetails(mobileNumber));
+        // dispatch(getUserDetails());
         //   navigate("/otp", { state: comingFrom, replace: true });
         toast({
           position: "top",
@@ -130,9 +129,9 @@ const Signin = () => {
           isClosable: true,
           duration: 1500,
         });
+        
         // console.log(comingFrom);
         setLoading("false");
-        navigate("/");
       })
       .catch((error) => {
         // User couldn't sign in (bad verification code?)
@@ -204,25 +203,25 @@ const Signin = () => {
     }
   };
 
-  const authii = async () => {
-    const auth_token = localStorage.getItem("authToken");
-    axios.defaults.headers.common["auth_token"] = `${auth_token}`;
-    if(auth_token){
-      await axios
-      .get(`${process.env.REACT_APP_BASE_API}/admin/adminloginstatus`)
-      .then((response) => {
-        // setisAuth(true);
-        console.log(response);
-        dispatch(login());
-      })
-      .catch((error) => {
-        // setisAuth(false);
-        console.error("Error: ", error);
-        dispatch(login("logout"));
-      });
-    }
-    dispatch(login("logout"));
-  };
+  // const authii = async () => {
+  //   const auth_token = localStorage.getItem("authToken");
+  //   axios.defaults.headers.common["auth_token"] = `${auth_token}`;
+  //   if(auth_token){
+  //     await axios
+  //     .get(`${process.env.REACT_APP_BASE_API}/admin/adminloginstatus`)
+  //     .then((response) => {
+  //       // setisAuth(true);
+  //       console.log(response);
+  //       dispatch(login());
+  //     })
+  //     .catch((error) => {
+  //       // setisAuth(false);
+  //       console.error("Error: ", error);
+  //       dispatch(login("logout"));
+  //     });
+  //   }
+  //   dispatch(login("logout"));
+  // };
   // console.log(value);
   return (
     <>

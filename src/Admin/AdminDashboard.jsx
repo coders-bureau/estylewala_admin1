@@ -21,15 +21,12 @@ const AdminDashboard = () => {
   const [numbers, setNumber] = useState({});
 
   // const Allproducts = useSelector((store) => store.AppReducer);
-
-  console.log(products);
-  console.log("error: " + products.isError);
   useEffect(() => {
     // dispatch(getAllProductsData());
     fetchProducts();
-    fetchOrders();
-    fetchUsers();
-    fetchChartData();
+    // fetchOrders();
+    // fetchUsers();
+    // fetchChartData();
   }, []);
 
   const fetchChartData = async () => {
@@ -120,9 +117,8 @@ const AdminDashboard = () => {
   // const md = Allproducts.Products ? 0 : Allproducts.Products.data.filter((item) => item.type === "Mens").length ;
   // const wd = Allproducts.Products ? 0 : Allproducts.Products.data.filter((item) => item.type === "Women").length ;
   const kd = products.filter((item) => item.type === "Kids").length;
-  const md = products.filter((item) => item.type === "Mens").length;
+  const md = products.filter((item) => item.type === "Men").length;
   const wd = products.filter((item) => item.type === "Women").length;
-  console.log(kd, md, wd);
 
   return (
     <Box minH="100vh" bg={"whiteAlpha.50"}>
