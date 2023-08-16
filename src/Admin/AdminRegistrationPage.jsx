@@ -12,16 +12,16 @@ import {
 } from "@chakra-ui/react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-const AdminRegistrationPage = () => {
+const AdminRegistrationPage = ({fetchUsers}) => {
   const toast = useToast();
   const [name, setName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
-  const handleSubmit = () => {
-    // e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
     try {
-     axios
+      axios
         .post(`${process.env.REACT_APP_BASE_API}/admin/signup`, {
           name,
           mobileNumber,
@@ -36,7 +36,8 @@ const AdminRegistrationPage = () => {
             status: "success",
             duration: 2500,
           });
-          navigate("/admin-list");
+          fetchUsers();
+          // navigate("/admin-list");
         });
       // console.log(response.data);
       // Clear form fields after successful registration
@@ -59,13 +60,13 @@ const AdminRegistrationPage = () => {
   return (
     <Box
       marginTop={"20px"}
-      marginLeft={{ lg: "250px", md: "250px", base: "10px" }}
-      w="70%"
+      marginLeft={{ lg: "250px", md: "250px", base: "5%" }}
+      w={{ md: "70%", base: "90%" }}
     >
       <h2>Admin Registration</h2>
-      <VStack  as="form" onSubmit={handleSubmit} spacing={4}>
+      <VStack as="form" onSubmit={handleSubmit} spacing={4}>
         {/* Add form fields for each product property */}
-        
+
         <FormControl isRequired>
           <FormLabel>Name:</FormLabel>
           <Input
@@ -77,7 +78,9 @@ const AdminRegistrationPage = () => {
         <FormControl isRequired>
           <FormLabel>Mobile Number:</FormLabel>
           <Input
-            type="text"
+            maxLength={10}
+            minLength={10}
+            type="tel"
             value={mobileNumber}
             onChange={(e) => setMobileNumber(e.target.value)}
           />
@@ -88,6 +91,7 @@ const AdminRegistrationPage = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            pla
           />
         </FormControl>
         <Button type="submit">Add Admin</Button>

@@ -270,7 +270,7 @@ const AddProductPage = () => {
       .then((response) => {
         console.log("Product added successfully:", response.data);
         toast({
-          title: "Product successfully added in Databse",
+          title: "Product successfully added ",
           variant: "top-accent",
           isClosable: true,
           position: "top-right",

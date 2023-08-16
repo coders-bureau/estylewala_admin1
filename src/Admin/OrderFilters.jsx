@@ -173,7 +173,7 @@ const OrderFilters = ({ onFilter }) => {
           </Box>
           {/* <HStack  alignItems={"center"}> */}
           <Text fontWeight={500}>Date Range</Text>
-          <HStack>
+          <Stack>
             <Text>Form:-</Text>
             <Input
               type="date"
@@ -188,7 +188,7 @@ const OrderFilters = ({ onFilter }) => {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
             />
-          </HStack>
+          </Stack>
           {/* </HStack> */}
 
           <Text fontWeight={500}>Products</Text>

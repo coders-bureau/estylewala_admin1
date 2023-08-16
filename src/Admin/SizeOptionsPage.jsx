@@ -111,12 +111,12 @@ const SizeOptions = () => {
       ) : (
         <Box
           marginTop={"100px"}
-          marginLeft={{ lg: "250px", md: "250px", base: "20px" }}
-          marginRight={"20px"}
+          marginLeft={{ lg: "250px", md: "250px", base: "10px" }}
+          marginRight={"10px"}
         >
           <Button 
             alignSelf={"right"}
-            ml={{lg:"60vw" ,md:"40vw",base:"0"}}
+            ml={{lg:"50vw" ,md:"40vw",base:"0"}}
             colorScheme="blue"
             onClick={handleUpdateSizeOptions}
           >
@@ -136,7 +136,7 @@ const SizeOptions = () => {
                 </FormLabel>
                 {/* <Stack direction={{ base: "column", md: "row" }} gridColumn={4} spacing={4}> */}
                 <SimpleGrid
-                  columns={{ lg: "10", md: "7", base: "5" }}
+                  columns={{ lg: "10", md: "7", base: "4" }}
                   spacing={10}
                   gap={5}
                 >

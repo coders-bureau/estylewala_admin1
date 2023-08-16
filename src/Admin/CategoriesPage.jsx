@@ -130,11 +130,11 @@ const CategoriesPage = () => {
     }
   };
 
-  const handleAddCategory = async (name) => {
+  const handleAddCategory = async () => {
     try {
       setisLoading(true);
       const formData = new FormData();
-      formData.append("name", name);
+      formData.append("name", newCategoryName);
       formData.append("image", image);
       console.log("firm data", formData);
       const response = await axios
@@ -193,72 +193,81 @@ const CategoriesPage = () => {
             {categories.length === 0 ? (
               <Text fontSize={50}>No categories available.</Text>
             ) : (
-              <Table variant="simple">
-                <Thead>
-                  <Tr>
-                    <Th>Name</Th>
-                    <Th>Update Text</Th>
-                    <Th>Image</Th>
-                    <Th>Actions</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {categories.map((category, index) => (
-                    <Tr key={index}>
-                      <Td>{category.name}</Td>
-                      <Td>
-                        {" "}
-                        <Input
-                          border={"1px"}
-                          w={200}
-                          placeholder="Type and click right button"
-                          // value={} // Use the existing category type
-                          onChange={(e) => setUpdatedCategories(e.target.value)}
-                        />
-                      </Td>
-                      <Td>
-                        <Image
-                          src={
-                            process.env.REACT_APP_BASE_API +
-                            `/${category.image}`
-                          }
-                          boxSize="50px"
-                          objectFit="cover"
-                          alt={`Offer ${category._id}`}
-                        />
-                      </Td>
-                      <Td>
-                        <Button
-                          // icon={<EditIcon />}
-                          
-                          colorScheme="blue"
-                          size="sm"
-                          mr={2}
-                          onClick={() =>
-                            handleEditCategory(category._id, updatedCategories)
-                          }
-                        >Update</Button>
-                        <IconButton
-                          icon={<DeleteIcon />}
-                          colorScheme="red"
-                          size="sm"
-                          onClick={() => handleDeleteCategory(category._id)}
-                        />
-                      </Td>
+              <Box overflowX={"auto"}>
+                <Table variant="simple">
+                  <Thead>
+                    <Tr>
+                      <Th>Name</Th>
+                      <Th>Update Text</Th>
+                      <Th>Image</Th>
+                      <Th>Actions</Th>
                     </Tr>
-                  ))}
-                </Tbody>
-              </Table>
+                  </Thead>
+                  <Tbody>
+                    {categories.map((category, index) => (
+                      <Tr key={index}>
+                        <Td>{category.name}</Td>
+                        <Td>
+                          {" "}
+                          <Input
+                            border={"1px"}
+                            w={200}
+                            placeholder="Type and click right button"
+                            // value={} // Use the existing category type
+                            onChange={(e) =>
+                              setUpdatedCategories(e.target.value)
+                            }
+                          />
+                        </Td>
+                        <Td>
+                          <Image
+                            src={
+                              process.env.REACT_APP_BASE_API +
+                              `/${category.image}`
+                            }
+                            boxSize="50px"
+                            objectFit="cover"
+                            alt={`Offer ${category._id}`}
+                          />
+                        </Td>
+                        <Td>
+                          <Button
+                            // icon={<EditIcon />}
+
+                            colorScheme="blue"
+                            size="sm"
+                            mr={2}
+                            onClick={() =>
+                              handleEditCategory(
+                                category._id,
+                                updatedCategories
+                              )
+                            }
+                          >
+                            Update
+                          </Button>
+                          <IconButton
+                            icon={<DeleteIcon />}
+                            colorScheme="red"
+                            size="sm"
+                            onClick={() => handleDeleteCategory(category._id)}
+                          />
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </Box>
             )}
-            <Box mt={10}>
+            <Box as="form" onSubmit={handleAddCategory} mt={10}>
               <Text fontSize="xl" fontWeight="semibold" mb={4}>
                 Add New Category
               </Text>
-              <FormControl>
-                {/* <FormLabel>Name</FormLabel> */}
+              <FormControl isRequired >
+                <FormLabel>Category</FormLabel>
                 <Input
                   border={"1px"}
-                  w={200}
+                  // w={200}
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
                 />
@@ -280,8 +289,9 @@ const CategoriesPage = () => {
             </FormControl> */}
               <Button
                 my={7}
+                type="submit"
                 colorScheme="green"
-                onClick={() => handleAddCategory(newCategoryName)}
+                // onClick={() => handleAddCategory(newCategoryName)}
               >
                 Add Category
               </Button>

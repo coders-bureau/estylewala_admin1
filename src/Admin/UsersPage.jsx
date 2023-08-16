@@ -46,6 +46,7 @@ const UsersPage = () => {
           marginTop={{ lg: "90px", md: "80px", base: "80px" }}
           marginLeft={{ lg: "250px", md: "250px", base: "10px" }}
           marginRight={"10px"}
+          overflowX="auto"
         >
           {users.length> 0 ? (
           <Table variant="striped" colorScheme="gray">

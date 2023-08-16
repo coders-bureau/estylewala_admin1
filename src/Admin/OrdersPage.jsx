@@ -99,7 +99,6 @@ const OrdersPage = () => {
   console.log(filteredOrders);
 
   console.log(orders);
- 
 
   return (
     <>
@@ -109,12 +108,12 @@ const OrdersPage = () => {
       ) : (
         <Box
           marginTop={{ lg: "90px", md: "80px", base: "80px" }}
-          marginLeft={{ lg: "250px", md: "250px", base: "0px" }}
+          marginLeft={{ lg: "250px", md: "250px", base: "10px" }}
           marginRight={"10px"}
           marginBottom={"50px"}
         >
           {/* <Text fontSize={50}>No orders available.</Text> */}
-          <div>
+          <Box>
             <Text fontSize={"25px"}>Order Management</Text>
             <OrderFilters onFilter={handleFilterSubmit} />
             {/* <ul>
@@ -124,66 +123,68 @@ const OrdersPage = () => {
                 </li>
               ))}
             </ul> */}
-            <Table variant="striped" colorScheme="gray">
-              <Thead>
-                <Tr>
-                  <Th>No.</Th>
-                  <Th>Address</Th>
-                  <Th>Customer Name</Th>
-                  <Th>Items</Th>
-                  <Th>Order Date</Th>
-                  <Th>Total Price</Th>
-                  <Th>Payment Mode</Th>
-                  <Th>Status</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <>
-                  {filteredOrders.map((order, index) => (
-                    <Tr key={index}>
-                      <Td>{index + 1}</Td>
-                      <Td>{order.addressLine}</Td>
-                      <Td>{order.userId.name}</Td>
-                      <Td>
-                        {order.items.map((item) => (
-                          <Box key={item._id}>
-                            {item.product.title} x{item.quantity}
-                          </Box>
-                        ))}
-                      </Td>
-                      <Td>{new Date(order.orderDate).toLocaleDateString()}</Td>
-                      <Td>{order.totalAmount}</Td>
-                      <Td>{order.paymentMode}</Td>
-                      <Td>
-                        <select
-                          id="status"
-                          value={order.orderStatus}
-                          onChange={(e) => setSelectedStatus(e.target.value)}
-                        >
-                          <option value="processing">Processing</option>
-                          <option value="shipped">Shipped</option>
-                          <option value="delivered">Delivered</option>
-                          <option value="cancelled">Cancelled</option>
-                        </select>
-                        <button
-                          onClick={() => {
-                            handleStatusChange(order._id);
-                          }}
-                        >
-                          Update Status
-                        </button>
-                      </Td>
-                    </Tr>
-                  ))}
-                </>
-              </Tbody>
-            </Table>
-          </div>
+            <Box overflowX="auto">
+              <Table variant="striped" colorScheme="gray">
+                <Thead>
+                  <Tr>
+                    <Th>No.</Th>
+                    <Th>Address</Th>
+                    <Th>Customer Name</Th>
+                    <Th>Items</Th>
+                    <Th>Order Date</Th>
+                    <Th>Total Price</Th>
+                    <Th>Payment Mode</Th>
+                    <Th>Status</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <>
+                    {filteredOrders.map((order, index) => (
+                      <Tr key={index}>
+                        <Td>{index + 1}</Td>
+                        <Td>{order.addressLine}</Td>
+                        <Td>{order.userId.name}</Td>
+                        <Td>
+                          {order.items.map((item) => (
+                            <Box key={item._id}>
+                              {item.productName} x{item.quantity}
+                            </Box>
+                          ))}
+                        </Td>
+                        <Td>
+                          {new Date(order.orderDate).toLocaleDateString()}
+                        </Td>
+                        <Td>{order.totalAmount}</Td>
+                        <Td>{order.paymentMode}</Td>
+                        <Td>
+                          <select
+                            id="status"
+                            value={order.orderStatus}
+                            onChange={(e) => setSelectedStatus(e.target.value)}
+                          >
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                          </select>
+                          <button
+                            onClick={() => {
+                              handleStatusChange(order._id);
+                            }}
+                          >
+                            Update Status
+                          </button>
+                        </Td>
+                      </Tr>
+                    ))}
+                  </>
+                </Tbody>
+              </Table>
+            </Box>
+          </Box>
           {filteredOrders.length === 0 && (
             <Text mt={4}>No orders available.</Text>
           )}
-
-
         </Box>
       )}
     </>

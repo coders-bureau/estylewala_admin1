@@ -116,7 +116,7 @@ const EditProduct = () => {
     // setimg(URL.createObjectURL(e.target.files[0]));
     setNormalImage(false);
     const file = e.target.files[0];
-    console.log(file);
+    // console.log(file);
     setProduct((prevData) => ({
       ...prevData,
       img: file,
@@ -259,8 +259,8 @@ const EditProduct = () => {
     setNormalImage(true);
     setNormalImage1(true);
     const formData = new FormData();
-    formData.append("offerType", product.offerType);
-    formData.append("offerValue", product.offerValue);
+    formData.append("offerType",offerType);
+    formData.append("offerValue", offerValue);
     formData.append("title", product.title);
     formData.append("brand", product.brand);
     formData.append("rating", product.rating);
@@ -270,7 +270,7 @@ const EditProduct = () => {
     formData.append("price", product.price);
     formData.append("MRP", product.MRP);
     // formData.append("discount", product.discount);
-    formData.append("size", product.size);
+    // formData.append("size", product.size);
     product.size.forEach((size) => {
       formData.append("size", size);
     });

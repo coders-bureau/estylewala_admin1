@@ -20,8 +20,10 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
+import LoadingPage from "../Pages/LoadingPage";
 
 const OfferForm = () => {
   const [offerType, setOfferType] = useState("percent");
@@ -40,6 +42,7 @@ const OfferForm = () => {
   }, []);
 
   const fetchOffers = async () => {
+    setisLoading(true);
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_BASE_API}/offer/fetchoffers`
@@ -48,18 +51,22 @@ const OfferForm = () => {
     } catch (error) {
       console.error("Error fetching offers:", error);
     }
+    setisLoading(false);
   };
 
   const handleDeleteOffer = async (offerId) => {
+    setisLoading(true);
     try {
       await axios.delete(
         `${process.env.REACT_APP_BASE_API}/offer/deleteoffer/${offerId}`
       );
       fetchOffers();
       setIsDeleteAlertOpen(false);
+      
     } catch (error) {
       console.error("Error deleting offer:", error);
     }
+    setisLoading(false);
   };
   const handleDeleteCategory = (categoryId) => {
     setDeleteCategoryId(categoryId);
@@ -120,8 +127,11 @@ const OfferForm = () => {
   //   });
   // };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    setisLoading(true);
+    
     try {
+      e.preventDefault();
       // Create a new FormData object
       const formData = new FormData();
       formData.append("type", offerType);
@@ -137,20 +147,39 @@ const OfferForm = () => {
  
       console.log(response.data);
       fetchOffers(); 
+      toast({
+        title: "Offer successfully added ",
+        variant: "top-accent",
+        isClosable: true,
+        position: "top-right",
+        status: "success",
+        duration: 2500,
+      });
       // Reset form fields
       // setOfferType("");
-      setValue("");
-      setText("");
-      setImage(null);
-      setCroppedImage(null);
+      // setValue("");
+      // setText("");
+      // setImage(null);
+      // setCroppedImage(null);
     } catch (error) {
       console.error("Error adding offer:", error);
     }
+    setisLoading(false);
+
   };
+  const toast = useToast();
+  const [isLoading, setisLoading] = useState(false);
+
 console.log(offers);
+if (isLoading)
+    return (
+      <Box height={"200px"}>
+        <LoadingPage />
+      </Box>
+    );
   return (
     <>
-      <Box>
+      <Box as="form" onSubmit={handleSubmit}>
         <FormControl isRequired mb={4}>
           <FormLabel>Offer Type</FormLabel>
           <Select
@@ -200,7 +229,7 @@ console.log(offers);
         </Box>
       )} */}
 
-        <Button mt={4} colorScheme="teal" onClick={handleSubmit}>
+        <Button mt={4} colorScheme="teal" type="submit">
           Add Offer
         </Button>
         {/* <OfferForm /> */}

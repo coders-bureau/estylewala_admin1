@@ -109,27 +109,46 @@ const Signin = () => {
         const config = { headers: { "Contnet-Type": "application/json" } };
         console.log(input);
         axios
-          .post(`${process.env.REACT_APP_BASE_API}/admin/login`, { mobileNumber })
+          .post(`${process.env.REACT_APP_BASE_API}/admin/login`, {
+            mobileNumber,
+          })
           .then((res) => {
             console.log(res);
             const token = res.data.token;
             localStorage.setItem("authToken", token);
             dispatch(login());
+            toast({
+              position: "top",
+              title: `Login successful`,
+              status: "success",
+              isClosable: true,
+              duration: 1500,
+            });
             navigate("/");
             // authii();
           })
-          .catch((error) => console.error("Error Adding User", error));
+          .catch((error) => {
+            setLoading("false");
+            toast({
+              position: "top",
+              title: "Something went wrong. Please reload and try again. Server Issue/Network Issue",
+              status: "error",
+              isClosable: true,
+              duration: 3000,
+            });
+            console.error("Error Adding User", error);
+          });
 
         // dispatch(getUserDetails());
         //   navigate("/otp", { state: comingFrom, replace: true });
-        toast({
-          position: "top",
-          title: `Login successful`,
-          status: "success",
-          isClosable: true,
-          duration: 1500,
-        });
-        
+        // toast({
+        //   position: "top",
+        //   title: `Login successful`,
+        //   status: "success",
+        //   isClosable: true,
+        //   duration: 1500,
+        // });
+
         // console.log(comingFrom);
         setLoading("false");
       })

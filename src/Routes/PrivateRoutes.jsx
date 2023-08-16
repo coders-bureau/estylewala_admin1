@@ -44,7 +44,7 @@ export const PrivateRoute = ({ children }) => {
         // setisAuth(false);
         console.error("Error: ", error);
         // dispatch(login("logout"));
-        localStorage.clear();
+        // localStorage.clear();
       });
   }
   // console.log(isAuth);

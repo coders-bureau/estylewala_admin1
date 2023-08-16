@@ -120,8 +120,9 @@ const ProductListPage = () => {
       ) : (
         <Box
           marginTop={"20px"}
-          marginLeft={{ lg: "250px", md: "250px", base: "0px" }}
+          marginLeft={{ lg: "250px", md: "250px", base: "10px" }}
           marginRight={"10px"}
+          overflowX={"auto"}
         >
           {products.length > 0 ? (
             <Table variant="striped" colorScheme="gray">
