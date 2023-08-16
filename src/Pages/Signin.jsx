@@ -225,7 +225,7 @@ const Signin = () => {
   // console.log(value);
   return (
     <>
-      <button
+      {/* <button
         onClick={() => {
           axios
             .post(`${process.env.REACT_APP_BASE_API}/admin/login`, {
@@ -261,7 +261,7 @@ const Signin = () => {
         }}
       >
         click me to buypass login
-      </button>
+      </button> */}
       {/* <button onClick={authii}>authii</button> */}
       {!viewOtpForm ? (
         <Box>

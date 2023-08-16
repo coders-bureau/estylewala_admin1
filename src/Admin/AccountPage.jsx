@@ -1,12 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Center, Text, Button, Input, useToast } from '@chakra-ui/react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Center,
+  Text,
+  Button,
+  Input,
+  useToast,
+  VStack,
+  Flex,
+} from "@chakra-ui/react";
+import axios from "axios";
+import AdminNavbar from "./AdminNavbar";
 
 const AccountPage = () => {
   const [adminInfo, setAdminInfo] = useState({
-    name: '',
-    email: '',
-    mobileNumber: '',
+    name: "",
+    email: "",
+    mobileNumber: "",
   });
   const toast = useToast();
 
@@ -16,10 +26,12 @@ const AccountPage = () => {
 
   const fetchAdminInfo = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BASE_API}/admin/adminloginstatus`); // Modify the endpoint accordingly
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_API}/admin/adminloginstatus`
+      ); // Modify the endpoint accordingly
       setAdminInfo(response.data.data);
     } catch (error) {
-      console.error('Error fetching admin info:', error);
+      console.error("Error fetching admin info:", error);
     }
   };
 
@@ -33,9 +45,11 @@ const AccountPage = () => {
 
   const handleUpdateProfile = async () => {
     try {
-      await axios.put(`${process.env.REACT_APP_BASE_API}/admin/profileupdate`
-      , adminInfo); // Modify the endpoint accordingly
-      console.log('Profile updated successfully');
+      await axios.put(
+        `${process.env.REACT_APP_BASE_API}/admin/profileupdate`,
+        adminInfo
+      ); // Modify the endpoint accordingly
+      console.log("Profile updated successfully");
       toast({
         position: "top",
         title: `Profile updated successfully`,
@@ -43,26 +57,33 @@ const AccountPage = () => {
         isClosable: true,
         duration: 1500,
       });
-      fetchAdminInfo()
+      fetchAdminInfo();
     } catch (error) {
-        toast({
-            position: "top",
-            title: `Error in Updating`,
-            status: "Error",
-            isClosable: true,
-            duration: 1500,
-          });
-      console.error('Error updating profile:', error);
+      toast({
+        position: "top",
+        title: `Error in Updating`,
+        status: "Error",
+        isClosable: true,
+        duration: 1500,
+      });
+      console.error("Error updating profile:", error);
     }
   };
 
   return (
     <Center minHeight="100vh">
-      <Box borderWidth="1px" p="4" rounded="md" width="400px">
+      <AdminNavbar />
+      {/* <Box borderWidth="1px" p="4" rounded="md" width="400px">
         <Text fontSize="xl" fontWeight="bold" mb="4">
           Account Details
-        </Text>
-        <Input
+        </Text> */}
+      {/* <VStack gap={10}> */}
+      {/* <Text margin={5}>{adminInfo.name}</Text>
+          <Text>{adminInfo.email}</Text>
+          <Text>{adminInfo.mobileNumber}</Text> */}
+      {/* </VStack> */}
+
+      {/* <Input
           name="name"
           value={adminInfo.name}
           onChange={handleInputChange}
@@ -82,10 +103,28 @@ const AccountPage = () => {
           onChange={handleInputChange}
           placeholder="Mobile Number"
           mb="4"
-        />
-        <Button colorScheme="blue" onClick={handleUpdateProfile}>
+        /> */}
+      {/* <Button colorScheme="blue" onClick={handleUpdateProfile}>
           Update Profile
-        </Button>
+        </Button> */}
+      {/* </Box> */}
+      <Box
+        bg="white"
+        boxShadow="xl"
+        p={6}
+        rounded="md"
+        w={["90%", "70%", "30%"]}
+      >
+        <VStack spacing={4}>
+          <Text fontSize="xl" fontWeight="bold">
+            Profile Details
+          </Text>
+          <Flex direction="column" alignItems="flex-start">
+            <Text>Name: {adminInfo.name}</Text>
+            <Text>Email: {adminInfo.email}</Text>
+            <Text>Mobile Number: {adminInfo.mobileNumber}</Text>
+          </Flex>
+        </VStack>
       </Box>
     </Center>
   );

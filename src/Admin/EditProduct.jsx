@@ -75,9 +75,9 @@ const EditProduct = () => {
   const fetchOffers = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BASE_API}/admin/fetchoffers`
+        `${process.env.REACT_APP_BASE_API}/offer/fetchoffers`
       );
-      setOffers(response.data);
+      setOffers(response.data.data);
     } catch (error) {
       console.error("Error fetching offers:", error);
     }
@@ -219,7 +219,40 @@ const EditProduct = () => {
     }
   };
   const [offers, setOffers] = useState([]);
+  const [offerType, setOfferType] = useState("");
+  const [offerValue, setOfferValue] = useState("");
+  const [discountedPrice, setDiscountedPrice] = useState(product.price);
+  const handleOfferChange = (text1) => {
+    const selectedOffer = offers?.find((o) => o.text === text1);
+    // console.log(kuch);
+    setOfferType(selectedOffer.type);
+    setOfferValue(selectedOffer.value);
 
+    if (selectedOffer.type === "percent") {
+      const discountAmount = (selectedOffer.value / 100) * product.price;
+      // setDiscountedPrice(product.price - discountAmount);
+      setProduct((prev)=> ({
+        ...prev,
+        discount:(product.price - discountAmount)
+      }));
+      // setProductData(productData.discount=discountedPrice);
+    } else if (selectedOffer.type === "flat") {
+      // setDiscountedPrice(product.price - selectedOffer.value);
+      setProduct((prev)=> ({
+        ...prev,
+        discount:(product.price - selectedOffer.value)
+      }));
+      // setProductData(productData.discount=discountedPrice);
+    } else {
+      // setDiscountedPrice(product.price);
+      setProduct((prev)=> ({
+        ...prev,
+        discount:product.price
+      }));
+      // setProductData(productData.price);
+    }
+    
+  };
   const handleUpdateProduct = async (e) => {
     setisLoading(true);
     e.preventDefault();
@@ -407,34 +440,38 @@ const EditProduct = () => {
 
             <FormControl>
               <FormLabel>Offers:</FormLabel>
-              <select
+              <Select
                 name="offerType"
-                value={product.offerType}
-                onChange={handleInputChange}
+                // value={productData.offerType}
+                onChange={(e) => {
+                  handleOfferChange(e.target.value);
+                }}
               >
                 <option value="">Select Offer Type</option>
                 {offers.map((offer) => (
-                  <option key={offer._id} value={offer.type}>
-                    {offer.type}
+                  <option key={offer._id} value={offer.text}>
+                    {offer.text}
                   </option>
                 ))}
-              </select>
-              <select
-                disabled={!product.offerType}
+              </Select>
+
+              {/* <select
+                disabled={!productData.offerType}
                 name="offerValue"
-                value={product.offerValue}
+                value={productData.offerValue}
                 onChange={handleInputChange}
               >
                 <option value="">Select Offer Value</option>
-                {product.offerType &&
+                {productData.offerType &&
                   offers
-                    ?.find((o) => o.type === product.offerType)
+                    ?.find((o) => o.type === productData.offerType)
                     ?.values?.map((value) => (
                       <option key={value} value={value}>
                         {value}
                       </option>
                     ))}
-              </select>
+                    
+              </select> */}
             </FormControl>
 
             <FormControl mb={4}>
@@ -443,7 +480,7 @@ const EditProduct = () => {
                 type="number"
                 name="discount"
                 value={product.discount}
-                onChange={handleInputChange}
+                // onChange={handleInputChange}
                 required
                 isDisabled
               />

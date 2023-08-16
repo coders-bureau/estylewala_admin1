@@ -21,6 +21,7 @@ import {
   FormControl,
   Input,
   useToast,
+  Image,
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import axios from "axios";
@@ -34,6 +35,7 @@ const CategoriesPage = () => {
   const [newCategoryName, setNewCategoryName] = useState("");
   const [updatedCategories, setUpdatedCategories] = useState("");
   const [isLoading, setisLoading] = useState(false);
+  const [image, setImage] = useState(null);
 
   const toast = useToast();
   useEffect(() => {
@@ -53,7 +55,11 @@ const CategoriesPage = () => {
       setisLoading(false);
     }
   };
-
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+  };
+  console.log(image);
   const handleEditCategory = async (categoryId, newType) => {
     try {
       setisLoading(true);
@@ -79,13 +85,13 @@ const CategoriesPage = () => {
         .catch(() => {
           setisLoading(false);
 
-          toast({
-            position: "top",
-            title: `Error in adding successfully`,
-            status: "Error",
-            isClosable: true,
-            duration: 1500,
-          });
+          // toast({
+          //   position: "top",
+          //   title: `Error in adding successfully`,
+          //   status: "Error",
+          //   isClosable: true,
+          //   duration: 1500,
+          // });
         });
       setUpdatedCategories("");
 
@@ -127,9 +133,15 @@ const CategoriesPage = () => {
   const handleAddCategory = async (name) => {
     try {
       setisLoading(true);
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("image", image);
+      console.log("firm data", formData);
       const response = await axios
-        .post(`${process.env.REACT_APP_BASE_API}/category/add`, {
-          name,
+        .post(`${process.env.REACT_APP_BASE_API}/category/add`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         })
         .then(() => {
           fetchCategories();
@@ -145,13 +157,13 @@ const CategoriesPage = () => {
         .catch(() => {
           setisLoading(false);
 
-          toast({
-            position: "top",
-            title: `Error in adding successfully`,
-            status: "Error",
-            isClosable: true,
-            duration: 1500,
-          });
+          // toast({
+          //   position: "top",
+          //   title: `Error in adding successfully`,
+          //   status: "Error",
+          //   isClosable: true,
+          //   duration: 1500,
+          // });
         });
 
       setNewCategoryName("");
@@ -161,7 +173,7 @@ const CategoriesPage = () => {
       // ...
     }
   };
-  console.log(updatedCategories);
+  console.log(categories);
 
   return (
     <>
@@ -186,6 +198,7 @@ const CategoriesPage = () => {
                   <Tr>
                     <Th>Name</Th>
                     <Th>Update Text</Th>
+                    <Th>Image</Th>
                     <Th>Actions</Th>
                   </Tr>
                 </Thead>
@@ -204,15 +217,27 @@ const CategoriesPage = () => {
                         />
                       </Td>
                       <Td>
-                        <IconButton
-                          icon={<EditIcon />}
+                        <Image
+                          src={
+                            process.env.REACT_APP_BASE_API +
+                            `/${category.image}`
+                          }
+                          boxSize="50px"
+                          objectFit="cover"
+                          alt={`Offer ${category._id}`}
+                        />
+                      </Td>
+                      <Td>
+                        <Button
+                          // icon={<EditIcon />}
+                          
                           colorScheme="blue"
                           size="sm"
                           mr={2}
                           onClick={() =>
                             handleEditCategory(category._id, updatedCategories)
                           }
-                        />
+                        >Update</Button>
                         <IconButton
                           icon={<DeleteIcon />}
                           colorScheme="red"
@@ -236,6 +261,14 @@ const CategoriesPage = () => {
                   w={200}
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
+                />
+              </FormControl>
+              <FormControl isRequired mb={4}>
+                <FormLabel>Image</FormLabel>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
                 />
               </FormControl>
               {/* <FormControl>

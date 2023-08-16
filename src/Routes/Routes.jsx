@@ -18,6 +18,7 @@ import ReportsPage from "../Admin/ReportsPage";
 import OfferPage from "../Admin/OfferPage";
 import AccountPage from "../Admin/AccountPage";
 import AdminNavbar from "../Admin/AdminNavbar";
+import SliderPage from "../Admin/SliderPage";
 
 // import AddProductsPage from '../Admin/AddProductsPage';
 // import UsersPage from "../Admin/UsersPage";
@@ -34,6 +35,14 @@ export const MainRoutes = () => {
       <Routes>
         <Route path="/chart" element={<OrderBarChart />} />
         <Route path="/login" element={<Signin />} />
+        <Route
+          path="/slider"
+          element={
+            <PrivateRoute>
+              <SliderPage />
+            </PrivateRoute>
+          }
+        ></Route>
         <Route
           path="/size"
           element={

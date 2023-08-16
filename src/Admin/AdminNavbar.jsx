@@ -32,7 +32,7 @@ import {
 
 import { FiMenu } from "react-icons/fi";
 import { AiFillFileAdd, AiFillFolder, AiFillHome } from "react-icons/ai";
-import { BsFillBellFill } from "react-icons/bs";
+import { BsFillBellFill, BsFillImageFill } from "react-icons/bs";
 import { HiFolderAdd, HiOutlineUser } from "react-icons/hi";
 import { ImMan, ImWoman } from "react-icons/im";
 import { TbRulerMeasure } from "react-icons/tb";
@@ -117,6 +117,7 @@ const LinkItems = [
   { name: "Size", icon: TbRulerMeasure, path: "/size" },
   { name: "Account", icon: RiAccountPinCircleFill, path: "/admin-profile" },
   { name: "Offer", icon: BiSolidOffer, path: "/offers" },
+  { name: "Slider", icon: BsFillImageFill, path: "/slider" },
 
   // { name: 'Logout', icon: RiLogoutCircleFill, path: '/' }
 ];
@@ -161,7 +162,7 @@ export default function AdminNavbar({ children }) {
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} onClose={onClose} name={"admin"} />
-      <Box ml={{ base: 0, md: 56 }} p="4">
+      <Box ml={{ base: 0, md: 56 }}>
         {children}
       </Box>
     </Box>
@@ -357,7 +358,7 @@ const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
   };
   const handleLogin = () => {
     navigate("/login");
-  }
+  };
   return (
     <Flex
       ml={{ base: 0, md: 56 }}
@@ -386,31 +387,42 @@ const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
           display={{ base: "flex", md: "none" }}
         />
       </a>
-
-      <HStack spacing={{ base: 0, md: 3 }} mr={{ base: 3, md: 8 }}>
+      <Button
+        textColor={"white"}
+        _hover={{
+          bg: "#72749B",
+          color: "white",
+        }}
+        bgColor={"#ff3e6c"}
+        mx={6}
+        onClick={isAuth ? handleLogOut : handleLogin}
+      >
+        {isAuth ? "Logout" : "Login"}
+      </Button>
+      {/* <HStack spacing={{ base: 0, md: 3 }} mr={{ base: 3, md: 8 }}> */}
         {/* <IconButton
           size="lg"
           variant="ghost"
           aria-label="open menu"
           icon={<BsFillBellFill />}
         /> */}
-        <Flex alignItems={"center"}>
-          <Menu>
+        {/* <Flex alignItems={"center"}> */}
+          {/* <Menu>
             <MenuButton
               py={2}
               transition="all 0.3s"
               _focus={{ boxShadow: "none" }}
             >
               <HStack>
-                {/* <Avatar size={"sm"} src={"/AdminProfile"}>
+                <Avatar size={"sm"} src={"/AdminProfile"}>
                   <AvatarBadge boxSize="1em" bg="green.500" />
-                </Avatar> */}
+                </Avatar>
                 <VStack
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"
                   spacing="1px"
-                >
-                  {/* <Text
+                > */}
+          {/* <Text
                     fontSize={"sm"}
                     fontWeight={500}
                     fontFamily={"sans-serif"}
@@ -420,7 +432,7 @@ const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
                   <Text fontSize={"xs"} fontWeight={500} color="gray.600">
                     Admin
                   </Text> */}
-                  {/* <VStack spacing={"3px"}>
+          {/* <VStack spacing={"3px"}>
                     <Menu>
                     <MenuButton onMouseEnter={onOpen} onMouseLeave={onClose}>
                     <VStack
@@ -490,24 +502,12 @@ const MobileNav = ({ onOpen, onClose, name, ...rest }) => {
                       </MenuList>
                     </Menu>
                   </VStack> */}
-                </VStack>
+          {/* </VStack>
               </HStack>
             </MenuButton>
-          </Menu>
-          <Button
-            textColor={"white"}
-            _hover={{
-              bg: "#72749B",
-              color: "white",
-            }}
-            bgColor={"#ff3e6c"}
-            mx={6}
-            onClick={isAuth ? handleLogOut : handleLogin}
-          >
-            {isAuth ? "Logout" : "Login"}
-          </Button>
-        </Flex>
-      </HStack>
+          </Menu> */}
+        {/* </Flex> */}
+      {/* </HStack> */}
     </Flex>
   );
 };

@@ -24,10 +24,27 @@ import LoadingPage from "../Pages/LoadingPage";
 import PageNotFound from "../Pages/PageNotFound";
 import CategoryDropdown from "./CategoryDropdown";
 // import { sizeOptions } from "../Constants/costant";
-
 const AddProductPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const [productData, setProductData] = useState({
+    title: "",
+    brand: "",
+    // rating: 0,
+    // ratingT: 0,
+    category: "",
+    type: "",
+    price: "",
+    MRP: "",
+    discount: "",
+    offerType: "", // Add offerType field
+    offerValue: "", // Add offerValue field
+    size: [],
+    currentSize: "",
+    img: null, // Main image link
+    images: [], // Array of additional image links
+    // reviews: [],
+  });
   const [isLoading, setisLoading] = useState(false);
   const [showimages, setshowimages] = useState([]);
   const [showImageWarning, setShowImageWarning] = useState(false);
@@ -35,7 +52,28 @@ const AddProductPage = () => {
   const [sizeOptions, setSizeOptions] = useState({});
   const [selectedCategory, setSelectedCategory] = useState("");
   const [offers, setOffers] = useState([]);
+  const [offerType, setOfferType] = useState("");
+  const [offerValue, setOfferValue] = useState("");
+  const [discountedPrice, setDiscountedPrice] = useState(productData.price);
+  console.log(discountedPrice);
+  const handleOfferChange = (text1) => {
+    const selectedOffer = offers?.find((o) => o.text === text1);
+    // console.log(kuch);
+    setOfferType(selectedOffer.type);
+    setOfferValue(selectedOffer.value);
 
+    if (selectedOffer.type === "percent") {
+      const discountAmount = (selectedOffer.value / 100) * productData.price;
+      setDiscountedPrice(productData.price - discountAmount);
+      // setProductData(productData.discount=discountedPrice);
+    } else if (selectedOffer.type === "flat") {
+      setDiscountedPrice(productData.price - selectedOffer.value);
+      // setProductData(productData.discount=discountedPrice);
+    } else {
+      setDiscountedPrice(productData.price);
+      // setProductData(productData.price);
+    }
+  };
   const handleSelectCategory = (category) => {
     setSelectedCategory(category);
     setProductData((prevProductData) => ({
@@ -52,9 +90,9 @@ const AddProductPage = () => {
   const fetchOffers = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BASE_API}/admin/fetchoffers`
+        `${process.env.REACT_APP_BASE_API}/offer/fetchoffers`
       );
-      setOffers(response.data);
+      setOffers(response.data.data);
     } catch (error) {
       console.error("Error fetching offers:", error);
     }
@@ -72,24 +110,6 @@ const AddProductPage = () => {
       });
   };
 
-  const [productData, setProductData] = useState({
-    title: "",
-    brand: "",
-    // rating: 0,
-    // ratingT: 0,
-    category: "",
-    type: "Men",
-    price: "",
-    MRP: "",
-    discount: "",
-    offerType: "", // Add offerType field
-    offerValue: "", // Add offerValue field
-    size: [],
-    currentSize: "",
-    img: null, // Main image link
-    images: [], // Array of additional image links
-    // reviews: [],
-  });
   console.log(productData);
 
   const handleInputChange = (event) => {
@@ -226,9 +246,9 @@ const AddProductPage = () => {
     formData.append("type", productData.type);
     formData.append("price", productData.price);
     formData.append("MRP", productData.MRP);
-    // formData.append("discount", productData.discount);
-    formData.append("offerType",productData.offerType);
-    formData.append("offerValue",productData.offerValue);
+    formData.append("discount", discountedPrice);
+    formData.append("offerType", offerType);
+    formData.append("offerValue", offerValue);
 
     productData.size.forEach((size) => {
       formData.append("size", size);
@@ -339,7 +359,8 @@ const AddProductPage = () => {
       <VStack spacing={4} align="center">
         <Box
           marginTop={"20px"}
-          marginLeft={{ lg: "250px", md: "250px", base: "10px" }}
+          marginLeft={{ lg: "250px", md: "250px", base: "20px" }}
+          marginRight={"20px"}
           as="form"
           onSubmit={handleSubmit}
           w="70%"
@@ -371,6 +392,10 @@ const AddProductPage = () => {
                 value={productData.type}
                 onChange={handleChange}
               >
+                <option value="" disabled>
+                  Select a Type
+                </option>
+
                 <option value="Men">Men</option>
                 <option value="Women">Women</option>
                 <option value="Kids">Kids</option>
@@ -405,58 +430,53 @@ const AddProductPage = () => {
                 onChange={handleChange}
               />
             </FormControl>
-            {/* <FormControl isRequired>
-              <FormLabel>Discount:</FormLabel>
-              <Input
-                type="number"
-                name="discount"
-                value={productData.discount}
-                onChange={handleChange}
-              />
-            </FormControl> */}
 
             {/* <text>erwre </text> */}
             <FormControl>
-            <FormLabel>Offers:</FormLabel>
-            <select
-              name="offerType"
-              value={productData.offerType}
-              onChange={handleInputChange}
-            >
-              <option value="">Select Offer Type</option>
-              {offers.map((offer) => (
-                <option key={offer._id} value={offer.type}>
-                  {offer.type}
-                </option>
-              ))}
-            </select>
-            <select
-              disabled={!productData.offerType}
-              name="offerValue"
-              value={productData.offerValue}
-              onChange={handleInputChange}
-            >
-              <option value="">Select Offer Value</option>
-              {productData.offerType &&
-                offers
-                  ?.find((o) => o.type === productData.offerType)
-                  ?.values?.map((value) => (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
-                  ))}
-            </select>
-            </FormControl>
-            {/* <FormControl isRequired>
               <FormLabel>Offers:</FormLabel>
+              <Select
+                name="offerType"
+                // value={productData.offerType}
+                onChange={(e) => {
+                  handleOfferChange(e.target.value);
+                }}
+              >
+                <option value="">Select Offer Type</option>
+                {offers.map((offer) => (
+                  <option key={offer._id} value={offer.text}>
+                    {offer.text}
+                  </option>
+                ))}
+              </Select>
+
+              {/* <select
+                disabled={!productData.offerType}
+                name="offerValue"
+                value={productData.offerValue}
+                onChange={handleInputChange}
+              >
+                <option value="">Select Offer Value</option>
+                {productData.offerType &&
+                  offers
+                    ?.find((o) => o.type === productData.offerType)
+                    ?.values?.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                    
+              </select> */}
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Final Price:</FormLabel>
               <Input
+                isdisabled
                 type="number"
                 name="discount"
-                value={productData.discount}
+                value={discountedPrice}
                 onChange={handleChange}
               />
-            </FormControl> */}
-            {/* Add other fields */}
+            </FormControl>
             <FormControl isRequired>
               <FormLabel>Main Image:</FormLabel>
               <HStack>
@@ -477,8 +497,6 @@ const AddProductPage = () => {
                 <Text color="red">Please select an image</Text>
               )}
             </FormControl>
-
-            {/* <input type="file" accept="image/*" onChange={handleImageChange} /> */}
 
             {/* Render input for additional images */}
 
@@ -510,8 +528,6 @@ const AddProductPage = () => {
               )}
             </FormControl>
 
-            {/* <input type="file" accept="image/*" onChange={handleAddImage} /> */}
-
             {Object.entries(sizeOptions).map(([category, sizes]) => (
               <FormControl key={category}>
                 <FormLabel>
@@ -537,7 +553,20 @@ const AddProductPage = () => {
               </FormControl>
             ))}
 
-            {/* <div>
+            <Spacer />
+            <Button type="submit">Add Product</Button>
+            <Spacer />
+          </VStack>
+        </Box>
+      </VStack>
+    </Box>
+  );
+};
+
+export default AddProductPage;
+
+{
+  /* <div>
               <label>Main Image:</label>
               <input
                 type="file"
@@ -555,8 +584,10 @@ const AddProductPage = () => {
                 onChange={handleImageChange}
                 required
               />
-            </div> */}
-            {/* <FormControl isRequired>
+            </div> */
+}
+{
+  /* <FormControl isRequired>
               <FormLabel>Main Image Link:</FormLabel>
               <Input
                 type="text"
@@ -586,11 +617,19 @@ const AddProductPage = () => {
               <Button type="button" onClick={handleAddImage}>
                 +
               </Button>
-            </FormControl>{" "} */}
-            {/* ... (rest of the code remains the same) */}
-            {/* <input type="file" accept="image/*" onChange={handleImageChange} /> */}
-            {/* Render input for additional images */}
-            {/* {productData.images.map((image, index) => (
+            </FormControl>{" "} */
+}
+{
+  /* ... (rest of the code remains the same) */
+}
+{
+  /* <input type="file" accept="image/*" onChange={handleImageChange} /> */
+}
+{
+  /* Render input for additional images */
+}
+{
+  /* {productData.images.map((image, index) => (
               <div key={index}>
                 <img
                   src={URL.createObjectURL(image)}
@@ -603,16 +642,8 @@ const AddProductPage = () => {
                 </button>
               </div>
             ))}
-            <input type="file" accept="image/*" onChange={handleAddImage} /> */}
-            {/* <img src={URL.createObjectURL(productData.img)} width="100px" height="100px" /> */}
-            <Spacer />
-            <Button type="submit">Add Product</Button>
-            <Spacer />
-          </VStack>
-        </Box>
-      </VStack>
-    </Box>
-  );
-};
-
-export default AddProductPage;
+            <input type="file" accept="image/*" onChange={handleAddImage} /> */
+}
+{
+  /* <img src={URL.createObjectURL(productData.img)} width="100px" height="100px" /> */
+}

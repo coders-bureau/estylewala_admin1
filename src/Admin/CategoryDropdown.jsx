@@ -27,14 +27,14 @@ console.log(categories);
   };
 
   return (
-    <select value={selectedCategory} onChange={handleCategoryChange}>
+    <Select value={selectedCategory} onChange={handleCategoryChange}>
       <option value="" disabled>Select a category</option>
       {categories.map((category) => (
         <option key={category._id} value={category.name}>
           {category.name}
         </option>
       ))}
-    </select>
+    </Select>
   );
 };
 

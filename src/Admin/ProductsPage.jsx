@@ -27,10 +27,9 @@ const ProductsPage = () => {
       </Box> */}
             {showAddProduct ? (
         <Box
-          textAlign={"left"}
-          marginLeft={"270px"}
-          // my={"20px"}
-          marginTop={{ lg: "110px", md: "110px", base: "110px" }}
+        marginTop={"20px"}
+        marginLeft={{ lg: "250px", md: "250px", base: "20px" }}
+        marginRight={"20px"}
         >
           <Button
             _hover={{
