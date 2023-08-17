@@ -25,7 +25,6 @@ export const PrivateRoute = ({ children }) => {
   //   });
 
   const auth_token = localStorage.getItem("authToken");
-  axios.defaults.headers.common["auth_token"] = `${auth_token}`;
   const config = {
     headers: {
       auth_token: `${auth_token}`,
@@ -33,8 +32,9 @@ export const PrivateRoute = ({ children }) => {
     },
   };
   if (auth_token) {
+    axios.defaults.headers.common["auth_token"] = `${auth_token}`;
     axios
-      .get(`${process.env.REACT_APP_BASE_API}/admin/adminloginstatus`, config)
+      .get(`${process.env.REACT_APP_BASE_API}/admin/adminloginstatus`)
       .then((response) => {
         // setisAuth(true);
         dispatch(login());
@@ -43,8 +43,8 @@ export const PrivateRoute = ({ children }) => {
       .catch((error) => {
         // setisAuth(false);
         console.error("Error: ", error);
-        // dispatch(login("logout"));
-        // localStorage.clear();
+        dispatch(login("logout"));
+        localStorage.clear();
       });
   }
   // console.log(isAuth);

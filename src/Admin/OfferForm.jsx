@@ -36,11 +36,11 @@ const OfferForm = () => {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   const [deleteCategoryId, setDeleteCategoryId] = useState(null);
   console.log(offerType,value,text,image);
+
   useEffect(() => {
     // Fetch offers from the backend
     fetchOffers();
   }, []);
-
   const fetchOffers = async () => {
     setisLoading(true);
     try {
@@ -53,7 +53,6 @@ const OfferForm = () => {
     }
     setisLoading(false);
   };
-
   const handleDeleteOffer = async (offerId) => {
     setisLoading(true);
     try {
@@ -75,6 +74,46 @@ const OfferForm = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
+  };
+  const handleSubmit = async (e) => {
+    setisLoading(true);
+    
+    try {
+      e.preventDefault();
+      // Create a new FormData object
+      const formData = new FormData();
+      formData.append("type", offerType);
+      formData.append("value", value);
+      formData.append("text", text);
+      formData.append("image", image);
+
+      // Send the form data to the backend using axios or any other HTTP library
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_API}/offer/addoffer`,
+        formData
+      );
+ 
+      console.log(response.data);
+      fetchOffers(); 
+      toast({
+        title: "Offer successfully added ",
+        variant: "top-accent",
+        isClosable: true,
+        position: "top-right",
+        status: "success",
+        duration: 2500,
+      });
+      // Reset form fields
+      // setOfferType("");
+      // setValue("");
+      // setText("");
+      // setImage(null);
+      // setCroppedImage(null);
+    } catch (error) {
+      console.error("Error adding offer:", error);
+    }
+    setisLoading(false);
+
   };
 
   //   const handleCropComplete = async (croppedArea, croppedAreaPixels) => {
@@ -127,46 +166,6 @@ const OfferForm = () => {
   //   });
   // };
 
-  const handleSubmit = async (e) => {
-    setisLoading(true);
-    
-    try {
-      e.preventDefault();
-      // Create a new FormData object
-      const formData = new FormData();
-      formData.append("type", offerType);
-      formData.append("value", value);
-      formData.append("text", text);
-      formData.append("image", image);
-
-      // Send the form data to the backend using axios or any other HTTP library
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_API}/offer/addoffer`,
-        formData
-      );
- 
-      console.log(response.data);
-      fetchOffers(); 
-      toast({
-        title: "Offer successfully added ",
-        variant: "top-accent",
-        isClosable: true,
-        position: "top-right",
-        status: "success",
-        duration: 2500,
-      });
-      // Reset form fields
-      // setOfferType("");
-      // setValue("");
-      // setText("");
-      // setImage(null);
-      // setCroppedImage(null);
-    } catch (error) {
-      console.error("Error adding offer:", error);
-    }
-    setisLoading(false);
-
-  };
   const toast = useToast();
   const [isLoading, setisLoading] = useState(false);
 

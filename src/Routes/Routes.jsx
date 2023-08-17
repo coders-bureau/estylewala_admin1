@@ -54,9 +54,9 @@ export const MainRoutes = () => {
         <Route
           path="/"
           element={
-            // <PrivateRoute>
-            <AdminDashboard />
-            // </PrivateRoute>
+            <PrivateRoute>
+              <AdminDashboard />
+            </PrivateRoute>
           }
         />
         <Route
