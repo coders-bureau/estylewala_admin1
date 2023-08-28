@@ -246,7 +246,7 @@ if (isLoading)
               p="4"
               my="2"
             >
-              <Text>Type: {offer.offertype}</Text>
+              <Text>Type: {offer.type}</Text>
               <Text>Value: {offer.value}</Text>
               <Text>Text: {offer.text}</Text>
               <Image

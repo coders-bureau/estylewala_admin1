@@ -19,6 +19,7 @@ import OfferPage from "../Admin/OfferPage";
 import AccountPage from "../Admin/AccountPage";
 import AdminNavbar from "../Admin/AdminNavbar";
 import SliderPage from "../Admin/SliderPage";
+import Barg from "../Pages/Barg";
 
 // import AddProductsPage from '../Admin/AddProductsPage';
 // import UsersPage from "../Admin/UsersPage";
@@ -34,6 +35,8 @@ export const MainRoutes = () => {
       {/* <AdminNavbar /> */}
       <Routes>
         <Route path="/chart" element={<OrderBarChart />} />
+        <Route path="/bar" element={<Barg />} />
+
         <Route path="/login" element={<Signin />} />
         <Route
           path="/slider"

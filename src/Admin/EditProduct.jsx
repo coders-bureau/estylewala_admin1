@@ -221,12 +221,18 @@ const EditProduct = () => {
   const [offers, setOffers] = useState([]);
   const [offerType, setOfferType] = useState("");
   const [offerValue, setOfferValue] = useState("");
+  const [offerName, setOfferName] = useState("");
+
   const [discountedPrice, setDiscountedPrice] = useState(product.price);
   const handleOfferChange = (text1) => {
     const selectedOffer = offers?.find((o) => o.text === text1);
-    // console.log(kuch);
+    console.log(selectedOffer);
+
     setOfferType(selectedOffer.type);
     setOfferValue(selectedOffer.value);
+    setOfferName(selectedOffer.text)
+    console.log(offerType,offerName,offerValue);
+
 
     if (selectedOffer.type === "percent") {
       const discountAmount = (selectedOffer.value / 100) * product.price;
@@ -259,8 +265,7 @@ const EditProduct = () => {
     setNormalImage(true);
     setNormalImage1(true);
     const formData = new FormData();
-    formData.append("offerType",offerType);
-    formData.append("offerValue", offerValue);
+
     formData.append("title", product.title);
     formData.append("brand", product.brand);
     formData.append("rating", product.rating);
@@ -284,6 +289,9 @@ const EditProduct = () => {
       formData.append("images", image);
     });
     formData.append("reviews", product.reviews);
+    formData.append("offerType",offerType);
+    formData.append("offerValue", offerValue);
+    formData.append("offerName", offerName);
     // Append the additional images to the FormData
     // for (let i = 0; i < product.images.length; i++) {
     //   formData.append('images', product.images[i]);

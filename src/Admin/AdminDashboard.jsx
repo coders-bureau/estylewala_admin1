@@ -17,8 +17,8 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setisLoading] = useState(false);
   const [chartData, setChartData] = useState({});
-  const [months, setMonths] = useState({});
-  const [numbers, setNumber] = useState({});
+  const [months, setMonths] = useState([]);
+  const [numbers, setNumber] = useState([]);
 
   // const Allproducts = useSelector((store) => store.AppReducer);
   useEffect(() => {
@@ -26,34 +26,45 @@ const AdminDashboard = () => {
     fetchProducts();
     // fetchOrders();
     // fetchUsers();
-    // fetchChartData();
+    fetchChartData();
   }, []);
 
   const fetchChartData = async () => {
+    setisLoading(true);
     try {
-      const response = await axios.get(
-        "http://localhost:5000/admin/order/chart"
-      );
-      const data = response.data.chartData;
+      await axios
+        .get("http://localhost:5000/order/chart-data1")
+        .then((response) => {
+          setMonths(response.data.categories);
+          setNumber(response.data.data);
+          console.log(months);
 
-      if (!Array.isArray(data)) {
-        console.error("Invalid chart data received:", data);
-        return;
-      }
-      console.log(data);
-      const months = [];
-      const chartdata = [];
-      const orderCounts = [];
-      data.forEach((entry) => {
-        if (entry.month && entry.count) {
-          months.push(entry.month);
-          orderCounts.push(entry.count);
-          // chartdata.push({ label: entry.month, y: entry.count });
-        }
-      });
-      setMonths(months);
-      setNumber(numbers);
-      console.log(months);
+          // console.log(response.data.data);
+          setisLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching products:", error);
+          setisLoading(false);
+        });
+      // const data = response.data.chartData;
+      // if (!Array.isArray(data)) {
+      //   console.error("Invalid chart data received:", data);
+      //   return;
+      // }
+      // console.log(data);
+      // const months = [];
+      // const chartdata = [];
+      // const orderCounts = [];
+      // data.forEach((entry) => {
+      //   if (entry.month && entry.count) {
+      //     months.push(entry.month);
+      //     orderCounts.push(entry.count);
+      //     // chartdata.push({ label: entry.month, y: entry.count });
+      //   }
+      // });
+      // setMonths(response.data.categories);
+      // setNumber(response.data.data);
+      // console.log(months,numbers);
       // setChartData(chartdata);
 
       //   setChartData({
@@ -190,6 +201,8 @@ const AdminDashboard = () => {
               <Chart
                 type="pie"
                 height={"450px"}
+                // width={{base:"400px"}}
+                
                 series={[kd, md, wd]}
                 options={{
                   noData: { text: "Unavailable" },
@@ -212,16 +225,29 @@ const AdminDashboard = () => {
                   //       opacity: 0.5,
                   //     },
                   labels: ["KIDS-PRODUCTS", "MENS-PRODUCTS", "WOMENS-PRODUCTS"],
+                  responsive: [{
+                    breakpoint: 480,
+                    options: {
+                      chart: {
+                        width: 300
+                      },
+                      legend: {
+                        position: 'bottom'
+                      }
+                    }
+                  }]
                 }}
               ></Chart>
             </Box>
           </HStack>
-          <HStack  display={"block"}
+          <HStack
+            display={"block"}
             ml={{ lg: "250px", md: "250px", base: "0px" }}
             borderRadius={15}
             mt={1}
             mb={4}
-            border="2px solid lightBlue">
+            border="2px solid lightBlue"
+          >
             <Box display={{ lg: "block", md: "block", base: "block" }}>
               <Text
                 ml={20}
@@ -236,10 +262,18 @@ const AdminDashboard = () => {
                 height="450px"
                 series={[
                   {
-                    data: [7, 1, 3, 2, 5, 6],
+                    data:numbers,
                   },
                 ]}
                 options={{
+                  responsive: [{
+                    breakpoint: 480,
+                    options: {
+                      chart: {
+                        height: 350
+                      }
+                    }
+                  }],
                   noData: { text: "Unavailable" },
                   stroke: {
                     lineCap: "round",
@@ -258,8 +292,8 @@ const AdminDashboard = () => {
                     formatter: (val) => `${val}%`,
                   },
                   xaxis: {
-                    // labels: ["Months"],
-                    categories: ["Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+                    // labels: months,
+                    categories: months,
                   },
                 }}
               />

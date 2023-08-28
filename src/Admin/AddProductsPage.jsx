@@ -54,14 +54,15 @@ const AddProductPage = () => {
   const [offers, setOffers] = useState([]);
   const [offerType, setOfferType] = useState("");
   const [offerValue, setOfferValue] = useState("");
+  const [offerName, setOfferName] = useState("");
   const [discountedPrice, setDiscountedPrice] = useState(productData.price);
-  console.log(discountedPrice);
+  console.log(discountedPrice,offerName);
   const handleOfferChange = (text1) => {
     const selectedOffer = offers?.find((o) => o.text === text1);
-    // console.log(kuch);
+    console.log(selectedOffer);
     setOfferType(selectedOffer.type);
     setOfferValue(selectedOffer.value);
-
+    setOfferName(selectedOffer.text)
     if (selectedOffer.type === "percent") {
       const discountAmount = (selectedOffer.value / 100) * productData.price;
       setDiscountedPrice(productData.price - discountAmount);
@@ -249,7 +250,8 @@ const AddProductPage = () => {
     formData.append("discount", discountedPrice);
     formData.append("offerType", offerType);
     formData.append("offerValue", offerValue);
-
+    formData.append("offerName", offerName);
+    
     productData.size.forEach((size) => {
       formData.append("size", size);
     });

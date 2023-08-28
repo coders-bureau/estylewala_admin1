@@ -128,7 +128,7 @@ const Signin = () => {
             // authii();
           })
           .catch((error) => {
-            setLoading("false");
+            setLoading(false);
             toast({
               position: "top",
               title: "Something went wrong. Please reload and try again. Server Issue/Network Issue",
@@ -150,12 +150,12 @@ const Signin = () => {
         // });
 
         // console.log(comingFrom);
-        setLoading("false");
+        setLoading(false);
       })
       .catch((error) => {
         // User couldn't sign in (bad verification code?)
         // ...
-        setLoading("false");
+        setLoading(false);
         // navigate("/");
         toast({
           position: "top",
