@@ -12,5 +12,6 @@ export const sizeOptions = {
       "12-14Y",
       "15-17Y",
     ],
+    gst: [12, 20],
   };
 

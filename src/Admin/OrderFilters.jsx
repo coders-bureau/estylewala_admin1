@@ -19,13 +19,14 @@ import DatePicker from "react-date-picker";
 // import DatePicker from 'react-date-picker/dist/entry.nostyle'; // Import DatePicker
 import "react-date-picker/dist/DatePicker.css";
 
-const OrderFilters = ({ onFilter }) => {
+const OrderFilters = ({ onFilter, selectedTab }) => {
+  console.log(selectedTab);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState(selectedTab);
   const [products, setProducts] = useState([]);
   const [users, setUsers] = useState([]);
 
@@ -34,6 +35,17 @@ const OrderFilters = ({ onFilter }) => {
     fetchProducts();
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    onFilter({
+      orderDate: null,
+      "items.product": null,
+      orderStatus: selectedTab || null,
+      userId: null,
+      startDate: null,
+      endDate: null,
+    });
+  }, [selectedTab]);
 
   const fetchProducts = async () => {
     try {
@@ -62,9 +74,9 @@ const OrderFilters = ({ onFilter }) => {
     }
   };
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
+  // const handleDateChange = (event) => {
+  //   setSelectedDate(date);
+  // };
 
   const handleProductChange = (event) => {
     setSelectedProduct(event.target.value);
@@ -80,7 +92,7 @@ const OrderFilters = ({ onFilter }) => {
 
   const handleFilterSubmit = () => {
     const filters = {
-      orderDate: selectedDate|| null,
+      orderDate: selectedDate || null,
       "items.product": selectedProduct || null,
       orderStatus: selectedStatus || null,
       userId: selectedCustomer || null,
@@ -93,7 +105,7 @@ const OrderFilters = ({ onFilter }) => {
   const handleGenerateReport = async () => {
     try {
       const filters = {
-        orderDate: selectedDate|| null,
+        orderDate: selectedDate || null,
         "items.product": selectedProduct || null,
         orderStatus: selectedStatus || null,
         userId: selectedCustomer || null,
@@ -125,7 +137,7 @@ const OrderFilters = ({ onFilter }) => {
   const handleGenerateReportExcel = async () => {
     try {
       const filters = {
-        orderDate: selectedDate|| null,
+        orderDate: selectedDate || null,
         "items.product": selectedProduct || null,
         orderStatus: selectedStatus || null,
         userId: selectedCustomer || null,
@@ -158,80 +170,83 @@ const OrderFilters = ({ onFilter }) => {
 
   return (
     <VStack align={"flex-start"}>
-      <Stack>
+      <Stack display={{lg:"flex",base:"none"}}>
         <VStack align={"flex-start"}>
-          <Text fontWeight={500}>Date</Text>
-          {/* <DatePicker wrapperClassName="datePicker" dateFormat="dd/MM/yyyy" /> */}
-          <Box bgColor={"white"}>
-            <Input
-              type="date"
-              placeholder="Date"
-              value={selectedDate}
-              onChange={handleDateChange}
-            />
-            {/* <DatePicker value={selectedDate} onChange={handleDateChange} /> */}
-          </Box>
-          {/* <HStack  alignItems={"center"}> */}
-          <Text fontWeight={500}>Date Range</Text>
-          <Stack>
-            <Text>Form:-</Text>
-            <Input
-              type="date"
-              placeholder="Start Date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-            <Text>To:- </Text>
-            <Input
-              type="date"
-              placeholder="End Date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </Stack>
-          {/* </HStack> */}
+          <HStack >
+            <Text fontWeight={500}>Date</Text>
+            <Box bgColor={"white"}>
+              <Input
+                type="date"
+                placeholder="Date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+              />
+            </Box>
+            <Text fontWeight={500}>Date Range</Text>
+            <Stack>
+              <HStack>
+                <Text>Form:-</Text>
+                <Input
+                  type="date"
+                  placeholder="Start Date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </HStack>
+              <HStack>
+                <Text>To:- </Text>
+                <Input
+                  type="date"
+                  placeholder="End Date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </HStack>
+            </Stack>
+          </HStack>
+          <HStack>
+            <Text fontWeight={500}>Products</Text>
 
-          <Text fontWeight={500}>Products</Text>
-
-          <Select
-            w={"50vw"}
-            value={selectedProduct}
-            onChange={handleProductChange}
-          >
-            <option value="">All Products</option>
-            {products.map((product) => (
-              <option key={product._id} value={product._id}>
-                {product.title}
-              </option>
-            ))}
-          </Select>
-          <Text fontWeight={500}>Status</Text>
-          <Select
-            w={"50vw"}
-            value={selectedStatus}
-            onChange={handleStatusChange}
-          >
-            <option value="">All Statuses</option>
-            <option value="processing">Processing</option>
-            <option value="shipped">Shipped</option>
-            <option value="delivered">Delivered</option>
-            <option value="cancelled">Cancelled</option>
-          </Select>
-          <Text fontWeight={500}>Customer</Text>
-          <Select
-            w={"50vw"}
-            value={selectedCustomer}
-            onChange={handleCustomerChange}
-          >
-            <option value="">All Customers</option>
-            {users.map((user) => (
-              <option key={user._id} value={user._id}>
-                {user.mobileNumber} {`:- ${user.name || "-no name-"} `}
-              </option>
-            ))}
-          </Select>
+            <Select
+              w={{ base: "100%", md: "20vw" }} 
+              value={selectedProduct}
+              onChange={handleProductChange}
+            >
+              <option value="">All Products</option>
+              {products.map((product) => (
+                <option key={product._id} value={product._id}>
+                  {product.title}
+                </option>
+              ))}
+            </Select>
+            {/* <Text fontWeight={500}>Status</Text>
+            <Select
+              w={{ base: "100%", md: "20vw" }} 
+              value={selectedStatus}
+              onChange={handleStatusChange}
+            >
+              <option value="">All Statuses</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </Select> */}
+            <Text fontWeight={500}>Customer</Text>
+            <Select
+              w={{ base: "100%", md: "20vw" }} 
+              value={selectedCustomer}
+              onChange={handleCustomerChange}
+            >
+              <option value="">All Customers</option>
+              {users.map((user) => (
+                <option key={user._id} value={user._id}>
+                  {user.mobileNumber} {`:- ${user.name || "-no name-"} `}
+                </option>
+              ))}
+            </Select>
+          </HStack>
         </VStack>
-        <VStack align={"end"}>
+        <VStack align={"flex-start"}>
           <HStack m={10}>
             {/* <Flex mt={4}> */}
             <Button colorScheme="blue" onClick={handleFilterSubmit}>
@@ -246,6 +261,95 @@ const OrderFilters = ({ onFilter }) => {
               Generate Excel
             </Button>
           </HStack>
+        </VStack>
+      </Stack>
+      <Stack display={{lg:"none",base:"flex"}}>
+        <VStack align={"flex-start"}>
+          {/* <HStack > */}
+            <Text fontWeight={500}>Date</Text>
+            <Box bgColor={"white"}>
+              <Input
+                type="date"
+                placeholder="Date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+              />
+            </Box>
+            <Text fontWeight={500}>Date Range</Text>
+            <Stack>
+              <HStack>
+                <Text>Form:-</Text>
+                <Input
+                  type="date"
+                  placeholder="Start Date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </HStack>
+              <HStack>
+                <Text>To:- </Text>
+                <Input
+                  type="date"
+                  placeholder="End Date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </HStack>
+            </Stack>
+          {/* </HStack> */}
+          <Stack>
+            <Text fontWeight={500}>Products</Text>
+            <Select
+              // w={{ base: "100%", md: "20vw" }} 
+              value={selectedProduct}
+              onChange={handleProductChange}
+            >
+              <option value="">All Products</option>
+              {products.map((product) => (
+                <option key={product._id} value={product._id}>
+                  {product.title}
+                </option>
+              ))}
+            </Select>
+            {/* <Text fontWeight={500}>Status</Text>
+            <Select
+              // w={{ base: "100%", md: "20vw" }} 
+              value={selectedStatus}
+              onChange={handleStatusChange}
+            >
+              <option value="">All Statuses</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </Select> */}
+            <Text fontWeight={500}>Customer</Text>
+            <Select
+              // w={{ base: "100%", md: "20vw" }} 
+              value={selectedCustomer}
+              onChange={handleCustomerChange}
+            >
+              <option value="">All Customers</option>
+              {users.map((user) => (
+                <option key={user._id} value={user._id}>
+                  {user.mobileNumber} {`:- ${user.name || "-no name-"} `}
+                </option>
+              ))}
+            </Select>
+          </Stack>
+        </VStack>
+        <VStack align={"end"}>
+          <VStack m={10}>
+            <Button colorScheme="blue" onClick={handleFilterSubmit}>
+              Filter
+            </Button>
+            <Button colorScheme="blue" onClick={handleGenerateReport}>
+              Generate Pdf
+            </Button>
+            <Button colorScheme="green" onClick={handleGenerateReportExcel}>
+              Generate Excel
+            </Button>
+          </VStack>
         </VStack>
       </Stack>
     </VStack>

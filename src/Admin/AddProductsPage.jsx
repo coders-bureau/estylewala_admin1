@@ -15,19 +15,32 @@ import {
   useToast,
   IconButton,
   Image,
+  Textarea,
+  Flex,
 } from "@chakra-ui/react";
+import { ChromePicker, SketchPicker } from "react-color";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
 import AdminNavbar from "./AdminNavbar";
-import { CloseIcon } from "@chakra-ui/icons";
+import { CloseIcon, DeleteIcon } from "@chakra-ui/icons";
 import LoadingPage from "../Pages/LoadingPage";
 import PageNotFound from "../Pages/PageNotFound";
 import CategoryDropdown from "./CategoryDropdown";
+import { FaTimes } from "react-icons/fa";
 // import { sizeOptions } from "../Constants/costant";
 const AddProductPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const [productData, setProductData] = useState({
+    SKU_ID: "",
+    product_id: "",
+    net_weight: "",
+    description: "",
+    countryoforigin: "",
+    manufacturerdetails: "",
+    selectedColor: "",
+    colors: [],
+    gst: "",
     title: "",
     brand: "",
     // rating: 0,
@@ -45,6 +58,9 @@ const AddProductPage = () => {
     images: [], // Array of additional image links
     // reviews: [],
   });
+
+  const [showColorPicker, setShowColorPicker] = useState(false); // To toggle the color picker
+
   const [isLoading, setisLoading] = useState(false);
   const [showimages, setshowimages] = useState([]);
   const [showImageWarning, setShowImageWarning] = useState(false);
@@ -56,13 +72,13 @@ const AddProductPage = () => {
   const [offerValue, setOfferValue] = useState("");
   const [offerName, setOfferName] = useState("");
   const [discountedPrice, setDiscountedPrice] = useState(productData.price);
-  console.log(discountedPrice,offerName);
+  console.log(discountedPrice, offerName);
   const handleOfferChange = (text1) => {
     const selectedOffer = offers?.find((o) => o.text === text1);
     console.log(selectedOffer);
     setOfferType(selectedOffer.type);
     setOfferValue(selectedOffer.value);
-    setOfferName(selectedOffer.text)
+    setOfferName(selectedOffer.text);
     if (selectedOffer.type === "percent") {
       const discountAmount = (selectedOffer.value / 100) * productData.price;
       setDiscountedPrice(productData.price - discountAmount);
@@ -86,6 +102,7 @@ const AddProductPage = () => {
   useEffect(() => {
     fetchSizeOptions();
     fetchOffers();
+    fetchGSTValues();
   }, []);
 
   const fetchOffers = async () => {
@@ -98,7 +115,19 @@ const AddProductPage = () => {
       console.error("Error fetching offers:", error);
     }
   };
+  const [gstValues, setGstValues] = useState([]);
+  const [newValue, setNewValue] = useState("");
 
+  const fetchGSTValues = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_API}/gst/gst-values`
+      );
+      setGstValues(response.data);
+    } catch (error) {
+      console.error("Error fetching GST values:", error);
+    }
+  };
   const fetchSizeOptions = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_API}/size/size-options`)
@@ -144,14 +173,6 @@ const AddProductPage = () => {
   };
   console.log("offers", offers);
 
-  // const handleAddImage = () => {
-  //   // Add a new empty string to the images array when plus button is clicked
-  //   setProductData((prevData) => ({
-  //     ...prevData,
-  //     images: [...prevData.images, ""],
-  //   }));
-  // };
-
   const handleAddImage = (e) => {
     setShowImagesWarning(false);
     const file = e.target.files[0];
@@ -182,18 +203,6 @@ const AddProductPage = () => {
     });
   };
 
-  // const handleImageChange = (index, value) => {
-  //   // Update the image link at the specified index in the images array
-  //   setProductData((prevData) => {
-  //     const updatedImages = [...prevData.images];
-  //     updatedImages[index] = value;
-  //     return {
-  //       ...prevData,
-  //       images: updatedImages,
-  //     };
-  //   });
-  // };
-  // const [imasd, setimg] = useState("");
   const handleImageChange = (e) => {
     setShowImageWarning(false);
     const file = e.target.files[0];
@@ -225,6 +234,32 @@ const AddProductPage = () => {
     }
   };
 
+  const handleColorChange = (color) => {
+    setProductData({
+      ...productData,
+      selectedColor: color.hex, // Store the selected color temporarily
+    });
+  };
+
+  const handleAddColor = () => {
+    if (productData.selectedColor) {
+      setProductData({
+        ...productData,
+        colors: [...productData.colors, productData.selectedColor], // Add the selected color to the colors array
+        selectedColor: "", // Clear the selected color
+      });
+    }
+  };
+
+  const handleRemoveColor = (index) => {
+    const updatedColors = [...productData.colors];
+    updatedColors.splice(index, 1); // Remove the color at the specified index
+    setProductData({
+      ...productData,
+      colors: updatedColors,
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (productData.images.length === 0) {
@@ -239,6 +274,19 @@ const AddProductPage = () => {
     setisLoading(true);
     console.log(productData);
     const formData = new FormData();
+
+    formData.append("SKU_ID", productData.SKU_ID);
+    formData.append("product_id", productData.product_id);
+    formData.append("net_weight", productData.net_weight);
+    formData.append("description", productData.description);
+    formData.append("countryoforigin", productData.countryoforigin);
+    formData.append("manufacturerdetails", productData.manufacturerdetails);
+    // formData.append("colors", productData.colors);
+    productData.colors.forEach((color) => {
+      formData.append("colors", color);
+    });
+    formData.append("gst", productData.gst);
+
     formData.append("title", productData.title);
     formData.append("brand", productData.brand);
     // formData.append("rating", productData.rating);
@@ -251,7 +299,7 @@ const AddProductPage = () => {
     formData.append("offerType", offerType);
     formData.append("offerValue", offerValue);
     formData.append("offerName", offerName);
-    
+
     productData.size.forEach((size) => {
       formData.append("size", size);
     });
@@ -282,6 +330,15 @@ const AddProductPage = () => {
         setisLoading(false);
         // Clear the form after successful submission
         setProductData({
+          SKU_ID: "",
+          product_id: "",
+          net_weight: "",
+          description: "",
+          countryoforigin: "",
+          manufacturerdetails: "",
+          selectedColor: "",
+          colors: [],
+          gst: "",
           title: "",
           brand: "",
           // rating: 0,
@@ -310,36 +367,6 @@ const AddProductPage = () => {
         });
         console.error("Error adding product:", error);
       });
-
-    // axios
-    //   .put(
-    //     `${process.env.REACT_APP_BASE_API}/updateproduct/64cf0c83059447fdb6c99468`,
-    //     formData,
-    //     {
-    //       headers: { "Content-Type": "multipart/form-data" },
-    //     }
-    //   )
-    //   .then((response) => {
-    //     toast({
-    //       title: "Product successfully updated",
-    //       variant: "top-accent",
-    //       isClosable: true,
-    //       position: "top-right",
-    //       status: "success",
-    //       duration: 2500,
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     toast({
-    //       title: "Error update product",
-    //       variant: "top-accent",
-    //       isClosable: true,
-    //       position: "top-right",
-    //       status: "error",
-    //       duration: 2500,
-    //     });
-    //     console.error("Error adding product:", error);
-    //   });
   };
   console.log(productData);
 
@@ -369,6 +396,152 @@ const AddProductPage = () => {
         >
           <VStack spacing={4}>
             {/* Add form fields for each product property */}
+            <FormControl isRequired>
+              <FormLabel>SKU ID:</FormLabel>
+              <Input
+                type="text"
+                name="SKU_ID"
+                value={productData.SKU_ID}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Product ID:</FormLabel>
+              <Input
+                type="text"
+                name="product_id"
+                value={productData.product_id}
+                onChange={handleChange}
+              />
+            </FormControl>{" "}
+            <FormControl isRequired>
+              <FormLabel>Net Weight:</FormLabel>
+              <Input
+                type="text"
+                name="net_weight"
+                value={productData.net_weight}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Description:</FormLabel>
+              <Textarea
+                type="text"
+                name="description"
+                value={productData.description}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Country of Origin:</FormLabel>
+              <Input
+                type="text"
+                name="countryoforigin"
+                value={productData.countryoforigin}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Manufacturer Details:</FormLabel>
+              <Input
+                type="text"
+                name="manufacturerdetails"
+                value={productData.manufacturerdetails}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Product Color Options:</FormLabel>
+
+              {/* Color Picker */}
+              {/* <Button onClick={() => setShowColorPicker(!showColorPicker)}>
+                {showColorPicker ? "Close Color Picker" : "Open Color Picker"}
+              </Button> */}
+              {/* {showColorPicker && ( */}
+              <SketchPicker
+                color={productData.selectedColor} // Use the selected color
+                onChange={handleColorChange} // Handle color change
+              />
+              {/* )} */}
+              {/* Add Color Button */}
+              <Flex>
+                <Button
+                  colorScheme="teal"
+                  onClick={handleAddColor}
+                  disabled={!productData.selectedColor}
+                >
+                  Add Color
+                </Button>
+                <div
+                  style={{
+                    backgroundColor: productData.selectedColor,
+                    width: "40px",
+                    height: "40px",
+                    marginLeft: "10px",
+                  }}
+                ></div>
+              </Flex>
+              {/* Display selected colors */}
+              <Text fontWeight={500}>Colors Added </Text>
+              <HStack>
+                {productData.colors.map((color, index) => (
+                  <VStack key={index}>
+                    <div
+                      // key={index}
+                      style={{
+                        backgroundColor: color,
+                        width: "20px",
+                        height: "20px",
+                        // display: "inline-block",
+                        // marginRight: "5px",
+                      }}
+                    ></div>
+                    <IconButton
+                      margin={"5px"}
+                      icon={<DeleteIcon />}
+                      colorScheme="red"
+                      size="sm"
+                      onClick={() => handleRemoveColor(index)}
+                      aria-label="Remove"
+                      // Add the delete functionality here
+                    />
+                  </VStack>
+                ))}
+              </HStack>
+            </FormControl>
+            {/* <FormControl isRequired>
+              <FormLabel>GST:</FormLabel>
+              <Input
+                type="text"
+                name="gst"
+                value={productData.gst}
+                onChange={handleChange}
+              />
+            </FormControl> */}
+            <FormControl isRequired>
+              <FormLabel>GST:</FormLabel>
+              {/* <Input
+                type="text"
+                name="category"
+                value={productData.category}
+                onChange={handleChange}
+              /> */}
+              <Select
+                name="gst"
+                value={productData.gst}
+                onChange={handleChange}
+              >
+                <option value="" disabled>
+                  Select a GST Value
+                </option>
+                {gstValues.map((gstitem) => (
+                  <option key={gstitem} value={gstitem}>
+                    {gstitem}
+                  </option>
+                ))}
+              </Select>
+              {/* {selectedCategory && <p>Selected category: {selectedCategory}</p>} */}
+            </FormControl>
             <FormControl isRequired>
               <FormLabel>Title:</FormLabel>
               <Input
@@ -432,7 +605,6 @@ const AddProductPage = () => {
                 onChange={handleChange}
               />
             </FormControl>
-
             {/* <text>erwre </text> */}
             <FormControl>
               <FormLabel>Offers:</FormLabel>
@@ -450,24 +622,6 @@ const AddProductPage = () => {
                   </option>
                 ))}
               </Select>
-
-              {/* <select
-                disabled={!productData.offerType}
-                name="offerValue"
-                value={productData.offerValue}
-                onChange={handleInputChange}
-              >
-                <option value="">Select Offer Value</option>
-                {productData.offerType &&
-                  offers
-                    ?.find((o) => o.type === productData.offerType)
-                    ?.values?.map((value) => (
-                      <option key={value} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                    
-              </select> */}
             </FormControl>
             <FormControl isRequired>
               <FormLabel>Final Price:</FormLabel>
@@ -499,9 +653,7 @@ const AddProductPage = () => {
                 <Text color="red">Please select an image</Text>
               )}
             </FormControl>
-
             {/* Render input for additional images */}
-
             <FormControl isRequired>
               <FormLabel>Aditional Images</FormLabel>
               <VStack spacing={4}>
@@ -529,7 +681,6 @@ const AddProductPage = () => {
                 <Text color="red">Please select images</Text>
               )}
             </FormControl>
-
             {Object.entries(sizeOptions).map(([category, sizes]) => (
               <FormControl key={category}>
                 <FormLabel>
@@ -554,7 +705,6 @@ const AddProductPage = () => {
                 </HStack>
               </FormControl>
             ))}
-
             <Spacer />
             <Button type="submit">Add Product</Button>
             <Spacer />
@@ -566,86 +716,3 @@ const AddProductPage = () => {
 };
 
 export default AddProductPage;
-
-{
-  /* <div>
-              <label>Main Image:</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                required
-              />
-            </div>
-            <div>
-              <label>Additional Images:</label>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-                required
-              />
-            </div> */
-}
-{
-  /* <FormControl isRequired>
-              <FormLabel>Main Image Link:</FormLabel>
-              <Input
-                type="text"
-                name="img"
-                value={productData.img}
-                onChange={handleChange}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Additional Images:</FormLabel>
-              {productData.images.map((image, index) => (
-                <HStack key={index} mb={2}>
-                  <Input
-                    key={index}
-                    type="text"
-                    value={image}
-                    onChange={(e) => handleImageChange(index, e.target.value)}
-                  />
-                  <IconButton
-                    icon={<CloseIcon />}
-                    colorScheme="red"
-                    size="sm"
-                    onClick={() => handleRemoveImage(index)}
-                  />
-                </HStack>
-              ))}
-              <Button type="button" onClick={handleAddImage}>
-                +
-              </Button>
-            </FormControl>{" "} */
-}
-{
-  /* ... (rest of the code remains the same) */
-}
-{
-  /* <input type="file" accept="image/*" onChange={handleImageChange} /> */
-}
-{
-  /* Render input for additional images */
-}
-{
-  /* {productData.images.map((image, index) => (
-              <div key={index}>
-                <img
-                  src={URL.createObjectURL(image)}
-                  alt={`Image ${index + 1}`}
-                  width="100"
-                  height="100"
-                />
-                <button type="button" onClick={() => handleRemoveImage(index)}>
-                  Remove
-                </button>
-              </div>
-            ))}
-            <input type="file" accept="image/*" onChange={handleAddImage} /> */
-}
-{
-  /* <img src={URL.createObjectURL(productData.img)} width="100px" height="100px" /> */
-}

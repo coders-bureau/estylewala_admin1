@@ -35,9 +35,11 @@ import { AiFillFileAdd, AiFillFolder, AiFillHome } from "react-icons/ai";
 import { BsFillBellFill, BsFillImageFill } from "react-icons/bs";
 import { HiFolderAdd, HiOutlineUser } from "react-icons/hi";
 import { ImMan, ImWoman } from "react-icons/im";
-import { TbRulerMeasure } from "react-icons/tb";
+import { TbRulerMeasure,TbReportSearch } from "react-icons/tb";
 import { MdRateReview } from "react-icons/md";
 import { FaBoxOpen, FaBoxes, FaChild, FaUser, FaUsers } from "react-icons/fa";
+import { re} from "react-icons/tb";
+
 import {
   RiAccountPinCircleFill,
   RiAdminFill,
@@ -118,6 +120,7 @@ const LinkItems = [
   { name: "Account", icon: RiAccountPinCircleFill, path: "/admin-profile" },
   { name: "Offer", icon: BiSolidOffer, path: "/offers" },
   { name: "Slider", icon: BsFillImageFill, path: "/slider" },
+  { name: "Report", icon: TbReportSearch, path: "/report" },
 
   // { name: 'Logout', icon: RiLogoutCircleFill, path: '/' }
 ];
@@ -179,6 +182,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
       pos="fixed"
       h="full"
       {...rest}
+      overflow={'scroll '}
     >
       <Flex h="20" alignItems="center" mx="14" justifyContent="space-between">
         <a href="/">

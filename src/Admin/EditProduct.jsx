@@ -15,17 +15,29 @@ import {
   VStack,
   IconButton,
   Image,
+  Flex,
+  Text,
 } from "@chakra-ui/react";
 import AdminNavbar from "./AdminNavbar";
-import { CloseIcon } from "@chakra-ui/icons";
+import { CloseIcon, DeleteIcon } from "@chakra-ui/icons";
 import LoadingPage from "../Pages/LoadingPage";
 import PageNotFound from "../Pages/PageNotFound";
+import { ChromePicker, SketchPicker } from "react-color";
+
 
 const EditProduct = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const { id } = useParams();
   const [product, setProduct] = useState({
+    SKU_ID: "",
+    product_id: "",
+    net_weight: "",
+    description: "",
+    countryoforigin: "",
+    manufacturerdetails: "",
+    selectedColor: "",
+    colors: [],
     title: "",
     brand: "",
     category: "",
@@ -39,6 +51,8 @@ const EditProduct = () => {
     img: "",
     images: [],
   });
+  const [showColorPicker, setShowColorPicker] = useState(false); // To toggle the color picker
+
   const [updatedImages, setUpdateImages] = useState([]);
   const [sizeOptions, setSizeOptions] = useState({});
   const fetchSizeOptions = () => {
@@ -71,6 +85,7 @@ const EditProduct = () => {
     fetchSizeOptions();
     fetchProduct();
     fetchOffers();
+    fetchGSTValues();
   }, [id]);
   const fetchOffers = async () => {
     try {
@@ -191,6 +206,47 @@ const EditProduct = () => {
     // }));
   };
   console.log(updatedImages);
+
+  const [gstValues, setGstValues] = useState([]);
+  // const [newValue, setNewValue] = useState("");
+
+  const fetchGSTValues = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_API}/gst/gst-values`
+      );
+      setGstValues(response.data);
+    } catch (error) {
+      console.error("Error fetching GST values:", error);
+    }
+  };
+
+  const handleColorChange = (color) => {
+    setProduct({
+      ...product,
+      selectedColor: color.hex, // Store the selected color temporarily
+    });
+  };
+
+  const handleAddColor = () => {
+    if (product.selectedColor) {
+      setProduct({
+        ...product,
+        colors: [...product.colors, product.selectedColor], // Add the selected color to the colors array
+        selectedColor: "", // Clear the selected color
+      });
+    }
+  };
+
+  const handleRemoveColor = (index) => {
+    const updatedColors = [...product.colors];
+    updatedColors.splice(index, 1); // Remove the color at the specified index
+    setProduct({
+      ...product,
+      colors: updatedColors,
+    });
+  };
+
   // Handle the product update when the "Update" button is clicked
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -230,34 +286,32 @@ const EditProduct = () => {
 
     setOfferType(selectedOffer.type);
     setOfferValue(selectedOffer.value);
-    setOfferName(selectedOffer.text)
-    console.log(offerType,offerName,offerValue);
-
+    setOfferName(selectedOffer.text);
+    console.log(offerType, offerName, offerValue);
 
     if (selectedOffer.type === "percent") {
       const discountAmount = (selectedOffer.value / 100) * product.price;
       // setDiscountedPrice(product.price - discountAmount);
-      setProduct((prev)=> ({
+      setProduct((prev) => ({
         ...prev,
-        discount:(product.price - discountAmount)
+        discount: product.price - discountAmount,
       }));
-      // setProductData(productData.discount=discountedPrice);
+      // setproduct(product.discount=discountedPrice);
     } else if (selectedOffer.type === "flat") {
       // setDiscountedPrice(product.price - selectedOffer.value);
-      setProduct((prev)=> ({
+      setProduct((prev) => ({
         ...prev,
-        discount:(product.price - selectedOffer.value)
+        discount: product.price - selectedOffer.value,
       }));
-      // setProductData(productData.discount=discountedPrice);
+      // setproduct(product.discount=discountedPrice);
     } else {
       // setDiscountedPrice(product.price);
-      setProduct((prev)=> ({
+      setProduct((prev) => ({
         ...prev,
-        discount:product.price
+        discount: product.price,
       }));
-      // setProductData(productData.price);
+      // setproduct(product.price);
     }
-    
   };
   const handleUpdateProduct = async (e) => {
     setisLoading(true);
@@ -265,6 +319,17 @@ const EditProduct = () => {
     setNormalImage(true);
     setNormalImage1(true);
     const formData = new FormData();
+    formData.append("SKU_ID", product.SKU_ID);
+    formData.append("product_id", product.product_id);
+    formData.append("net_weight", product.net_weight);
+    formData.append("description", product.description);
+    formData.append("countryoforigin", product.countryoforigin);
+    formData.append("manufacturerdetails", product.manufacturerdetails);
+    // formData.append("colors", product.colors);
+    product.colors.forEach((color) => {
+      formData.append("colors", color);
+    });
+    formData.append("gst", product.gst);
 
     formData.append("title", product.title);
     formData.append("brand", product.brand);
@@ -289,7 +354,7 @@ const EditProduct = () => {
       formData.append("images", image);
     });
     formData.append("reviews", product.reviews);
-    formData.append("offerType",offerType);
+    formData.append("offerType", offerType);
     formData.append("offerValue", offerValue);
     formData.append("offerName", offerName);
     // Append the additional images to the FormData
@@ -386,6 +451,141 @@ const EditProduct = () => {
             onSubmit={handleUpdateProduct}
             w="70%"
           >
+            <FormControl isRequired>
+              <FormLabel>SKU ID:</FormLabel>
+              <Input
+                type="text"
+                name="SKU_ID"
+                value={product.SKU_ID}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Product ID:</FormLabel>
+              <Input
+                type="text"
+                name="product_id"
+                value={product.product_id}
+                onChange={handleInputChange}
+              />
+            </FormControl>{" "}
+            <FormControl isRequired>
+              <FormLabel>Net Weight:</FormLabel>
+              <Input
+                type="text"
+                name="net_weight"
+                value={product.net_weight}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Description:</FormLabel>
+              <Textarea
+                type="text"
+                name="description"
+                value={product.description}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Country of Origin:</FormLabel>
+              <Input
+                type="text"
+                name="countryoforigin"
+                value={product.countryoforigin}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Manufacturer Details:</FormLabel>
+              <Input
+                type="text"
+                name="manufacturerdetails"
+                value={product.manufacturerdetails}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+            <FormLabel>Product Color Options:</FormLabel>
+
+              {/* Color Picker */}
+              {/* <Button onClick={() => setShowColorPicker(!showColorPicker)}>
+                {showColorPicker ? "Close Color Picker" : "Open Color Picker"}
+              </Button> */}
+              {/* {showColorPicker && ( */}
+                {/* <SketchPicker
+                  color={product.selectedColor} // Use the selected color
+                  onChange={handleColorChange} // Handle color change
+                /> */}
+              {/* )} */}
+              {/* Add Color Button */}
+              <Flex>
+              <SketchPicker
+                  color={product.selectedColor} // Use the selected color
+                  onChange={handleColorChange} // Handle color change
+                />
+                <Button
+                margin={"10px"}
+                  colorScheme="teal"
+                  onClick={handleAddColor}
+                  disabled={!product.selectedColor}
+                >
+                  Add Color
+                </Button>
+                <div
+                  style={{
+                    backgroundColor: product.selectedColor,
+                    width: "40px",
+                    height: "40px",
+                    margin: "10px",
+                  }}
+                ></div>
+              </Flex>
+              {/* Display selected colors */}
+              <Text fontWeight={500}>Colors Added </Text>
+              <HStack>
+                {product.colors.map((color, index) => (
+                  <VStack key={index}>
+                    <div
+                      // key={index}
+                      style={{
+                        backgroundColor: color,
+                        width: "20px",
+                        height: "20px",
+                        // display: "inline-block",
+                        // marginRight: "5px",
+                      }}
+                    ></div>
+                    <IconButton
+                      margin={"5px"}
+                      icon={<DeleteIcon />}
+                      colorScheme="red"
+                      size="sm"
+                      onClick={() => handleRemoveColor(index)}
+                      aria-label="Remove"
+                      // Add the delete functionality here
+                    />
+                  </VStack>
+                ))}
+              </HStack>
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>GST:</FormLabel>
+              <Select
+                name="gst"
+                value={product.gst}
+                onChange={handleInputChange}
+              >
+                <option value="" disabled>
+                  Select a GST Value
+                </option>
+                {gstValues.map((gstitem) => (
+                  <option key={gstitem} value={gstitem}>
+                    {gstitem}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
             <FormControl mb={4}>
               <FormLabel>Title</FormLabel>
               <Input
@@ -445,12 +645,11 @@ const EditProduct = () => {
                 required
               />
             </FormControl>
-
             <FormControl>
               <FormLabel>Offers:</FormLabel>
               <Select
                 name="offerType"
-                // value={productData.offerType}
+                // value={product.offerType}
                 onChange={(e) => {
                   handleOfferChange(e.target.value);
                 }}
@@ -464,15 +663,15 @@ const EditProduct = () => {
               </Select>
 
               {/* <select
-                disabled={!productData.offerType}
+                disabled={!product.offerType}
                 name="offerValue"
-                value={productData.offerValue}
+                value={product.offerValue}
                 onChange={handleInputChange}
               >
                 <option value="">Select Offer Value</option>
-                {productData.offerType &&
+                {product.offerType &&
                   offers
-                    ?.find((o) => o.type === productData.offerType)
+                    ?.find((o) => o.type === product.offerType)
                     ?.values?.map((value) => (
                       <option key={value} value={value}>
                         {value}
@@ -481,7 +680,6 @@ const EditProduct = () => {
                     
               </select> */}
             </FormControl>
-
             <FormControl mb={4}>
               <FormLabel>Final Price</FormLabel>
               <Input
@@ -493,184 +691,6 @@ const EditProduct = () => {
                 isDisabled
               />
             </FormControl>
-
-            {/* <FormControl mb={4}>
-              <FormLabel>Standard Sizes:</FormLabel>
-              <Checkbox
-                name="S"
-                isChecked={product.size.includes("S")}
-                onChange={handleSizeCheckboxChange}
-                mr={2}
-              >
-                S
-              </Checkbox>
-              <Checkbox
-                name="M"
-                isChecked={product.size.includes("M")}
-                onChange={handleSizeCheckboxChange}
-                mr={2}
-              >
-                M
-              </Checkbox>
-              <Checkbox
-                name="L"
-                isChecked={product.size.includes("L")}
-                onChange={handleSizeCheckboxChange}
-                mr={2}
-              >
-                L
-              </Checkbox>
-              <Checkbox
-                name="XL"
-                isChecked={product.size.includes("XL")}
-                onChange={handleSizeCheckboxChange}
-                mr={2}
-              >
-                XL
-              </Checkbox>
-              <Checkbox
-                name="XXL"
-                isChecked={product.size.includes("XXL")}
-                onChange={handleSizeCheckboxChange}
-                mr={2}
-              >
-                XXL
-              </Checkbox>
-              <Checkbox
-                name="3XL"
-                isChecked={product.size.includes("3XL")}
-                onChange={handleSizeCheckboxChange}
-                mr={2}
-              >
-                3XL
-              </Checkbox>
-            </FormControl>
-            <FormControl mb={4}>
-              <FormLabel>Waist Sizes:</FormLabel>
-              <Checkbox
-                name="28"
-                isChecked={product.size.includes("28")}
-                onChange={handleSizeCheckboxChange}
-                mr={2}
-              >
-                28
-              </Checkbox>
-              <Checkbox
-                name="30"
-                isChecked={product.size.includes("30")}
-                onChange={handleSizeCheckboxChange}
-                mr={2}
-              >
-                30
-              </Checkbox>
-              <Checkbox
-                name="32"
-                isChecked={product.size.includes("32")}
-                onChange={handleSizeCheckboxChange}
-                mr={2}
-              >
-                32
-              </Checkbox>
-              <Checkbox
-                name="34"
-                isChecked={product.size.includes("34")}
-                onChange={handleSizeCheckboxChange}
-                mr={2}
-              >
-                34
-              </Checkbox>
-              <Checkbox
-                name="36"
-                isChecked={product.size.includes("36")}
-                onChange={handleSizeCheckboxChange}
-                mr={2}
-              >
-                36
-              </Checkbox>
-              <Checkbox
-                name="38"
-                isChecked={product.size.includes("38")}
-                onChange={handleSizeCheckboxChange}
-                mr={2}
-              >
-                38
-              </Checkbox>
-            </FormControl>
-            <FormControl mb={4}>
-              <FormLabel>Age Sizes:</FormLabel>
-              <Checkbox
-                name="6-12M"
-                isChecked={product.size.includes("6-12M")}
-                mr={2}
-                onChange={handleSizeCheckboxChange}
-              >
-                6-12M
-              </Checkbox>
-              <Checkbox
-                name="1-1.5Y"
-                isChecked={product.size.includes("1-1.5Y")}
-                mr={2}
-                onChange={handleSizeCheckboxChange}
-              >
-                1-1.5Y
-              </Checkbox>
-              <Checkbox
-                name="1.5-2Y"
-                isChecked={product.size.includes("1.5-2Y")}
-                mr={2}
-                onChange={handleSizeCheckboxChange}
-              >
-                1.5-2Y
-              </Checkbox>
-              <Checkbox
-                name="2-3Y"
-                isChecked={product.size.includes("2-3Y")}
-                mr={2}
-                onChange={handleSizeCheckboxChange}
-              >
-                2-3Y
-              </Checkbox>
-              <Checkbox
-                name="4-6Y"
-                isChecked={product.size.includes("4-6Y")}
-                mr={2}
-                onChange={handleSizeCheckboxChange}
-              >
-                4-6Y
-              </Checkbox>
-              <Checkbox
-                name="6-8Y"
-                isChecked={product.size.includes("6-8Y")}
-                mr={2}
-                onChange={handleSizeCheckboxChange}
-              >
-                6-8Y
-              </Checkbox>
-              <Checkbox
-                name="9-11Y"
-                isChecked={product.size.includes("9-11Y")}
-                mr={2}
-                onChange={handleSizeCheckboxChange}
-              >
-                9-11Y
-              </Checkbox>
-              <Checkbox
-                name="12-14Y"
-                isChecked={product.size.includes("12-14Y")}
-                mr={2}
-                onChange={handleSizeCheckboxChange}
-              >
-                12-14Y
-              </Checkbox>
-              <Checkbox
-                name="15-17Y"
-                isChecked={product.size.includes("15-17Y")}
-                mr={2}
-                onChange={handleSizeCheckboxChange}
-              >
-                15-17Y
-              </Checkbox>
-            </FormControl> */}
             <FormControl mb={4}>
               <FormLabel>Main Image:</FormLabel>
               <HStack>
@@ -761,7 +781,6 @@ const EditProduct = () => {
               </FormControl>
             ))}
             {/* <input type="file" accept="image/*" onChange={handleAdditionalImagesChange}/> */}
-
             <HStack mt={8}>
               <Button type="submit" colorScheme="blue">
                 Update Product

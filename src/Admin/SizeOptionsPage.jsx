@@ -16,6 +16,7 @@ import {
 import axios from "axios";
 import AdminNavbar from "./AdminNavbar";
 import LoadingPage from "../Pages/LoadingPage";
+import GSTManager from "./GSTManager";
 
 const SizeOptions = () => {
   //   const [sizeOptions, setSizeOptions] = useState({});
@@ -24,7 +25,7 @@ const SizeOptions = () => {
   const [isLoading, setisLoading] = useState(false);
   const toast = useToast();
 
-  console.log(editingOptions);
+  console.log(editingOptions,newSizes);
   // Fetch size options on component mount
   useEffect(() => {
     fetchSizeOptions();
@@ -55,16 +56,23 @@ const SizeOptions = () => {
 
   const handleAddSize = (category) => {
     if (newSizes[category]) {
-      setEditingOptions((prevOptions) => ({
-        ...prevOptions,
-        [category]: [...prevOptions[category], newSizes[category]],
-      }));
+      // setEditingOptions((prevOptions) => ({
+      //   ...prevOptions,
+      //   [category]: [...prevOptions[category], newSizes[category]],
+      // }));
+      // handleUpdateSizeOptions();
+      setEditingOptions((prevOptions) => {
+        const updatedOptions = { ...prevOptions };
+        updatedOptions[category].push(newSizes[category]);
+        // updatedOptions[category].splice(sizeIndex, 1);
+        handleUpdateSizeOptions();
+        return updatedOptions;
+      });
       setNewSizes((prevSizes) => ({
         ...prevSizes,
         [category]: "",
       }));
     }
-    // handleUpdateSizeOptions();
   };
 
   const handleDeleteSize = (category, sizeIndex) => {
@@ -114,14 +122,14 @@ const SizeOptions = () => {
           marginLeft={{ lg: "250px", md: "250px", base: "10px" }}
           marginRight={"10px"}
         >
-          <Button 
+          {/* <Button
             alignSelf={"right"}
-            ml={{lg:"50vw" ,md:"40vw",base:"0"}}
+            ml={{ lg: "50vw", md: "40vw", base: "0" }}
             colorScheme="blue"
             onClick={handleUpdateSizeOptions}
           >
             Update Size Options
-          </Button>
+          </Button> */}
           {/* <h1>Size Options</h1> */}
           <VStack align="flex-start">
             {Object.entries(editingOptions).map(([category, sizes]) => (
@@ -176,7 +184,7 @@ const SizeOptions = () => {
                 </HStack>
               </FormControl>
             ))}
-
+            <GSTManager />
             {/* <Button
               alignSelf={"flex-start"}
               m={5}

@@ -235,7 +235,7 @@ if (isLoading)
       </Box>
       <Box>
         <Heading as="h2" mb="4">
-          Offers List
+          Offers List 123
         </Heading>
         <List>
           {offers.map((offer) => (

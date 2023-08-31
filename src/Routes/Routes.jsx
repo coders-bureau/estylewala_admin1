@@ -20,6 +20,7 @@ import AccountPage from "../Admin/AccountPage";
 import AdminNavbar from "../Admin/AdminNavbar";
 import SliderPage from "../Admin/SliderPage";
 import Barg from "../Pages/Barg";
+import NewOrderPage from "../Admin/NewOrderPage";
 
 // import AddProductsPage from '../Admin/AddProductsPage';
 // import UsersPage from "../Admin/UsersPage";
@@ -91,6 +92,7 @@ export const MainRoutes = () => {
           element={
             <PrivateRoute>
               <OrdersPage />
+              {/* <NewOrderPage /> */}
             </PrivateRoute>
           }
         ></Route>
@@ -147,6 +149,14 @@ export const MainRoutes = () => {
           element={
             <PrivateRoute>
               <AccountPage />
+            </PrivateRoute>
+          }
+        ></Route>
+        <Route
+          path="/report"
+          element={
+            <PrivateRoute>
+              <ReportsPage />
             </PrivateRoute>
           }
         ></Route>
