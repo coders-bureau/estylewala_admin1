@@ -83,9 +83,9 @@ const ReviewsPage = () => {
                             <AccordionIcon />
                           </AccordionButton>
                         </h2>
-                        <AccordionPanel bgColor={"white"} pb={4}>
+                        <AccordionPanel bgColor={"#ebebeb"} pb={4}>
                           <VStack>
-                            {product.reviews.length > 1 ? (
+                            {product.reviews[0].user ? (
                               <>
                                 {product.reviews.map((review) => (
                                   <HStack
