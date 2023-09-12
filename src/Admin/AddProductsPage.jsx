@@ -17,6 +17,7 @@ import {
   Image,
   Textarea,
   Flex,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import { ChromePicker, SketchPicker } from "react-color";
 import axios from "axios";
@@ -39,8 +40,12 @@ const AddProductPage = () => {
     countryoforigin: "",
     manufacturerdetails: "",
     selectedColor: "",
-    colors: [],
+    // colors: [],
     gst: "",
+    topColor: "", // Add topColor field
+    topFabric: "", // Add topFabric field
+    bottomColor: "", // Add bottomColor field
+    bottomFabric: "", // Add bottomFabric field
     title: "",
     brand: "",
     // rating: 0,
@@ -68,6 +73,7 @@ const AddProductPage = () => {
   const [sizeOptions, setSizeOptions] = useState({});
   const [selectedCategory, setSelectedCategory] = useState("");
   const [offers, setOffers] = useState([]);
+  const [offerText, setOfferText] = useState("");
   const [offerType, setOfferType] = useState("");
   const [offerValue, setOfferValue] = useState("");
   const [offerName, setOfferName] = useState("");
@@ -76,6 +82,7 @@ const AddProductPage = () => {
   const handleOfferChange = (text1) => {
     const selectedOffer = offers?.find((o) => o.text === text1);
     console.log(selectedOffer);
+    setOfferText(text1);
     setOfferType(selectedOffer.type);
     setOfferValue(selectedOffer.value);
     setOfferName(selectedOffer.text);
@@ -282,10 +289,15 @@ const AddProductPage = () => {
     formData.append("countryoforigin", productData.countryoforigin);
     formData.append("manufacturerdetails", productData.manufacturerdetails);
     // formData.append("colors", productData.colors);
-    productData.colors.forEach((color) => {
-      formData.append("colors", color);
-    });
+    // productData.colors.forEach((color) => {
+    //   formData.append("colors", color);
+    // });
     formData.append("gst", productData.gst);
+
+    formData.append("topColor", productData.topColor);
+    formData.append("topFabric", productData.topFabric);
+    formData.append("bottomColor", productData.bottomColor);
+    formData.append("bottomFabric", productData.bottomFabric);
 
     formData.append("title", productData.title);
     formData.append("brand", productData.brand);
@@ -337,8 +349,12 @@ const AddProductPage = () => {
           countryoforigin: "",
           manufacturerdetails: "",
           selectedColor: "",
-          colors: [],
+          // colors: [],
           gst: "",
+          topColor: "", // Add topColor field
+          topFabric: "", // Add topFabric field
+          bottomColor: "", // Add bottomColor field
+          bottomFabric: "", // Add bottomFabric field
           title: "",
           brand: "",
           // rating: 0,
@@ -388,8 +404,9 @@ const AddProductPage = () => {
       <VStack spacing={4} align="center">
         <Box
           marginTop={"20px"}
-          marginLeft={{ lg: "250px", md: "250px", base: "20px" }}
-          marginRight={"20px"}
+          marginLeft={{ lg: "250px", md: "250px", base: "10px" }}
+          marginRight={"10px"}
+          marginBottom={"30px"}
           as="form"
           onSubmit={handleSubmit}
           w="70%"
@@ -450,20 +467,13 @@ const AddProductPage = () => {
                 onChange={handleChange}
               />
             </FormControl>
-            <FormControl isRequired>
+            {/* <FormControl isRequired>
               <FormLabel>Product Color Options:</FormLabel>
 
-              {/* Color Picker */}
-              {/* <Button onClick={() => setShowColorPicker(!showColorPicker)}>
-                {showColorPicker ? "Close Color Picker" : "Open Color Picker"}
-              </Button> */}
-              {/* {showColorPicker && ( */}
               <SketchPicker
                 color={productData.selectedColor} // Use the selected color
                 onChange={handleColorChange} // Handle color change
               />
-              {/* )} */}
-              {/* Add Color Button */}
               <Flex>
                 <Button
                   colorScheme="teal"
@@ -481,7 +491,6 @@ const AddProductPage = () => {
                   }}
                 ></div>
               </Flex>
-              {/* Display selected colors */}
               <Text fontWeight={500}>Colors Added </Text>
               <HStack>
                 {productData.colors.map((color, index) => (
@@ -508,7 +517,7 @@ const AddProductPage = () => {
                   </VStack>
                 ))}
               </HStack>
-            </FormControl>
+            </FormControl> */}
             {/* <FormControl isRequired>
               <FormLabel>GST:</FormLabel>
               <Input
@@ -541,6 +550,42 @@ const AddProductPage = () => {
                 ))}
               </Select>
               {/* {selectedCategory && <p>Selected category: {selectedCategory}</p>} */}
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Top Color:</FormLabel>
+              <Input
+                type="text"
+                name="topColor"
+                value={productData.topColor}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Top Fabric:</FormLabel>
+              <Input
+                type="text"
+                name="topFabric"
+                value={productData.topFabric}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Bottom Color:</FormLabel>
+              <Input
+                type="text"
+                name="bottomColor"
+                value={productData.bottomColor}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Bottom Fabric:</FormLabel>
+              <Input
+                type="text"
+                name="bottomFabric"
+                value={productData.bottomFabric}
+                onChange={handleChange}
+              />
             </FormControl>
             <FormControl isRequired>
               <FormLabel>Title:</FormLabel>
@@ -610,17 +655,24 @@ const AddProductPage = () => {
               <FormLabel>Offers:</FormLabel>
               <Select
                 name="offerType"
-                // value={productData.offerType}
+                value={offerText}
                 onChange={(e) => {
                   handleOfferChange(e.target.value);
                 }}
               >
-                <option value="">Select Offer Type</option>
-                {offers.map((offer) => (
-                  <option key={offer._id} value={offer.text}>
-                    {offer.text}
-                  </option>
-                ))}
+                <option value="" disabled>
+                  Select Offer Type
+                </option>
+                {offers
+                  .filter(
+                    (offer) => offer.type === "percent" || offer.type === "flat"
+                  )
+                  .sort((a, b) => a.text.localeCompare(b.text))
+                  .map((offer) => (
+                    <option key={offer._id} value={offer.text}>
+                      {offer.text}
+                    </option>
+                  ))}
               </Select>
             </FormControl>
             <FormControl isRequired>
@@ -685,13 +737,20 @@ const AddProductPage = () => {
               <FormControl key={category}>
                 <FormLabel>
                   {category === "standardSizes"
-                    ? "Standard"
+                    ? "Standard Sizes:"
                     : category === "waistSizes"
-                    ? "Waist"
-                    : "Age"}{" "}
-                  Sizes:
+                    ? "Waist Sizes:"
+                    : category === "ageSizes"
+                    ? "Age Sizes:"
+                    : category === "sleeveLength"
+                    ? "Sleeve Length:"
+                    : "Pant Closure:"}{" "}
                 </FormLabel>
-                <HStack>
+                <SimpleGrid
+                  columns={{ lg: "10", md: "6", base: "3" }}
+                  spacing={10}
+                  gap={5}
+                >
                   {sizes.map((size) => (
                     <Checkbox
                       key={size}
@@ -702,7 +761,7 @@ const AddProductPage = () => {
                       {size}
                     </Checkbox>
                   ))}
-                </HStack>
+                </SimpleGrid>
               </FormControl>
             ))}
             <Spacer />

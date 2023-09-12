@@ -17,13 +17,13 @@ import {
   Image,
   Flex,
   Text,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import AdminNavbar from "./AdminNavbar";
 import { CloseIcon, DeleteIcon } from "@chakra-ui/icons";
 import LoadingPage from "../Pages/LoadingPage";
 import PageNotFound from "../Pages/PageNotFound";
 import { ChromePicker, SketchPicker } from "react-color";
-
 
 const EditProduct = () => {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const EditProduct = () => {
     countryoforigin: "",
     manufacturerdetails: "",
     selectedColor: "",
-    colors: [],
+    // colors: [],
     title: "",
     brand: "",
     category: "",
@@ -45,6 +45,7 @@ const EditProduct = () => {
     price: 0,
     MRP: 0,
     discount: 0,
+    offer: { text: "" },
     offerType: "", // Add offerType field
     offerValue: "", // Add offerValue field
     size: [],
@@ -283,12 +284,14 @@ const EditProduct = () => {
   const handleOfferChange = (text1) => {
     const selectedOffer = offers?.find((o) => o.text === text1);
     console.log(selectedOffer);
-
     setOfferType(selectedOffer.type);
     setOfferValue(selectedOffer.value);
     setOfferName(selectedOffer.text);
     console.log(offerType, offerName, offerValue);
-
+    setProduct((prev) => ({
+      ...prev,
+      offer: { text: text1 },
+    }));
     if (selectedOffer.type === "percent") {
       const discountAmount = (selectedOffer.value / 100) * product.price;
       // setDiscountedPrice(product.price - discountAmount);
@@ -326,10 +329,15 @@ const EditProduct = () => {
     formData.append("countryoforigin", product.countryoforigin);
     formData.append("manufacturerdetails", product.manufacturerdetails);
     // formData.append("colors", product.colors);
-    product.colors.forEach((color) => {
-      formData.append("colors", color);
-    });
+    // product.colors.forEach((color) => {
+    //   formData.append("colors", color);
+    // });
     formData.append("gst", product.gst);
+
+    formData.append("topColor", product.topColor);
+    formData.append("topFabric", product.topFabric);
+    formData.append("bottomColor", product.bottomColor);
+    formData.append("bottomFabric", product.bottomFabric);
 
     formData.append("title", product.title);
     formData.append("brand", product.brand);
@@ -445,11 +453,13 @@ const EditProduct = () => {
       {!isLoading ? (
         <VStack spacing={4} align="center">
           <Box
-            marginTop={{ lg: "100px", md: "80px", base: "80px" }}
-            marginLeft={{ lg: "250px", md: "250px", base: "0px" }}
+            marginTop={{ lg: "100px", md: "90px", base: "90px" }}
+            marginLeft={{ lg: "250px", md: "250px", base: "10px" }}
+            marginBottom={"30px"}
+            marginRight={"10px"}
             as="form"
             onSubmit={handleUpdateProduct}
-            w="70%"
+            // w="80%"
           >
             <FormControl isRequired>
               <FormLabel>SKU ID:</FormLabel>
@@ -505,20 +515,10 @@ const EditProduct = () => {
                 onChange={handleInputChange}
               />
             </FormControl>
-            <FormControl isRequired>
+            {/* <FormControl isRequired>
             <FormLabel>Product Color Options:</FormLabel>
 
-              {/* Color Picker */}
-              {/* <Button onClick={() => setShowColorPicker(!showColorPicker)}>
-                {showColorPicker ? "Close Color Picker" : "Open Color Picker"}
-              </Button> */}
-              {/* {showColorPicker && ( */}
-                {/* <SketchPicker
-                  color={product.selectedColor} // Use the selected color
-                  onChange={handleColorChange} // Handle color change
-                /> */}
-              {/* )} */}
-              {/* Add Color Button */}
+              
               <Flex>
               <SketchPicker
                   color={product.selectedColor} // Use the selected color
@@ -541,7 +541,6 @@ const EditProduct = () => {
                   }}
                 ></div>
               </Flex>
-              {/* Display selected colors */}
               <Text fontWeight={500}>Colors Added </Text>
               <HStack>
                 {product.colors.map((color, index) => (
@@ -568,7 +567,7 @@ const EditProduct = () => {
                   </VStack>
                 ))}
               </HStack>
-            </FormControl>
+            </FormControl> */}
             <FormControl isRequired>
               <FormLabel>GST:</FormLabel>
               <Select
@@ -585,6 +584,42 @@ const EditProduct = () => {
                   </option>
                 ))}
               </Select>
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Top Color:</FormLabel>
+              <Input
+                type="text"
+                name="topColor"
+                value={product.topColor}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Top Fabric:</FormLabel>
+              <Input
+                type="text"
+                name="topFabric"
+                value={product.topFabric}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Bottom Color:</FormLabel>
+              <Input
+                type="text"
+                name="bottomColor"
+                value={product.bottomColor}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Bottom Fabric:</FormLabel>
+              <Input
+                type="text"
+                name="bottomFabric"
+                value={product.bottomFabric}
+                onChange={handleInputChange}
+              />
             </FormControl>
             <FormControl mb={4}>
               <FormLabel>Title</FormLabel>
@@ -649,12 +684,14 @@ const EditProduct = () => {
               <FormLabel>Offers:</FormLabel>
               <Select
                 name="offerType"
-                // value={product.offerType}
+                value={product.offer.text}
                 onChange={(e) => {
                   handleOfferChange(e.target.value);
                 }}
               >
-                <option value="">Select Offer Type</option>
+                <option value="" disabled>
+                  Select Offer Type
+                </option>
                 {offers.map((offer) => (
                   <option key={offer._id} value={offer.text}>
                     {offer.text}
@@ -759,14 +796,20 @@ const EditProduct = () => {
             {Object.entries(sizeOptions).map(([category, sizes]) => (
               <FormControl key={category}>
                 <FormLabel>
-                  {category === "standardSizes"
-                    ? "Standard"
+                {category === "standardSizes"
+                    ? "Standard Sizes:"
                     : category === "waistSizes"
-                    ? "Waist"
-                    : "Age"}{" "}
-                  Sizes:
+                    ? "Waist Sizes:"
+                    : category === "ageSizes"
+                    ? "Age Sizes:"
+                    : category === "sleeveLength"
+                    ? "Sleeve Length:"
+                    : "Pant Closure:"}{" "}
                 </FormLabel>
-                <HStack>
+                <SimpleGrid
+                 columns={{ lg: "10", md: "6", base: "3" }}
+                 spacing={10}
+                 gap={5}>
                   {sizes.map((size) => (
                     <Checkbox
                       key={size}
@@ -777,7 +820,7 @@ const EditProduct = () => {
                       {size}
                     </Checkbox>
                   ))}
-                </HStack>
+                </SimpleGrid>
               </FormControl>
             ))}
             {/* <input type="file" accept="image/*" onChange={handleAdditionalImagesChange}/> */}
@@ -785,7 +828,7 @@ const EditProduct = () => {
               <Button type="submit" colorScheme="blue">
                 Update Product
               </Button>
-              <Button colorScheme="gray">Cancel</Button>
+              <Button colorScheme="gray" onClick={()=> (navigate("/product-list"))}>Cancel</Button>
             </HStack>
           </Box>
         </VStack>

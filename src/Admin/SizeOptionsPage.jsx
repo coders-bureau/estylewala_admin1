@@ -24,11 +24,14 @@ const SizeOptions = () => {
   const [newSizes, setNewSizes] = useState({});
   const [isLoading, setisLoading] = useState(false);
   const toast = useToast();
+  const [gstValues, setGstValues] = useState([]);
+  const [newValue, setNewValue] = useState("");
 
-  console.log(editingOptions,newSizes);
+  console.log(editingOptions, newSizes);
   // Fetch size options on component mount
   useEffect(() => {
     fetchSizeOptions();
+    fetchGSTValues();
   }, []);
 
   const fetchSizeOptions = () => {
@@ -111,6 +114,42 @@ const SizeOptions = () => {
       });
   };
 
+  const fetchGSTValues = async () => {
+    setisLoading(true);
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_API}/gst/gst-values`
+      );
+      setGstValues(response.data);
+    } catch (error) {
+      console.error("Error fetching GST values:", error);
+      setisLoading(false);
+    }
+    setisLoading(false);
+  };
+
+  const handleAddGSTValue = async () => {
+    try {
+      await axios.post(`${process.env.REACT_APP_BASE_API}/gst/addgst`, {
+        value: Number(newValue),
+      });
+      fetchGSTValues();
+      setNewValue("");
+    } catch (error) {
+      console.error("Error adding GST value:", error);
+    }
+  };
+
+  const handleDeleteGSTValue = async (value) => {
+    try {
+      await axios.delete(
+        `${process.env.REACT_APP_BASE_API}/gst/delgst/${value}`
+      );
+      fetchGSTValues();
+    } catch (error) {
+      console.error("Error deleting GST value:", error);
+    }
+  };
   return (
     <div>
       <AdminNavbar />
@@ -136,11 +175,15 @@ const SizeOptions = () => {
               <FormControl my={0} key={category}>
                 <FormLabel>
                   {category === "standardSizes"
-                    ? "Standard"
+                    ? "Standard Sizes:"
                     : category === "waistSizes"
-                    ? "Waist"
-                    : "Age"}{" "}
-                  Sizes:
+                    ? "Waist Sizes:"
+                    : category === "ageSizes"
+                    ? "Age Sizes:"
+                    : category === "sleeveLength"
+                    ? "Sleeve Length:"
+                    : "Pant Closure:"}{" "}
+                  
                 </FormLabel>
                 {/* <Stack direction={{ base: "column", md: "row" }} gridColumn={4} spacing={4}> */}
                 <SimpleGrid
@@ -184,7 +227,45 @@ const SizeOptions = () => {
                 </HStack>
               </FormControl>
             ))}
-            <GSTManager />
+            <VStack align={"flex-start"}>
+              <FormControl>
+                <FormLabel>GST Values</FormLabel>
+                <SimpleGrid
+                  columns={{ lg: "10", md: "7", base: "4" }}
+                  spacing={10}
+                  gap={5}
+                >
+                  {gstValues.map((value) => (
+                    <div key={value}>
+                      <Text>{value}</Text>
+                      <Button
+                        size="xs"
+                        colorScheme="red"
+                        onClick={() => handleDeleteGSTValue(value)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  ))}
+                </SimpleGrid>
+                <HStack my={5}>
+                  <InputGroup>
+                    <Input
+                      w={200}
+                      mx={10}
+                      type="number"
+                      placeholder="Enter a new GST value"
+                      value={newValue}
+                      onChange={(e) => setNewValue(e.target.value)}
+                    />
+                    <Button colorScheme="green" onClick={handleAddGSTValue}>
+                      Add
+                    </Button>
+                  </InputGroup>
+                </HStack>
+              </FormControl>
+            </VStack>
+            {/* <GSTManager/> */}
             {/* <Button
               alignSelf={"flex-start"}
               m={5}

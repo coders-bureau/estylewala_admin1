@@ -35,7 +35,7 @@ const OfferForm = () => {
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   const [deleteCategoryId, setDeleteCategoryId] = useState(null);
-  console.log(offerType,value,text,image);
+  console.log(offerType, value, text, image);
 
   useEffect(() => {
     // Fetch offers from the backend
@@ -61,7 +61,6 @@ const OfferForm = () => {
       );
       fetchOffers();
       setIsDeleteAlertOpen(false);
-      
     } catch (error) {
       console.error("Error deleting offer:", error);
     }
@@ -77,7 +76,7 @@ const OfferForm = () => {
   };
   const handleSubmit = async (e) => {
     setisLoading(true);
-    
+
     try {
       e.preventDefault();
       // Create a new FormData object
@@ -92,9 +91,9 @@ const OfferForm = () => {
         `${process.env.REACT_APP_BASE_API}/offer/addoffer`,
         formData
       );
- 
+
       console.log(response.data);
-      fetchOffers(); 
+      fetchOffers();
       toast({
         title: "Offer successfully added ",
         variant: "top-accent",
@@ -111,9 +110,16 @@ const OfferForm = () => {
       // setCroppedImage(null);
     } catch (error) {
       console.error("Error adding offer:", error);
+      toast({
+        title: error.response.statusText,
+        variant: "top-accent",
+        isClosable: true,
+        position: "top-right",
+        status: "error",
+        duration: 2500,
+      });
     }
     setisLoading(false);
-
   };
 
   //   const handleCropComplete = async (croppedArea, croppedAreaPixels) => {
@@ -169,8 +175,8 @@ const OfferForm = () => {
   const toast = useToast();
   const [isLoading, setisLoading] = useState(false);
 
-console.log(offers);
-if (isLoading)
+  console.log(offers);
+  if (isLoading)
     return (
       <Box height={"200px"}>
         <LoadingPage />
@@ -187,6 +193,7 @@ if (isLoading)
           >
             <option value="percent">Percent</option>
             <option value="flat">Flat</option>
+            <option value="deal">Deal</option>
           </Select>
         </FormControl>
 
@@ -238,29 +245,38 @@ if (isLoading)
           Offers List 123
         </Heading>
         <List>
-          {offers.map((offer) => (
-            <HStack
-              justifyContent={"space-evenly"}
-              key={offer._id}
-              border="1px solid #ccc"
-              p="4"
-              my="2"
-            >
-              <Text>Type: {offer.type}</Text>
-              <Text>Value: {offer.value}</Text>
-              <Text>Text: {offer.text}</Text>
-              <Image
-                src={process.env.REACT_APP_BASE_API + `/${offer.image}`}
-                boxSize="50px"
-                objectFit="cover"
-                alt={`Offer ${offer._id}`}
-              />
-              {/* <Button onClick={() => setSelectedOffer(offer)}>Edit</Button> */}
-              <Button onClick={() => handleDeleteCategory(offer._id)}>
-                Delete
-              </Button>
-            </HStack>
-          ))}
+          {offers
+            .sort((a, b) => a.text.localeCompare(b.text))
+            .map((offer) => (
+              <HStack
+                justifyContent={"space-evenly"}
+                key={offer._id}
+                border="1px solid #ccc"
+                p="4"
+                my="2"
+              >
+                <Text>
+                  Type:{" "}
+                  <span
+                    style={{ textTransform: "uppercase", fontWeight: "bold" }}
+                  >
+                    {offer.type}
+                  </span>
+                </Text>
+                <Text>Value: {offer.value}</Text>
+                <Text>Text: {offer.text}</Text>
+                <Image
+                  src={process.env.REACT_APP_BASE_API + `/${offer.image}`}
+                  boxSize="50px"
+                  objectFit="cover"
+                  alt={`Offer ${offer._id}`}
+                />
+                {/* <Button onClick={() => setSelectedOffer(offer)}>Edit</Button> */}
+                <Button onClick={() => handleDeleteCategory(offer._id)}>
+                  Delete
+                </Button>
+              </HStack>
+            ))}
         </List>
         <AlertDialog
           isOpen={isDeleteAlertOpen}

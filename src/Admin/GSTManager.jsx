@@ -79,14 +79,16 @@ const GSTManager = () => {
         <HStack my={5}>
           <InputGroup>
             <Input
-               w={200}
-               mx={10}
+              w={200}
+              mx={10}
               type="number"
               placeholder="Enter a new GST value"
               value={newValue}
               onChange={(e) => setNewValue(e.target.value)}
             />
-            <Button colorScheme="green" onClick={handleAddGSTValue}>Add GST Value</Button>
+            <Button colorScheme="green" onClick={handleAddGSTValue}>
+              Add GST Value
+            </Button>
           </InputGroup>
         </HStack>
       </FormControl>
