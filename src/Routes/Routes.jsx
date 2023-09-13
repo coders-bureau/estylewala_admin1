@@ -21,6 +21,7 @@ import AdminNavbar from "../Admin/AdminNavbar";
 import SliderPage from "../Admin/SliderPage";
 import Barg from "../Pages/Barg";
 import NewOrderPage from "../Admin/NewOrderPage";
+import ContactList from "../Admin/ContactList";
 
 // import AddProductsPage from '../Admin/AddProductsPage';
 // import UsersPage from "../Admin/UsersPage";
@@ -160,7 +161,15 @@ export const MainRoutes = () => {
             </PrivateRoute>
           }
         ></Route>
-
+        
+        <Route
+          path="/contactlist"
+          element={
+            <PrivateRoute>
+              <ContactList />
+            </PrivateRoute>
+          }
+        ></Route>
         {/* <Route path="/add-products" element={<AddProductsPage />}></Route>
              <Route path="/admin-men" element={<MensPage />}></Route>
              <Route path="/admin-women" element={<WomensPage />}></Route>

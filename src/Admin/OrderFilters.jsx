@@ -26,7 +26,6 @@ const OrderFilters = ({ onFilter, selectedTab }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState(selectedTab);
   const [products, setProducts] = useState([]);
   const [users, setUsers] = useState([]);
 
@@ -86,15 +85,15 @@ const OrderFilters = ({ onFilter, selectedTab }) => {
     setSelectedCustomer(event.target.value);
   };
 
-  const handleStatusChange = (event) => {
-    setSelectedStatus(event.target.value);
-  };
+  // const handleStatusChange = (event) => {
+  //   setSelectedStatus(event.target.value);
+  // };
 
   const handleFilterSubmit = () => {
     const filters = {
       orderDate: selectedDate || null,
       "items.product": selectedProduct || null,
-      orderStatus: selectedStatus || null,
+      orderStatus: selectedTab || null,
       userId: selectedCustomer || null,
       startDate: startDate || null,
       endDate: endDate || null,
@@ -107,7 +106,7 @@ const OrderFilters = ({ onFilter, selectedTab }) => {
       const filters = {
         orderDate: selectedDate || null,
         "items.product": selectedProduct || null,
-        orderStatus: selectedStatus || null,
+        orderStatus: selectedTab || null,
         userId: selectedCustomer || null,
         startDate: startDate || null,
         endDate: endDate || null,
@@ -139,7 +138,7 @@ const OrderFilters = ({ onFilter, selectedTab }) => {
       const filters = {
         orderDate: selectedDate || null,
         "items.product": selectedProduct || null,
-        orderStatus: selectedStatus || null,
+        orderStatus: selectedTab || null,
         userId: selectedCustomer || null,
         startDate: startDate || null,
         endDate: endDate || null,

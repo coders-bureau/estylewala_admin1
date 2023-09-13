@@ -121,6 +121,8 @@ const LinkItems = [
   { name: "Offer", icon: BiSolidOffer, path: "/offers" },
   { name: "Slider", icon: BsFillImageFill, path: "/slider" },
   { name: "Report", icon: TbReportSearch, path: "/report" },
+  { name: "ContactUs List", icon: TbReportSearch, path: "/contactlist" },
+
 
   // { name: 'Logout', icon: RiLogoutCircleFill, path: '/' }
 ];

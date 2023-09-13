@@ -431,42 +431,7 @@ const AddProductPage = () => {
                 onChange={handleChange}
               />
             </FormControl>{" "}
-            <FormControl isRequired>
-              <FormLabel>Net Weight:</FormLabel>
-              <Input
-                type="text"
-                name="net_weight"
-                value={productData.net_weight}
-                onChange={handleChange}
-              />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Description:</FormLabel>
-              <Textarea
-                type="text"
-                name="description"
-                value={productData.description}
-                onChange={handleChange}
-              />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Country of Origin:</FormLabel>
-              <Input
-                type="text"
-                name="countryoforigin"
-                value={productData.countryoforigin}
-                onChange={handleChange}
-              />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Manufacturer Details:</FormLabel>
-              <Input
-                type="text"
-                name="manufacturerdetails"
-                value={productData.manufacturerdetails}
-                onChange={handleChange}
-              />
-            </FormControl>
+
             {/* <FormControl isRequired>
               <FormLabel>Product Color Options:</FormLabel>
 
@@ -527,66 +492,7 @@ const AddProductPage = () => {
                 onChange={handleChange}
               />
             </FormControl> */}
-            <FormControl isRequired>
-              <FormLabel>GST:</FormLabel>
-              {/* <Input
-                type="text"
-                name="category"
-                value={productData.category}
-                onChange={handleChange}
-              /> */}
-              <Select
-                name="gst"
-                value={productData.gst}
-                onChange={handleChange}
-              >
-                <option value="" disabled>
-                  Select a GST Value
-                </option>
-                {gstValues.map((gstitem) => (
-                  <option key={gstitem} value={gstitem}>
-                    {gstitem}
-                  </option>
-                ))}
-              </Select>
-              {/* {selectedCategory && <p>Selected category: {selectedCategory}</p>} */}
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Top Color:</FormLabel>
-              <Input
-                type="text"
-                name="topColor"
-                value={productData.topColor}
-                onChange={handleChange}
-              />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Top Fabric:</FormLabel>
-              <Input
-                type="text"
-                name="topFabric"
-                value={productData.topFabric}
-                onChange={handleChange}
-              />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Bottom Color:</FormLabel>
-              <Input
-                type="text"
-                name="bottomColor"
-                value={productData.bottomColor}
-                onChange={handleChange}
-              />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Bottom Fabric:</FormLabel>
-              <Input
-                type="text"
-                name="bottomFabric"
-                value={productData.bottomFabric}
-                onChange={handleChange}
-              />
-            </FormControl>
+
             <FormControl isRequired>
               <FormLabel>Title:</FormLabel>
               <Input
@@ -733,6 +639,97 @@ const AddProductPage = () => {
                 <Text color="red">Please select images</Text>
               )}
             </FormControl>
+            <FormControl isRequired>
+              <FormLabel>GST:</FormLabel>
+              <Select
+                name="gst"
+                value={productData.gst}
+                onChange={handleChange}
+              >
+                <option value="" disabled>
+                  Select a GST Value
+                </option>
+                {gstValues.map((gstitem) => (
+                  <option key={gstitem} value={gstitem}>
+                    {gstitem}
+                  </option>
+                ))}
+              </Select>
+              {/* {selectedCategory && <p>Selected category: {selectedCategory}</p>} */}
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Top Color:</FormLabel>
+              <Input
+                type="text"
+                name="topColor"
+                value={productData.topColor}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Top Fabric:</FormLabel>
+              <Input
+                type="text"
+                name="topFabric"
+                value={productData.topFabric}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Bottom Color:</FormLabel>
+              <Input
+                type="text"
+                name="bottomColor"
+                value={productData.bottomColor}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Bottom Fabric:</FormLabel>
+              <Input
+                type="text"
+                name="bottomFabric"
+                value={productData.bottomFabric}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Net Weight:</FormLabel>
+              <Input
+                type="text"
+                name="net_weight"
+                value={productData.net_weight}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Description:</FormLabel>
+              <Textarea
+                type="text"
+                name="description"
+                value={productData.description}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Country of Origin:</FormLabel>
+              <Input
+                type="text"
+                name="countryoforigin"
+                value={productData.countryoforigin}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Manufacturer Details:</FormLabel>
+              <Input
+                type="text"
+                name="manufacturerdetails"
+                value={productData.manufacturerdetails}
+                onChange={handleChange}
+              />
+            </FormControl>
+
             {Object.entries(sizeOptions).map(([category, sizes]) => (
               <FormControl key={category}>
                 <FormLabel>

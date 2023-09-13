@@ -18,7 +18,7 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Checkbox
+  Checkbox,
 } from "@chakra-ui/react";
 import axios from "axios";
 import AdminNavbar from "./AdminNavbar";
@@ -47,60 +47,6 @@ const OrdersPage = () => {
   const [selectedOrders, setSelectedOrders] = useState([]);
   // const [selectedStatus, setSelectedStatus] = useState("processing");
   const toast = useToast();
-  //   const handleStatusChange = async (orderId) => {
-  //     try {
-  //       let selectedStatus = "";
-  //       if (selectedTab=="processing") {
-  //         selectedStatus = "accepted";
-  //       }else if(selectedTab=="accepted") {
-  //         selectedStatus = "readytoship";
-  //       }else if(selectedTab=="readytoship") {
-  //         selectedStatus = "shipped";
-  //       }
-  //       setisLoading(true);
-  // console.log(selectedStatus);
-  //       const response = await axios.put(
-  //         `${process.env.REACT_APP_BASE_API}/admin/order/${orderId}/status`,
-  //         {
-  //           orderStatus: selectedStatus,
-  //         }
-  //       );
-
-  //       if (response.data.success) {
-  //         toast({
-  //           title: "Order status updated successfully",
-  //           variant: "top-accent",
-  //           isClosable: true,
-  //           position: "top-right",
-  //           status: "success",
-  //           duration: 2500,
-  //         });
-  //         // console.log("Order status updated successfully");
-  //         setisLoading(false);
-  //       } else {
-  //         toast({
-  //           title: "Order status not updated",
-  //           variant: "top-accent",
-  //           isClosable: true,
-  //           position: "top-right",
-  //           status: "error",
-  //           duration: 2500,
-  //         });
-  //       }
-  //     } catch (error) {
-  //       setisLoading(false);
-  //       toast({
-  //         title: "updating order status",
-  //         variant: "top-accent",
-  //         isClosable: true,
-  //         position: "top-right",
-  //         status: "error",
-  //         duration: 2500,
-  //       });
-
-  //       console.error("Error updating order status:", error);
-  //     }
-  //   };
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
@@ -292,7 +238,8 @@ const OrdersPage = () => {
                 selectedOrders,
                 handleAcceptSelectedOrders,
                 handleSelectAll,
-                handleCheckboxChange
+                handleCheckboxChange,
+                isLoading,
               )}
             </Box>
           </Box>
@@ -312,121 +259,137 @@ const renderOrdersTable = (
   selectedOrders,
   handleAcceptSelectedOrders,
   handleSelectAll,
-  handleCheckboxChange
+  handleCheckboxChange,
+  isLoading
 ) => {
   return (
     <>
       <Box overflow={"auto"}>
         {/* <Text>{selectedTab}</Text> */}
-        <Button
-          isDisabled={selectedTab === "shipped" || selectedTab === "cancelled"}
-          colorScheme="purple"
-          size="sm"
-          onClick={handleAcceptSelectedOrders}
-        >
-          {selectedTab === "processing" && "Accept Selected"}
-          {selectedTab === "accepted" && "Ready to Ship Selected"}
-          {selectedTab === "readytoship" && "Shipped Selected"}
-        </Button>
-        <Table variant="striped" colorScheme="gray">
-          <Thead>
-            <Tr>
-              <Th>
-                <Checkbox
-                  isChecked={selectedOrders.length === filteredOrders.length}
-                  onChange={handleSelectAll}
-                />
-              </Th>
-              <Th>No.</Th>
-              <Th>Address</Th>
-              <Th>Customer Name</Th>
-              <Th>Items</Th>
-              <Th>Order Date</Th>
-              <Th>Total Price</Th>
-              <Th>Payment Mode</Th>
-              {/* <Th>Status</Th> */}
-              <Th>Action</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            <>
-              {filteredOrders.map((order, index) => (
-                <Tr key={index}>
-                  <Td>
-                    <Checkbox
-                      isChecked={selectedOrders.includes(order._id)}
-                      onChange={() => handleCheckboxChange(order._id)}
-                    />
-                  </Td>
-                  <Td>{index + 1}</Td>
-                  <Td>{order.addressLine}</Td>
-                  <Td>{order.userId.name}</Td>
-                  <Td>
-                    {order.items.map((item) => (
-                      <Box key={item._id}>
-                        {item.productName} x{item.quantity}
-                      </Box>
-                    ))}
-                  </Td>
-                  <Td>{new Date(order.orderDate).toLocaleDateString()}</Td>
-                  <Td>{order.totalAmount}</Td>
-                  <Td>{order.paymentMode}</Td>
-                  <Td>
-                    <Button
-                      isDisabled={
-                        selectedTab === "shipped" || selectedTab === "cancelled"
-                      }
-                      colorScheme="purple"
-                      size="sm"
-                      onClick={() => {
-                        if (selectedTab === "processing") {
-                          handleStatusChange(order._id, "accepted");
-                        } else if (selectedTab === "accepted") {
-                          handleStatusChange(order._id, "readytoship");
-                        } else if (selectedTab === "readytoship") {
-                          handleStatusChange(order._id, "shipped");
-                        }
-                      }}
-                    >
-                      {selectedTab === "processing" && "Accepted"}
-                      {selectedTab === "accepted" && "Ready to Ship"}
-                      {selectedTab === "readytoship" && "Shipped"}
-                    </Button>{" "}
-                    <Button
-                      isDisabled={
-                        selectedTab === "shipped" || selectedTab === "cancelled"
-                      }
-                      colorScheme="red"
-                      size="sm"
-                      onClick={() => handleStatusChange(order._id, "cancelled")}
-                    >
-                      Cancel
-                    </Button>
-                  </Td>
-                  {/* <Td>
-                          <select
-                            id="status"
-                            value={order.orderStatus}
-                            onChange={(e) => setSelectedStatus(e.target.value)}
-                          >
-                            <option value="processing">Processing</option>
-                            <option value="shipped">Shipped</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="cancelled">Cancelled</option>
-                          </select>
-                          <button
-                            onClick={() => {
-                              handleStatusChange(order._id);
-                            }}
-                          >
-                            Update Status
-                          </button>
-                        </Td> */}
-                </Tr>
-              ))}
-            </>
-          </Tbody>
-        </Table>
+        {selectedTab !== "shipped" && selectedTab !== "cancelled" && (
+          <Button
+            // isDisabled={selectedTab === "shipped" || selectedTab === "cancelled"}
+            colorScheme="purple"
+            size="sm"
+            onClick={handleAcceptSelectedOrders}
+          >
+            {selectedTab === "processing" && "Accept Selected"}
+            {selectedTab === "accepted" && "Ready to Ship Selected"}
+            {selectedTab === "readytoship" && "Shipped Selected"}
+          </Button>
+        )}
+        {isLoading ? (
+          <Text>Loading...... </Text>
+        ) : (
+          <Table variant="striped" colorScheme="gray">
+            <Thead>
+              <Tr>
+                <Th>
+                  <Checkbox
+                    isChecked={selectedOrders.length === filteredOrders.length}
+                    onChange={handleSelectAll}
+                  />
+                </Th>
+                <Th>No.</Th>
+                <Th>Address</Th>
+                <Th>Customer Name</Th>
+                <Th>Items</Th>
+                <Th>Order Date</Th>
+                <Th>Total Price</Th>
+                <Th>Payment Mode</Th>
+                {/* <Th>Status</Th> */}
+                {selectedTab !== "shipped" && selectedTab !== "cancelled" && (
+                  <Th>Action</Th>
+                )}
+              </Tr>
+            </Thead>
+            <Tbody>
+              <>
+                {filteredOrders.map((order, index) => (
+                  <Tr key={index}>
+                    <Td>
+                      <Checkbox
+                        isChecked={selectedOrders.includes(order._id)}
+                        onChange={() => handleCheckboxChange(order._id)}
+                      />
+                    </Td>
+                    <Td>{index + 1}</Td>
+                    <Td>{order.addressLine}</Td>
+                    <Td>{order.userId.name}</Td>
+                    <Td>
+                      {order.items.map((item) => (
+                        <Box key={item._id}>
+                          {item.productName} x{item.quantity}
+                        </Box>
+                      ))}
+                    </Td>
+                    <Td>{new Date(order.orderDate).toLocaleDateString()}</Td>
+                    <Td>{order.totalAmount}</Td>
+                    <Td>{order.paymentMode}</Td>
+                    {selectedTab !== "shipped" && selectedTab !== "cancelled" && (
+                      <Td>
+                        <Button
+                          isDisabled={
+                            selectedTab === "shipped" ||
+                            selectedTab === "cancelled"
+                          }
+                          colorScheme="purple"
+                          size="sm"
+                          onClick={() => {
+                            if (selectedTab === "processing") {
+                              handleStatusChange(order._id, "accepted");
+                            } else if (selectedTab === "accepted") {
+                              handleStatusChange(order._id, "readytoship");
+                            } else if (selectedTab === "readytoship") {
+                              handleStatusChange(order._id, "shipped");
+                            }
+                          }}
+                        >
+                          {selectedTab === "processing" && "Accepted"}
+                          {selectedTab === "accepted" && "Ready to Ship"}
+                          {selectedTab === "readytoship" && "Shipped"}
+                        </Button>{" "}
+                        <Button
+                          isDisabled={
+                            selectedTab === "shipped" ||
+                            selectedTab === "cancelled"
+                          }
+                          colorScheme="red"
+                          size="sm"
+                          onClick={() =>
+                            handleStatusChange(order._id, "cancelled")
+                          }
+                        >
+                          Cancel
+                        </Button>
+                      </Td>
+                    )}
+
+                    {/* <Td>
+                <select
+                  id="status"
+                  value={order.orderStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                >
+                  <option value="processing">Processing</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <button
+                  onClick={() => {
+                    handleStatusChange(order._id);
+                  }}
+                >
+                  Update Status
+                </button>
+              </Td> */}
+                  </Tr>
+                ))}
+              </>
+            </Tbody>
+          </Table>
+        )}
       </Box>
     </>
   );

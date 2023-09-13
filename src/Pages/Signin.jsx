@@ -32,7 +32,8 @@ import AdminNavbar from "../Admin/AdminNavbar";
 import Cookies from "js-cookie";
 
 const Signin = () => {
-  const [mbNumber, setMbNumber] = useState(false);
+  const [mobileNumber, setMobileNumber] = useState(false);
+  const [hash, setHashcode] = useState("");
   const [value, setValue] = useState("");
   const prevLocation = useRef();
   const toast = useToast();
@@ -97,74 +98,39 @@ const Signin = () => {
 
     const code = value;
     console.log(code);
-    window.confirmationResult
-      .confirm(code)
-      .then((result) => {
-        // User signed in successfully.
-        // const user = result.user;
-        // console.log(JSON.stringify(user));
-        // alert("User is verified");
 
-        const mobileNumber = input;
-        const config = { headers: { "Contnet-Type": "application/json" } };
-        console.log(input);
-        axios
-          .post(`${process.env.REACT_APP_BASE_API}/admin/login`, {
-            mobileNumber,
-          })
-          .then((res) => {
-            console.log(res);
-            const token = res.data.token;
-            localStorage.setItem("authToken", token);
-            dispatch(login());
-            toast({
-              position: "top",
-              title: `Login successful`,
-              status: "success",
-              isClosable: true,
-              duration: 1500,
-            });
-            navigate("/");
-            // authii();
-          })
-          .catch((error) => {
-            setLoading(false);
-            toast({
-              position: "top",
-              title: "Something went wrong. Please reload and try again. Server Issue/Network Issue",
-              status: "error",
-              isClosable: true,
-              duration: 3000,
-            });
-            console.error("Error Adding User", error);
-          });
-
-        // dispatch(getUserDetails());
-        //   navigate("/otp", { state: comingFrom, replace: true });
-        // toast({
-        //   position: "top",
-        //   title: `Login successful`,
-        //   status: "success",
-        //   isClosable: true,
-        //   duration: 1500,
-        // });
-
-        // console.log(comingFrom);
-        setLoading(false);
-      })
-      .catch((error) => {
-        // User couldn't sign in (bad verification code?)
-        // ...
-        setLoading(false);
+    axios
+      .post(
+        `${process.env.REACT_APP_BASE_API}/admin/verifyotp`,
+        { mobileNumber, hash, code }
+        // config
+      )
+      .then((res) => {
+        console.log(res);
+        const token = res.data.token;
+        localStorage.setItem("authToken", token);
         // navigate("/");
+        setLoading(false);
+        dispatch(login());
         toast({
           position: "top",
-          title: `Wrong OTP entered`,
-          status: "error",
+          title: `Login successful`,
+          status: "success",
           isClosable: true,
           duration: 1500,
         });
-        setValue("");
+        navigate("/");
+      })
+      .catch((error) => {
+        setLoading(false);
+        toast({
+          position: "top",
+          title: error.response.data.message,
+          status: "error",
+          isClosable: true,
+          duration: 3000,
+        });
+        console.error("Error verifying User", error);
       });
   };
 
@@ -177,47 +143,42 @@ const Signin = () => {
       try {
         //mobile no. registration
         localStorage.setItem("MbNumber", +input);
-
-        configureCaptcha();
-        const phoneNumber = "+91" + input;
-        console.log(phoneNumber);
-        const appVerifier = window.recaptchaVerifier;
-        firebase
-          .auth()
-          .signInWithPhoneNumber(phoneNumber, appVerifier)
-          .then((confirmationResult) => {
-            // SMS sent. Prompt user to type the code from the message, then sign the
-            // user in with confirmationResult.confirm(code).
-            window.confirmationResult = confirmationResult;
-            console.log("OTP has been sent");
-            // ...
-            setLoading(false);
+        const mobileNumber = input;
+        axios
+          .post(
+            `${process.env.REACT_APP_BASE_API}/admin/getotp`,
+            { mobileNumber }
+            // config
+          )
+          .then((res) => {
+            console.log(res.data);
+            setMobileNumber(res.data.mobileNumber);
+            setHashcode(res.data.hash);
             setViewOtpForm(true);
-          })
-          .catch((error) => {
-            // Error; SMS not sent
-            // ...
             setLoading(false);
-
             toast({
               position: "top",
-              title: "Something went wrong. Please reload and try again",
+              title: "Otp has been sent.",
+              status: "success",
+              isClosable: true,
+              duration: 3000,
+            });
+          })
+          .catch((error) => {
+            setLoading(false);
+            toast({
+              position: "top",
+              title:
+                "Something went wrong. Please reload and try again. Server Issue/Network Issue",
               status: "error",
               isClosable: true,
               duration: 3000,
             });
-            // toast({
-            //   title: error.response.data.error,
-            //   variant: "top-accent",
-            //   isClosable: true,
-            //   position: "top-center",
-            //   status: "error",
-            //   duration: 1500,
-            // });
-            console.log("SMS not sent " + error);
+            console.error("Error sending OTP", error);
           });
       } catch (error) {
         console.log(error);
+        setLoading(false);
       }
     }
   };
@@ -437,7 +398,7 @@ const Signin = () => {
                   Verify with OTP
                 </Heading>
                 <Text fontSize={"12px"} mt={2} color={"#a7a9af"}>
-                  Send to {mbNumber}
+                  Send to {mobileNumber}
                 </Text>
               </Box>
               {/* <form onSubmit={onSignInSubmit}> */}
