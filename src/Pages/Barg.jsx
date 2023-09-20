@@ -7,7 +7,7 @@ const Barg = () => {
 
   useEffect(() => {
     // Fetch data from your backend API
-    axios.get("http://localhost:5000/order/last-six-months-orders").then((response) => {
+    axios.get(`${process.env.REACT_APP_BASE_API}/order/last-six-months-orders`).then((response) => {
       const { months, orderCounts } = response.data;
       setData({ months, orderCounts });
     });

@@ -18,6 +18,7 @@ import {
   Textarea,
   Flex,
   SimpleGrid,
+  Grid,
 } from "@chakra-ui/react";
 import { ChromePicker, SketchPicker } from "react-color";
 import axios from "axios";
@@ -87,7 +88,7 @@ const AddProductPage = () => {
     setOfferValue(selectedOffer.value);
     setOfferName(selectedOffer.text);
     if (selectedOffer.type === "percent") {
-      const discountAmount = (selectedOffer.value / 100) * productData.price;
+      const discountAmount = Math.round((selectedOffer.value / 100) * productData.price);
       setDiscountedPrice(productData.price - discountAmount);
       // setProductData(productData.discount=discountedPrice);
     } else if (selectedOffer.type === "flat") {
@@ -411,7 +412,14 @@ const AddProductPage = () => {
           onSubmit={handleSubmit}
           w="70%"
         >
-          <VStack spacing={4}>
+          <Grid
+            templateColumns={{
+              base: "1fr",
+              md: "repeat(2, 1fr)",
+              lg: "repeat(3, 1fr)",
+            }}
+            gap={4}
+          >
             {/* Add form fields for each product property */}
             <FormControl isRequired>
               <FormLabel>SKU ID:</FormLabel>
@@ -431,7 +439,6 @@ const AddProductPage = () => {
                 onChange={handleChange}
               />
             </FormControl>{" "}
-
             {/* <FormControl isRequired>
               <FormLabel>Product Color Options:</FormLabel>
 
@@ -492,7 +499,6 @@ const AddProductPage = () => {
                 onChange={handleChange}
               />
             </FormControl> */}
-
             <FormControl isRequired>
               <FormLabel>Title:</FormLabel>
               <Input
@@ -729,7 +735,9 @@ const AddProductPage = () => {
                 onChange={handleChange}
               />
             </FormControl>
-
+          </Grid>
+          <Spacer />
+          <VStack spacing={4}>
             {Object.entries(sizeOptions).map(([category, sizes]) => (
               <FormControl key={category}>
                 <FormLabel>
@@ -761,10 +769,10 @@ const AddProductPage = () => {
                 </SimpleGrid>
               </FormControl>
             ))}
-            <Spacer />
-            <Button type="submit">Add Product</Button>
-            <Spacer />
           </VStack>
+          <Spacer />
+          <Button type="submit">Add Product</Button>
+          <Spacer />
         </Box>
       </VStack>
     </Box>

@@ -33,7 +33,7 @@ const AdminDashboard = () => {
     setisLoading(true);
     try {
       await axios
-        .get("http://localhost:5000/order/chart-data1")
+        .get(`${process.env.REACT_APP_BASE_API}/order/chart-data1`)
         .then((response) => {
           setMonths(response.data.categories);
           setNumber(response.data.data);

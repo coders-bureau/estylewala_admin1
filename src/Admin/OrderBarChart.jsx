@@ -33,7 +33,7 @@ console.log(chartData);
 
   const fetchChartData = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/admin/order/chart');
+      const response = await axios.get(`${process.env.REACT_APP_BASE_API}/admin/order/chart`);
       const data = response.data.chartData;
 
       if (!Array.isArray(data)) {

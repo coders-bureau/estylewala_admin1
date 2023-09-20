@@ -131,7 +131,7 @@ const OfferForm = () => {
 
       // Send the form data to the backend using axios or any other HTTP library
       const response = await axios.post(
-        `http://localhost:5000/offer/addoffer`,
+        `${process.env.REACT_APP_BASE_API}/offer/addoffer`,
         formData
       );
 

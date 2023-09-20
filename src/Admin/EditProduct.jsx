@@ -293,7 +293,7 @@ const EditProduct = () => {
       offer: { text: text1 },
     }));
     if (selectedOffer.type === "percent") {
-      const discountAmount = (selectedOffer.value / 100) * product.price;
+      const discountAmount = Math.round((selectedOffer.value / 100) * product.price);
       // setDiscountedPrice(product.price - discountAmount);
       setProduct((prev) => ({
         ...prev,
