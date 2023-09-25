@@ -208,7 +208,7 @@ const OfferForm = () => {
 
         <FormControl isRequired mb={4}>
           <FormLabel>Text</FormLabel>
-          <Textarea value={text} onChange={(e) => setText(e.target.value)} />
+          <Input value={text} onChange={(e) => setText(e.target.value)} />
         </FormControl>
 
         <FormControl isRequired mb={4}>
@@ -242,7 +242,7 @@ const OfferForm = () => {
       </Box>
       <Box>
         <Heading as="h2" mb="4">
-          Offers List 123
+          Offers List 
         </Heading>
         <List>
           {offers
@@ -272,7 +272,7 @@ const OfferForm = () => {
                   alt={`Offer ${offer._id}`}
                 />
                 {/* <Button onClick={() => setSelectedOffer(offer)}>Edit</Button> */}
-                <Button onClick={() => handleDeleteCategory(offer._id)}>
+                <Button colorScheme="red" onClick={() => handleDeleteCategory(offer._id)}>
                   Delete
                 </Button>
               </HStack>

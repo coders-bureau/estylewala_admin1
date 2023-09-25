@@ -11,7 +11,7 @@ const LoadingPage = () => {
         }
         position={"fixed"}
         top={{ lg: "50%", md: "50%", base: "30%" }}
-        left={{ lg: "60%", md: "60%", base: "50%" }}
+        left={{ lg: "55%", md: "55%", base: "50%" }}
         transform={"translate(-50% , -50%)"}
       >
         <Image

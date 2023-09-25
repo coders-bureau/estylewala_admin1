@@ -50,6 +50,7 @@ import {
   BiCategory,
   BiSolidCommentDetail,
   BiSolidOffer,
+  BiSolidDiscount,
 } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -119,6 +120,7 @@ const LinkItems = [
   { name: "Size", icon: TbRulerMeasure, path: "/size" },
   { name: "Account", icon: RiAccountPinCircleFill, path: "/admin-profile" },
   { name: "Offer", icon: BiSolidOffer, path: "/offers" },
+  { name: "Coupon", icon: BiSolidDiscount, path: "/coupons" },
   { name: "Slider", icon: BsFillImageFill, path: "/slider" },
   { name: "Report", icon: TbReportSearch, path: "/report" },
   { name: "ContactUs List", icon: TbReportSearch, path: "/contactlist" },

@@ -16,6 +16,7 @@ import ProductsPage from "../Admin/ProductsPage";
 import OrderBarChart from "../Admin/OrderBarChart";
 import ReportsPage from "../Admin/ReportsPage";
 import OfferPage from "../Admin/OfferPage";
+import CouponsPage from "../Admin/CouponsPage";
 import AccountPage from "../Admin/AccountPage";
 import AdminNavbar from "../Admin/AdminNavbar";
 import SliderPage from "../Admin/SliderPage";
@@ -146,6 +147,14 @@ export const MainRoutes = () => {
           }
         ></Route>
         <Route
+          path="/coupons"
+          element={
+            <PrivateRoute>
+              <CouponsPage />
+            </PrivateRoute>
+          }
+        ></Route>
+        <Route
           path="/admin-profile"
           element={
             <PrivateRoute>
@@ -161,7 +170,7 @@ export const MainRoutes = () => {
             </PrivateRoute>
           }
         ></Route>
-        
+
         <Route
           path="/contactlist"
           element={
